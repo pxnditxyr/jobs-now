@@ -1,0 +1,58 @@
+---
+import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
+
+---
+
+<AuthLayout>
+  <h1> Combinando ropa </h1>
+  <div class="w-full flex flex-col gap-4 p-8 md:flex-row md:items-center md:justify-center md:py-20">
+    <div class="w-full flex flex-col items-center justify-center gap-4 md:p-8 md:w-1/2 md:max-w-[500px]">
+      <img
+        src="/logo.svg"
+        alt="QualitySoft"
+        class="w-full max-w-[200px] md:max-w-[400px]"
+        transition:name="logo-auth"
+        transition:animate="initial"
+      />
+
+    </div>
+
+    <div class="w-full flex flex-col items-center justify-center gap-12 md:p-8 border-l-2 border-l-slate-300 md:w-1/2 md:max-w-[500px]">
+      <h2 class="text-center text-3xl font-bold text-slate-800"> Iniciar sesión </h2>
+      <form class="flex flex-col gap-8 w-full max-w-[400px]">
+
+        <div class="flex flex-col gap-4">
+          <label for="email" class="text-slate-800 text-sm font-bold"> Correo electrónico </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="email@example.com"
+            class="w-full rounded-md border-2 border-slate-300 p-2 text-slate-800"
+          />
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <label for="password" class="text-slate-800 text-sm font-bold"> Contraseña </label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Contraseña"
+            class="w-full rounded-md border-2 border-slate-300 p-2 text-slate-800"
+          />
+        </div>
+
+        <button class="w-full rounded-md bg-slate-800 p-2 text-white">
+          Iniciar sesión
+        </button>
+      </form>
+      <p class="text-center text-sm text-slate-600">
+        ¿No tienes cuenta?
+        <a href="/auth/signup" class="text-blue-500 hover:underline">
+          Registrate
+        </a>
+      </p>
+    </div>
+  </div>
+</AuthLayout>
