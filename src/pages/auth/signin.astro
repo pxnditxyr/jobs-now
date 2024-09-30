@@ -3,8 +3,7 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 
 ---
 
-<AuthLayout>
-  <h1> Combinando ropa </h1>
+<AuthLayout class="bg-gradient-to-br from-[#800020] via-red-500 to-orange-500 min-h-screen flex justify-center items-center font-sans">
   <div class="w-full flex flex-col gap-4 p-8 md:flex-row md:items-center md:justify-center md:py-20">
     <div class="w-full flex flex-col items-center justify-center gap-4 md:p-8 md:w-1/2 md:max-w-[500px]">
       <img
@@ -12,47 +11,60 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
         alt="QualitySoft"
         class="w-full max-w-[200px] md:max-w-[400px]"
         transition:name="logo-auth"
-        transition:animate="initial"
       />
-
     </div>
 
-    <div class="w-full flex flex-col items-center justify-center gap-12 md:p-8 border-l-2 border-l-slate-300 md:w-1/2 md:max-w-[500px]">
-      <h2 class="text-center text-3xl font-bold text-slate-800"> Iniciar sesión </h2>
-      <form class="flex flex-col gap-8 w-full max-w-[400px]">
-
-        <div class="flex flex-col gap-4">
-          <label for="email" class="text-slate-800 text-sm font-bold"> Correo electrónico </label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            placeholder="email@example.com"
-            class="w-full rounded-md border-2 border-slate-300 p-2 text-slate-800"
-          />
+    <div class="w-full flex flex-col items-center justify-center gap-12 md:p-8 border-l-2 border-l-white md:w-1/2 md:max-w-[500px]">
+      <div class="bg-white bg-opacity-80 backdrop-blur-lg p-8 rounded-lg shadow-[0_0_25px_12px_rgba(0,0,0,0.6)] w-full flex flex-col gap-8">
+        <div class="bg-red-600 w-16 h-16 rounded-full flex justify-center items-center mx-auto -mt-20 mb-5 shadow-md">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="white"
+            class="w-6 h-6"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          </svg>
         </div>
+        <h2 class="text-center text-3xl font-bold text-slate-800"> Iniciar sesión </h2>
+        <form class="w-full flex flex-col gap-8">
+          <div class="flex flex-col gap-4">
+            <label for="email" class="text-slate-800 text-sm font-bold"> Correo electrónico </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="email@example.com"
+              class="w-full p-2 mb-4 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
+          <div class="flex flex-col gap-4">
+            <label for="password" class="text-slate-800 text-sm font-bold"> Contraseña </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              class="w-full p-2 mb-4 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
 
-        <div class="flex flex-col gap-4">
-          <label for="password" class="text-slate-800 text-sm font-bold"> Contraseña </label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            class="w-full rounded-md border-2 border-slate-300 p-2 text-slate-800"
-          />
-        </div>
+          <button
+            type="submit"
+            class="w-full p-2 bg-red-600 text-white font-bold rounded cursor-pointer hover:bg-red-700 transition duration-300"
+          >
+            Iniciar sesión
+          </button>
+        </form>
 
-        <button class="w-full rounded-md bg-slate-800 p-2 text-white">
-          Iniciar sesión
-        </button>
-      </form>
-      <p class="text-center text-sm text-slate-600">
-        ¿No tienes cuenta?
-        <a href="/auth/signup" class="text-blue-500 hover:underline">
-          Registrate
-        </a>
-      </p>
+        <p class="text-center text-sm text-slate-600">
+          ¿No tienes cuenta?
+          <a href="/auth/signup" class="text-blue-500 hover:underline">
+            Registrate
+          </a>
+        </p>
+      </div>
     </div>
   </div>
 </AuthLayout>

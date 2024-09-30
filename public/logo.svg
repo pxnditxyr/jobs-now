@@ -7,7 +7,9 @@
     rx="5"
     fill="#FF4136"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="40"
@@ -17,7 +19,9 @@
     rx="5"
     fill="#FFDC00"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="40"
@@ -27,7 +31,9 @@
     rx="5"
     fill="#FFDC00"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="65"
@@ -37,7 +43,9 @@
     rx="5"
     fill="#2ECC40"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="65"
@@ -47,7 +55,9 @@
     rx="5"
     fill="#2ECC40"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="65"
@@ -57,7 +67,9 @@
     rx="5"
     fill="#2ECC40"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="90"
@@ -67,7 +79,9 @@
     rx="5"
     fill="#0074D9"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="90"
@@ -77,7 +91,9 @@
     rx="5"
     fill="#0074D9"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <rect
     x="90"
@@ -87,9 +103,12 @@
     rx="5"
     fill="#0074D9"
     opacity="0.8"
-    />
+    stroke="#020617"
+    stroke-width="2"
+  />
 
   <text x="0" y="120" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
     QualitySoft
   </text>
 </svg>
+
