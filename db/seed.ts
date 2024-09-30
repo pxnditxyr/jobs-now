@@ -20,8 +20,8 @@ export default async function seed() {
     },
     {
       id: UUID(),
-      name: 'Jhonnael',
-      email: 'jhonnael@qualitysoft.com',
+      name: 'Worker',
+      email: 'worker@qualitysoft.com',
       password: bcryptjs.hashSync( '123456', 10 ),
       role: 'worker',
     }

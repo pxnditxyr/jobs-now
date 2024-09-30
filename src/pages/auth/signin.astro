@@ -62,6 +62,7 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
         <button
           type="button"
           class="w-full px-4 py-2 bg-blue-600 text-white font-bold rounded-lg flex items-center justify-center mb-4 hover:bg-blue-700 focus:outline-none"
+          id="google-button"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,8 +104,9 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 </AuthLayout>
 
 <script>
-import { actions } from 'astro:actions'
+//import { actions } from 'astro:actions'
 import Swal from 'sweetalert2'
+const { signIn, signOut } = await import( 'auth-astro/client' )
 
 const form = document.querySelector( 'form' ) as HTMLFormElement
 const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
@@ -118,13 +120,21 @@ form.addEventListener( 'submit', async ( event ) => {
 
   const formData = new FormData( form )
 
-  const { error } = await actions.signinUser( formData )
+  //const { error } = await actions.signinUser( formData )
+  const response = await signIn( 'credentials', {
+    email: formData.get( 'email' ) as string,
+    password: formData.get( 'password' ) as string,
+    redirect: false,
+  } )
 
-  if ( error ) {
+  console.log( response )
+
+  if ( response ) {
     Swal.fire( {
       icon: 'error',
-      title: 'Error',
-      text: error.message,
+      title: 'Error en el Inicio de sesión',
+      //text: error.message,
+      text: `Parece que el correo electrónico o la contraseña son incorrectos`
     } )
     submitButton.disabled = false
     return

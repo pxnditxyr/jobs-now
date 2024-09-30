@@ -1,13 +1,30 @@
 ---
 import Layout from '@/modules/shared/layouts/Layout.astro'
+import Navbar from '@/modules/shared/components/Navbar.astro'
+import { getSession } from 'auth-astro/server'
+
+const session = await getSession( Astro.request )
+
+const { user } = session ?? {}
+console.log({ user })
 ---
 
 <Layout>
+  <Navbar />
   <h1> Quality Soft </h1>
 
-  <a
-    class="text-blue-500 hover:text-blue-700 hover:underline"
-    href="/auth/signin"
-  > Sign In </a>
+  {
+    ( !user ) && (
+      <a
+        class="text-blue-500 hover:text-blue-700 hover:underline"
+        href="/auth/signin"
+      > Ingresar </a>
+    )
+  }
 
+  <pre>
+    <code>
+      { JSON.stringify( user, null, 2 ) }
+    </code>
+  </pre>
 </Layout>
