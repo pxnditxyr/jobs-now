@@ -56,7 +56,13 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
             <div class="flex flex-col gap-4">
               <div class="flex justify-between items-center text-gray-800">
                 <label class="flex items-center">
-                  <input type="checkbox" class="mr-2" /> Quiero formar parte de nuestros trabajadores
+                  <input
+                    id="typeOfUser"
+                    name="typeOfUser"
+                    type="checkbox"
+                    class="mr-2"
+                    value="worker"
+                  /> Quiero formar parte de nuestros trabajadores
                 </label>
               </div>
             </div>
@@ -97,3 +103,33 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
     </div>
   </div>
 </AuthLayout>
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+const form = document.querySelector( 'form' ) as HTMLFormElement
+const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
+
+form.addEventListener( 'submit', async ( event ) => {
+
+  event.preventDefault()
+
+  submitButton.disabled = true
+
+  const formData = new FormData( form )
+
+  const { error } = await actions.signupUser( formData )
+
+  if ( error ) {
+    Swal.fire( {
+      icon: 'error',
+      title: 'Error',
+      text: error.message,
+    } )
+    submitButton.disabled = false
+    return
+  }
+  window.location.replace( '/' )
+} )
+
+</script>
