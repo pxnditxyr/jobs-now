@@ -1,13 +1,14 @@
 /// <reference path="../.astro/types.d.ts" />
+/// <reference path="astro/client" />
 
 interface User {
   name:       string
+  lastName:   string
   email:      string
-  lastName?:  string
-  gender?:    string
-  birthDate?: string
-  avatar?:    string
-  role?:      string
+  role:       string
+  gender?:    string | null
+  birthDate?: string | null
+  avatar?:    string | null
 }
 
 declare namespace App {

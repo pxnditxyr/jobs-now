@@ -5,7 +5,7 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 
 <AuthLayout class="bg-gradient-to-br from-[#800020] via-red-500 to-orange-500 min-h-screen flex justify-center items-center font-sans">
   <div class="w-full flex flex-col-reverse gap-4 p-8 md:flex-row md:items-center md:justify-center md:py-20">
-    <div class="w-full flex flex-col items-center justify-center gap-12 md:p-8 border-r-2 border-r-white md:w-1/2 md:max-w-[500px]">
+    <div class="w-full flex flex-col items-center justify-center gap-12 md:p-8 border-r-2 border-r-white md:w-1/2 md:max-w-[700px]">
       <div class="bg-white bg-opacity-80 backdrop-blur-lg p-8 rounded-lg shadow-[0_0_25px_12px_rgba(0,0,0,0.6)] w-full flex flex-col gap-8">
         <div class="bg-red-600 w-16 h-16 rounded-full flex justify-center items-center mx-auto -mt-20 mb-5 shadow-md">
           <svg
@@ -20,16 +20,32 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
         </div>
         <h2 class="text-center text-3xl font-bold text-slate-800"> Crear una cuenta </h2>
         <form class="w-full flex flex-col gap-4">
-          <div class="flex flex-col gap-4">
-            <label for="name" class="text-slate-800 text-sm font-bold"> Nombre </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="Nombre"
-              class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
+          <div class="flex flex-col gap-4 lg:flex-row">
+            <div class="flex flex-col gap-4">
+              <label for="name" class="text-slate-800 text-sm font-bold"> Nombres </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Nombre"
+                class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              />
+            </div>
+
+            <div class="flex flex-col gap-4">
+              <label for="lastName" class="text-slate-800 text-sm font-bold"> Apellidos </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Apellido"
+                class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              />
+            </div>
           </div>
+
           <div class="flex flex-col gap-4">
             <label for="email" class="text-slate-800 text-sm font-bold"> Correo electrónico </label>
             <input
@@ -38,6 +54,7 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
               type="email"
               placeholder="email@example.com"
               class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
             />
           </div>
           <div class="flex flex-col gap-4">
@@ -48,6 +65,7 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
               type="password"
               placeholder="Contraseña"
               class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
             />
           </div>
 
@@ -59,6 +77,7 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
               type="password"
               placeholder="Confirmar contraseña"
               class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
             />
           </div>
 
@@ -80,7 +99,12 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
             <div class="flex flex-col gap-4">
               <div class="flex justify-between items-center text-gray-800">
                 <label class="flex items-center">
-                  <input type="checkbox" class="mr-2" /> Acepto los <a href="#" class="text-blue-500 hover:underline"> Términos y condiciones </a>
+                  <input
+                    name="terms"
+                    type="checkbox"
+                    id="terms"
+                    class="mr-2"
+                  /> Acepto los <a href="#" class="text-blue-500 hover:underline"> Términos y condiciones </a>
                 </label>
               </div>
             </div>
@@ -88,7 +112,8 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 
           <button
             type="submit"
-            class="w-full p-2 bg-red-600 text-white font-bold rounded cursor-pointer hover:bg-red-700 transition duration-300"
+            class="w-full p-2 bg-red-600 text-white font-bold rounded cursor-pointer hover:bg-red-700 transition duration-300 disabled:bg-gray-400 disabled:text-gray-500"
+            disabled
           >
             Registrarse
           </button>
@@ -115,10 +140,23 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 </AuthLayout>
 <script>
 import { actions } from 'astro:actions'
+import { getErrorMessage } from '@/utils/erorrMessages'
 import Swal from 'sweetalert2'
+
+const { signIn } = await import( 'auth-astro/client' )
 
 const form = document.querySelector( 'form' ) as HTMLFormElement
 const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
+
+
+// if terms is checked then enable the submit button
+const termsCheckbox = document.querySelector( '#terms' ) as HTMLInputElement
+
+termsCheckbox.addEventListener( 'change', ( event ) => {
+  const target = event.target as HTMLInputElement
+  submitButton.disabled = !target.checked
+} )
+
 
 form.addEventListener( 'submit', async ( event ) => {
 
@@ -131,14 +169,35 @@ form.addEventListener( 'submit', async ( event ) => {
   const { error } = await actions.signupUser( formData )
 
   if ( error ) {
-    Swal.fire( {
+
+    const errorMessages = getErrorMessage( error )
+
+    Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: error.message,
+      text: errorMessages,
+    })
+
+    submitButton.disabled = false
+    return
+  }
+
+  const response = await signIn( 'credentials', {
+    email: formData.get( 'email' ) as string,
+    password: formData.get( 'password' ) as string,
+    redirect: false,
+  } )
+
+  if ( response ) {
+    Swal.fire( {
+      icon: 'error',
+      title: 'Error en el Inicio de sesión',
+      text: `Parece que el correo electrónico o la contraseña son incorrectos`
     } )
     submitButton.disabled = false
     return
   }
+
   window.location.replace( '/' )
 } )
 

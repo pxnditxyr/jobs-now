@@ -17,19 +17,17 @@ export const onRequest = defineMiddleware(
       locals.user = {
         name:      user.name!,
         email:     user.email!,
-        lastName:  user.lastName,
+        lastName:  user.lastName!,
+        role:      user.role,
         gender:    user.gender,
         birthDate: user.birthDate,
         avatar:    user.avatar,
-        role:      user.role,
       }
     }
 
     if ( !isLoggedIn && url.pathname.startsWith( '/dashboard' ) ) {
       return redirect( '/auth/signin' )
     }
-
-    console.log( isLoggedIn )
 
     if ( isLoggedIn && notAuthenticatedRoutes.includes( url.pathname ) ) {
       return redirect( '/' )

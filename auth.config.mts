@@ -26,8 +26,6 @@ export default defineConfig({
         }
 
         const { password: _, ...userData } = user
-        console.log({ userData })
-
         return userData
       }
     })

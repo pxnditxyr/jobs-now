@@ -14,6 +14,7 @@ export default async function seed() {
     {
       id: UUID(),
       name: 'Pxndxs 🐼',
+      lastName: 'Ricaldi',
       email: 'pxndxs@qualitysoft.com',
       password: bcryptjs.hashSync( '123456', 10 ),
       role: 'admin',
@@ -21,10 +22,19 @@ export default async function seed() {
     {
       id: UUID(),
       name: 'Worker',
+      lastName: 'Worker Last Name',
       email: 'worker@qualitysoft.com',
       password: bcryptjs.hashSync( '123456', 10 ),
       role: 'worker',
-    }
+    },
+    {
+      id: UUID(),
+      name: 'User',
+      lastName: 'User Last Name',
+      email: 'user@qualitysoft.com',
+      password: bcryptjs.hashSync( '123456', 10 ),
+      role: 'user',
+    },
   ]
 
   await db.insert( Role ).values( roles )

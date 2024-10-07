@@ -2,6 +2,7 @@
 import Layout from '@/modules/shared/layouts/Layout.astro'
 import Navbar from '@/modules/shared/components/Navbar.astro'
 import { getSession } from 'auth-astro/server'
+import { Icon } from 'astro-icon/components'
 
 const session = await getSession( Astro.request )
 
@@ -11,20 +12,73 @@ console.log({ user })
 
 <Layout>
   <Navbar />
-  <h1> Quality Soft </h1>
-
   {
-    ( !user ) && (
+    ( !user ) ? (
       <a
         class="text-blue-500 hover:text-blue-700 hover:underline"
         href="/auth/signin"
       > Ingresar </a>
+    ) : (
+
+    <div class="bg-white rounded-2xl shadow-lg max-w-xl w-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl py-8">
+    <div class="bg-gradient-to-r from-green-600 to-green-500 text-white p-8 text-center relative overflow-hidden">
+      <Icon name="avatar" class="w-36 h-36 rounded-full border-4 border-white mx-auto mb-4 shadow-lg relative z-10 bg-white" />
+      <h1 class="text-3xl font-bold mb-2">¡Bienvenido a Jobs Now! 🎉</h1>
+      <p class="text-lg">Estamos encantados de tenerte con nosotros</p>
+    </div>
+    <div class="p-8">
+      <p class="mb-6 text-gray-700">Hola,
+        { user?.name } { user?.lastName }
+        Aquí tienes un resumen de tu información:</p>
+
+      <div class="flex items-center mb-5 text-gray-700 hover:translate-x-1 transition-transform duration-200">
+        <div class="bg-green-500 text-white w-10 h-10 rounded-full flex justify-center items-center mr-4 shadow">
+          👤
+        </div>
+        <span><strong>Nombre:</strong> { user?.name } { user?.lastName }</span>
+      </div>
+
+      <div class="flex items-center mb-5 text-gray-700 hover:translate-x-1 transition-transform duration-200">
+        <div class="bg-green-500 text-white w-10 h-10 rounded-full flex justify-center items-center mr-4 shadow">
+          ✉️
+        </div>
+        <span><strong>Correo electrónico:</strong> { user?.email }</span>
+      </div>
+
+      <div class="flex items-center mb-5 text-gray-700 hover:translate-x-1 transition-transform duration-200">
+        <div class="bg-green-500 text-white w-10 h-10 rounded-full flex justify-center items-center mr-4 shadow">
+          🔑
+        </div>
+        <span><strong>Rol:</strong>
+          { ( user.role === 'worker' ) ? 'Trabajador'
+            : ( user.role === 'admin' ) ? 'Administrador'
+            : 'Usuario'
+          }
+        </span>
+      </div>
+
+      <div class="my-6 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
+
+      <h2 class="text-2xl font-semibold mb-4">🚀 Próximos pasos</h2>
+      <p class="mb-4">Para comenzar tu viaje con nosotros, te sugerimos:</p>
+      <ul class="list-disc list-inside text-gray-700 mb-6">
+        <li>📝 Completa tu perfil añadiendo tu género y fecha de nacimiento</li>
+        <li>🔍 Explora las características de nuestra plataforma</li>
+        <li>🤝 Conéctate con otros usuarios y expande tu red</li>
+        <li>🎯 Establece tus primeros objetivos y metas en la plataforma</li>
+        <li>📚 Revisa nuestros tutoriales y recursos de aprendizaje</li>
+      </ul>
+
+      <div class="my-6 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
+
+      <h2 class="text-2xl font-semibold mb-4 mt-4">💡 ¿Sabías que...?</h2>
+      <p class="mb-6">JobsNow ofrece herramientas de productividad que pueden aumentar tu eficiencia hasta en un 30%. ¡Descúbrelas en tu panel de control!</p>
+
+      <a href="#" class="bg-green-500 text-white rounded-full py-3 px-6 font-semibold text-lg transition-transform duration-300 hover:bg-green-600 hover:-translate-y-0.5 hover:shadow-lg block text-center mt-6">Comenzar a Explorar 🚀</a>
+    </div>
+  </div>
     )
   }
 
-  <pre>
-    <code>
-      { JSON.stringify( user, null, 2 ) }
-    </code>
-  </pre>
+
 </Layout>

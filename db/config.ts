@@ -8,15 +8,16 @@ const User = defineTable({
       unique: true,
     }),
 
-    name: column.text({ optional: true }),
-    lastName: column.text({ optional: true }),
-    gender: column.text({ optional: true }),
-    birthDate: column.text({ optional: true }),
-
+    name: column.text(),
+    lastName: column.text(),
     email: column.text({ unique: true }),
     password: column.text(),
 
+    gender: column.text({ optional: true }),
+    birthDate: column.text({ optional: true }),
+
     createdAt: column.date({ default: new Date() }),
+    updatedAt: column.date({ default: new Date() }),
     role: column.text({ references: () => Role.columns.id }),
   },
 })

@@ -1,5 +1,6 @@
 ---
 import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
+
 ---
 
 <AuthLayout class="bg-gradient-to-br from-[#800020] via-red-500 to-orange-500 min-h-screen flex justify-center items-center font-sans">
@@ -106,7 +107,8 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 <script>
 //import { actions } from 'astro:actions'
 import Swal from 'sweetalert2'
-const { signIn, signOut } = await import( 'auth-astro/client' )
+
+const { signIn } = await import( 'auth-astro/client' )
 
 const form = document.querySelector( 'form' ) as HTMLFormElement
 const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
@@ -120,14 +122,11 @@ form.addEventListener( 'submit', async ( event ) => {
 
   const formData = new FormData( form )
 
-  //const { error } = await actions.signinUser( formData )
   const response = await signIn( 'credentials', {
     email: formData.get( 'email' ) as string,
     password: formData.get( 'password' ) as string,
     redirect: false,
   } )
-
-  console.log( response )
 
   if ( response ) {
     Swal.fire( {
