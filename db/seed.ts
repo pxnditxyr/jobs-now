@@ -21,6 +21,14 @@ export default async function seed() {
     },
     {
       id: UUID(),
+      name: 'Admin',
+      lastName: 'Administrador',
+      email: 'admin@qualitysoft.com',
+      password: bcryptjs.hashSync( '123456', 10 ),
+      role: 'admin',
+    },
+    {
+      id: UUID(),
       name: 'Worker',
       lastName: 'Worker Last Name',
       email: 'worker@qualitysoft.com',
