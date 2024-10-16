@@ -1,6 +1,9 @@
 ---
 import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
+import { getRandomCaptcha } from '@/utils'
 
+const { audio: audioUrl, code: unhashedCode } = getRandomCaptcha()
+const code = btoa( unhashedCode )
 ---
 
 <AuthLayout class="bg-gradient-to-br from-[#800020] via-red-500 to-orange-500 min-h-screen flex justify-center items-center font-sans">
@@ -110,6 +113,22 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
             </div>
           </div>
 
+          <div class="flex flex-col gap-4 justify-center items-center">
+            <label for="captcha" class="text-slate-800 text-sm font-bold"> Ingresa el código del CAPTCHA </label>
+              <audio id="captcha-audio" controls class="mb-4" data-ref={ code }>
+              <source src={ audioUrl } type="audio/mpeg" />
+              Tu navegador no soporta la reproducción de audio.
+            </audio>
+            <input
+              id="captcha"
+              name="captcha"
+              type="text"
+              placeholder="Código CAPTCHA"
+              class="w-full p-2 mb-4 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
+            />
+          </div>
+
           <button
             type="submit"
             class="w-full p-2 bg-red-600 text-white font-bold rounded cursor-pointer hover:bg-red-700 transition duration-300 disabled:bg-gray-400 disabled:text-gray-500"
@@ -157,6 +176,16 @@ termsCheckbox.addEventListener( 'change', ( event ) => {
   submitButton.disabled = !target.checked
 } )
 
+const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
+const captchaInput = document.querySelector( '#captcha' ) as HTMLInputElement
+
+const encodedCode = captchaAudio.getAttribute( 'data-ref' ) as string
+console.log({ encodedCode })
+const decodedCode = atob( encodedCode.trim() )
+console.log({ decodedCode })
+
+
+
 
 form.addEventListener( 'submit', async ( event ) => {
 
@@ -165,6 +194,18 @@ form.addEventListener( 'submit', async ( event ) => {
   submitButton.disabled = true
 
   const formData = new FormData( form )
+
+  const userCaptcha = captchaInput.value.trim()
+
+  if ( userCaptcha !== decodedCode ) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error de CAPTCHA',
+      text: 'El código CAPTCHA ingresado es incorrecto.',
+    })
+    submitButton.disabled = false
+    return
+  }
 
   const { error } = await actions.signupUser( formData )
 
