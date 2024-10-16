@@ -1,0 +1,116 @@
+---
+import AdminLayout from '@/modules/admin/layouts/AdminLayout.astro'
+import { actions } from 'astro:actions'
+
+const { data: usersData, error: usersError } = await actions.findAllUsers()
+
+if ( usersError ) return Astro.redirect( '/admin/dashboard' )
+
+const { users } = usersData
+---
+
+<AdminLayout>
+  <h1 class="text-5xl font-bold"> Usuarios </h1>
+
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-slate-900">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nombre</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Email</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Rol</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        {
+        users.map( ( user, index ) => (
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-slate-800">{ index + 1 }</td>
+          <td class="px-6 py-4 whitespace-nowrap text-slate-800">{user.name}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-slate-800">{user.email}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-slate-800">{user.role}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-slate-800">
+            <span
+              class={ `px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }` }
+              id={ `span-status-${ user.id }` }
+            >
+              { ( user.status ) ? 'Activo' : 'Inactivo' }
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-slate-800 text-right text-sm font-medium">
+            <button class="text-red-600 hover:text-red-900 delete-button" data-id={ user.id } data-current-status={ user.status }>
+              { ( !user.status ) ? 'Restaurar' : 'Eliminar' }
+            </button>
+          </td>
+        </tr>
+        ) )
+        }
+      </tbody>
+    </table>
+  </div>
+
+</AdminLayout>
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+
+const deleteButtons = document.querySelectorAll( '.delete-button' )
+
+deleteButtons.forEach( ( button ) => {
+  button.addEventListener( 'click', async ( _e ) => {
+
+    const id = button.getAttribute( 'data-id' )
+
+    const currentStatus = button.getAttribute( 'data-current-status' ) === 'true'
+    console.log({ currentStatusPrim: currentStatus })
+
+    if ( !id ) return
+
+    const { error } = await actions.toggleStatusUser( { id, currentStatus } )
+
+    if ( error ) {
+
+      Swal.fire( {
+        icon: 'error',
+        title: 'Error al eliminar el usuario',
+        text: 'No se pudo eliminar el usuario. Por favor, inténtelo de nuevo.',
+      } )
+      return
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Perfecto!',
+      text: `Se realizo la accion`,
+    })
+
+    button.setAttribute('data-current-status', (!currentStatus).toString())
+
+    const statusSpan = document.querySelector( `#span-status-${ id }` ) as HTMLElement
+
+    if ( !currentStatus ) {
+      statusSpan.classList.add( 'bg-green-100' )
+      statusSpan.classList.add( 'text-green-800' )
+      statusSpan.classList.remove( 'bg-red-100' )
+      statusSpan.classList.remove( 'text-red-800' )
+      statusSpan.textContent = 'Activo'
+      console.log({ statusSpan: statusSpan.innerText })
+    } else {
+      statusSpan.classList.add( 'bg-red-100' )
+      statusSpan.classList.add( 'text-red-800' )
+      statusSpan.classList.remove( 'bg-green-100' )
+      statusSpan.classList.remove( 'text-green-800' )
+      statusSpan.textContent = 'Inactivo'
+      console.log({ statusSpan1: statusSpan.innerText })
+    }
+
+    button.textContent = currentStatus ? 'Restaurar' : 'Eliminar'
+
+  } )
+} )
+
+</script>

@@ -1,0 +1,49 @@
+---
+import { getSession } from 'auth-astro/server'
+
+const session = await getSession( Astro.request )
+const { user } = session ?? {}
+
+---
+
+<div class="bg-[#1a1a2e] px-8 py-12 min-w-[300px]">
+  <div class="text-2xl font-bold text-white mb-8"> JobsNow </div>
+  <div class="flex flex-col gap-4 mb-8">
+    <div class="text-xl font-bold text-white"> Nombre: { user?.name } { user?.lastName } </div>
+    <div class="text-sm text-white"> { user?.email } </div>
+  </div>
+
+  <div class="flex flex-col gap-6">
+    <a
+      class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold"
+      href="/admin/dashboard"
+    >
+      Dashboard
+    </a>
+    <!--<div class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold">Trabajadores</div>-->
+    <!--<div class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold">Clientes</div>-->
+    <a
+      class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold"
+      href="/admin/dashboard/users"
+    >Usuarios</a>
+    <a class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold">Servicios</a>
+    <a class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold">Pagos</a>
+    <a class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold">Reportes</a>
+    <a class="menu-item hover:text-[#4a4ae6] cursor-pointer text-lg font-semibold">Configuración</a>
+    <button id="logout" class="font-semibold text-white w-full text-lg hover:text-red-500">
+      🔓 Salir
+    </button>
+
+  </div>
+</div>
+
+<script>
+  const { signOut } = await import( 'auth-astro/client' )
+
+  const logoutElement = document.querySelector( '#logout' ) as HTMLLIElement
+
+  logoutElement.addEventListener( 'click', async () => {
+    await signOut()
+    window.location.href = '/auth/signin'
+  } )
+</script>

@@ -19,6 +19,7 @@ const User = defineTable({
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
     role: column.text({ references: () => Role.columns.id }),
+    status: column.boolean({ default: true }),
   },
 })
 
