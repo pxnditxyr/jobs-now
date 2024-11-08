@@ -2,6 +2,8 @@
 import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 import { getRandomCaptcha } from '@/utils'
 
+import 'sweetalert2/dist/sweetalert2.min.css'
+
 const { audio: audioUrl, code: unhashedCode } = getRandomCaptcha()
 const code = btoa( unhashedCode )
 ---
@@ -159,87 +161,88 @@ const code = btoa( unhashedCode )
 </AuthLayout>
 <script>
 import { actions } from 'astro:actions'
-import { getErrorMessage } from '@/utils/erorrMessages'
+import { getErrorMessage } from '@/utils'
 import Swal from 'sweetalert2'
 
 const { signIn } = await import( 'auth-astro/client' )
 
-const form = document.querySelector( 'form' ) as HTMLFormElement
-const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
+const handlerPageLoad = () => {
+  console.log( 'Page loaded' )
+  const form = document.querySelector( 'form' ) as HTMLFormElement
+  const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
+
+  const termsCheckbox = document.querySelector( '#terms' ) as HTMLInputElement
 
 
-// if terms is checked then enable the submit button
-const termsCheckbox = document.querySelector( '#terms' ) as HTMLInputElement
+  const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
+  const captchaInput = document.querySelector( '#captcha' ) as HTMLInputElement
 
-termsCheckbox.addEventListener( 'change', ( event ) => {
-  const target = event.target as HTMLInputElement
-  submitButton.disabled = !target.checked
-} )
-
-const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
-const captchaInput = document.querySelector( '#captcha' ) as HTMLInputElement
-
-const encodedCode = captchaAudio.getAttribute( 'data-ref' ) as string
-console.log({ encodedCode })
-const decodedCode = atob( encodedCode.trim() )
-console.log({ decodedCode })
-
-
-
-
-form.addEventListener( 'submit', async ( event ) => {
-
-  event.preventDefault()
-
-  submitButton.disabled = true
-
-  const formData = new FormData( form )
-
-  const userCaptcha = captchaInput.value.trim()
-
-  if ( userCaptcha !== decodedCode ) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error de CAPTCHA',
-      text: 'El código CAPTCHA ingresado es incorrecto.',
-    })
-    submitButton.disabled = false
+  if ( !form || !submitButton || !captchaAudio || !captchaInput || !termsCheckbox ) {
     return
   }
 
-  const { error } = await actions.signupUser( formData )
+  const encodedCode = captchaAudio.getAttribute( 'data-ref' ) as string
+  const decodedCode = atob( encodedCode.trim() )
 
-  if ( error ) {
-
-    const errorMessages = getErrorMessage( error )
-
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: errorMessages,
-    })
-
-    submitButton.disabled = false
-    return
-  }
-
-  const response = await signIn( 'credentials', {
-    email: formData.get( 'email' ) as string,
-    password: formData.get( 'password' ) as string,
-    redirect: false,
+  termsCheckbox.addEventListener( 'change', ( event ) => {
+    const target = event.target as HTMLInputElement
+    submitButton.disabled = !target.checked
   } )
 
-  if ( response ) {
-    Swal.fire( {
-      icon: 'error',
-      title: 'Error en el Inicio de sesión',
-      text: `Parece que el correo electrónico o la contraseña son incorrectos`
+  form.addEventListener( 'submit', async ( event ) => {
+    event.preventDefault()
+
+    submitButton.disabled = true
+
+    const formData = new FormData( form )
+
+    const userCaptcha = captchaInput.value.trim()
+
+    if ( userCaptcha !== decodedCode ) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de CAPTCHA',
+        text: 'El código CAPTCHA ingresado es incorrecto.',
+      })
+      submitButton.disabled = false
+      return
+    }
+
+    const { error } = await actions.signupUser( formData )
+
+    if ( error ) {
+
+      const errorMessages = getErrorMessage( error )
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessages,
+      })
+
+      submitButton.disabled = false
+      return
+    }
+
+    const response = await signIn( 'credentials', {
+      email: formData.get( 'email' ) as string,
+      password: formData.get( 'password' ) as string,
+      redirect: false,
     } )
-    submitButton.disabled = false
-    return
-  }
 
-  window.location.replace( '/' )
-} )
+    if ( response ) {
+      Swal.fire( {
+        icon: 'error',
+        title: 'Error en el Inicio de sesión',
+        text: `Parece que el correo electrónico o la contraseña son incorrectos`
+      } )
+      submitButton.disabled = false
+      return
+    }
 
+    window.location.replace( '/' )
+  } )
+}
+
+document.addEventListener( 'astro:page-load', handlerPageLoad )
 </script>

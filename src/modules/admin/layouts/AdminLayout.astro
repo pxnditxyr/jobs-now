@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
-import AdminSidebar from '@/modules/admin/components/AdminSidebar.astro'
+import { Icon } from 'astro-icon/components'
 
 interface Props {
   title?: string
@@ -39,16 +39,135 @@ const {
   </head>
   <body>
     <main class:list={[
-      'w-full min-h-screen text-white flex bg-slate-800',
+      'w-full min-h-screen text-white bg-slate-800 flex',
       Astro.props.class
     ]}
     >
-      <AdminSidebar />
+      <aside
+        class={ `-translate-x-full fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0` }
+        id="sidebar"
+      >
+        <div class="flex items-center justify-between p-4 border-b">
+          <span class="text-2xl font-bold text-primary">🛠️ ServiciosYa</span>
+          <button
+            class="lg:hidden"
+            id="closeSidebar"
+          >
+            <Icon size={ 24 } name="mdi:close-thick" class="text-red-500" />
+          </button>
+        </div>
+        <nav class="mt-5">
+          <a
+            href="/admin"
+            class="flex items-center px-4 py-2 text-gray-700 bg-gray-200 gap-2"
+          >
+            <Icon
+              size={ 24 }
+              name="mdi:home-outline"
+            />
+            Dashboard
+          </a>
+          <a
+            href="/admin/users"
+            class="flex items-center px-4 py-2 mt-1 text-gray-600 hover:bg-gray-200 gap-2"
+          >
+            <Icon size={ 24 } name="mdi:account-group-outline" />
+            Usuarios
+          </a>
+          <a
+            href="/admin/services"
+            class="flex items-center px-4 py-2 mt-1 text-gray-600 hover:bg-gray-200 gap-2"
+          >
+            <Icon size={ 24 } name="mdi:briefcase-outline" />
+            Servicios
+          </a>
+          <a
+            href="/admin/categories"
+            class="flex items-center px-4 py-2 mt-1 text-gray-600 hover:bg-gray-200 gap-2"
+          >
+            <Icon size={ 24 } name="mdi:cog-outline" />
+            Configuración
+          </a>
+          <a href="#" class="flex items-center px-4 py-2 mt-1 text-gray-600 hover:bg-gray-200 gap-2">
+            <Icon size={ 24 } name="mdi:help-circle-outline" />
+            Ayuda
+          </a>
+        </nav>
+        <div class="absolute bottom-0 w-full">
+          <a href="#" class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-200 gap-2">
+            <Icon size={ 24 } name="mdi:logout" />
+            Cerrar sesión
+          </a>
+        </div>
+      </aside>
 
-      <div class="p-10 w-full flex flex-col gap-8">
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white shadow-sm">
+          <div class="flex items-center justify-between p-4">
+            <button
+              id="openSidebar"
+              class="text-gray-500 focus:outline-none focus:text-gray-700 lg:hidden"
+            >
+              <Icon size={ 24 } name="mdi:menu" />
+            </button>
+            <div class="flex items-center">
+              <div class="relative">
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary text-slate-800"
+                />
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                  <Icon size={ 24 } name="mdi:magnify" />
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <button class="flex mx-4 text-gray-600 focus:outline-none">
+                <Icon size={ 24 } name="mdi:bell-outline" />
+              </button>
+              <div class="relative">
+                <button class="flex items-center text-gray-600 focus:outline-none">
+                  <img
+                    class="h-8 w-8 rounded-full object-cover"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt="Admin avatar"
+                  />
+                  <span class="ml-2">Admin</span>
+                  <Icon size={ 24 } name="mdi:chevron-down" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
         <slot />
       </div>
     </main>
   </body>
 </html>
 
+
+<script>
+
+const handlerPageLoad = () => {
+
+  const sidebar = document.getElementById( 'sidebar' ) as HTMLDivElement;
+  const openSidebarBtn = document.getElementById('openSidebar') as HTMLButtonElement;
+  const closeSidebarBtn = document.getElementById('closeSidebar') as HTMLButtonElement;
+
+  if ( !sidebar || !openSidebarBtn || !closeSidebarBtn ) return;
+
+
+  openSidebarBtn.addEventListener('click', () => {
+    sidebar.classList.remove( '-translate-x-full' );
+    sidebar.classList.add( 'translate-x-0' );
+  });
+
+  closeSidebarBtn.addEventListener('click', () => {
+    sidebar.classList.remove('translate-x-0');
+    sidebar.classList.add('-translate-x-full');
+  });
+}
+
+document.addEventListener( 'astro:page-load', handlerPageLoad )
+</script>

@@ -1,4 +1,4 @@
-<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+<svg width="115" height="100" xmlns="http://www.w3.org/2000/svg">
   <rect
     x="10"
     y="50"
@@ -88,5 +88,4 @@
     fill="#0074D9"
     opacity="0.8"
     />
-
 </svg>

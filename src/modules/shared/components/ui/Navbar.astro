@@ -1,0 +1,46 @@
+---
+import { Icon } from 'astro-icon/components'
+import { type ILink } from '@/interfaces'
+
+interface Props {
+  links: ILink[]
+}
+
+const { links = [] } = Astro.props
+const currentPath = Astro.url.pathname
+
+console.log(currentPath)
+---
+
+<nav class="flex justify-between px-6 py-10 items-center bg-white w-full">
+
+  <div class="flex items-center gap-2">
+    <Icon
+      name="icon"
+      size={ 40 }
+    />
+    <h3 class="text-lg text-gray-800 font-bold capitalize">
+      jobs now
+    </h3>
+  </div>
+  <div class="flex items-center">
+    <ul class="flex items-center gap-5">
+      {
+        links.map( ({ name, url }) => (
+        <li
+          class:list={[
+            'font-semibold hover:text-blue-600 capitalize',
+            {
+              'text-blue-600': currentPath === url,
+              'text-gray-700': currentPath !== url
+            }
+          ]}
+        >
+            <a href={ url }>{ name }</a>
+        </li>
+        ) )
+      }
+      <slot />
+    </ul>
+  </div>
+</nav>

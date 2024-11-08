@@ -15,6 +15,7 @@
     "@astrojs/netlify": "^5.5.3",
     "@astrojs/tailwind": "^5.1.1",
     "@auth/core": "^0.32.0",
+    "@iconify-json/mdi": "^1.2.1",
     "astro": "5.0.0-beta.2",
     "astro-icon": "^1.1.1",
     "auth-astro": "^4.1.2",

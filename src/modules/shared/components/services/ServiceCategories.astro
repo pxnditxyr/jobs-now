@@ -1,0 +1,25 @@
+---
+import { actions } from 'astro:actions'
+import ServiceCategoryCard from './ServiceCategoryCard.astro'
+import Title from '@/modules/shared/components/ui/Title.astro'
+
+const { data, error } = await actions.findAllCategories({})
+
+if ( error ) return Astro.redirect( '/404' )
+
+const { data: categories } = data
+---
+
+
+<div class="px-4 py-4 w-full flex flex-col items-center gap-8">
+
+  <Title> nuestros servicios 👨‍🔧 </Title>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {
+      categories.map( ( category ) => (
+        <ServiceCategoryCard category={ category } />
+      ) )
+    }
+  </div>
+</div>

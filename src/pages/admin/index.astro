@@ -1,0 +1,126 @@
+---
+import { Icon } from 'astro-icon/components'
+import AdminLayout from '@/modules/admin/layouts/AdminLayout.astro'
+
+const statCards = [
+  {
+    title: 'Usuarios Activos',
+    value: '1,234',
+    icon: 'mdi:account-group-outline',
+    color: 'bg-blue-100'
+  },
+  {
+    title: 'Servicios Completados',
+    value: '5,678',
+    icon: 'mdi:briefcase-outline',
+    color: 'bg-green-100'
+  },
+  {
+    title: 'Ingresos Totales',
+    value: '$98,765',
+    icon: 'mdi:currency-usd',
+    color: 'bg-yellow-100'
+  },
+  {
+    title: 'Calificación Promedio',
+    value: '4.8',
+    icon: 'mdi:star-outline',
+    color: 'bg-purple-100'
+  },
+]
+
+const recentActivities = [
+  {
+    user: 'María G.',
+    action: 'completó un servicio de limpieza',
+    time: 'Hace 5 minutos'
+  },
+  {
+    user: 'Juan P.',
+    action: 'se registró como nuevo proveedor',
+    time: 'Hace 15 minutos'
+  },
+  {
+    user: 'Ana L.',
+    action: 'dejó una reseña de 5 estrellas',
+    time: 'Hace 30 minutos'
+  },
+  {
+    user: 'Carlos M.',
+    action: 'solicitó un servicio de plomería',
+    time: 'Hace 1 hora'
+  },
+]
+
+---
+
+<AdminLayout>
+  <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+    <div class="container mx-auto px-6 py-8">
+      <h3 class="text-3xl font-medium text-gray-700">Dashboard</h3>
+      <div class="mt-8">
+        <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+          { statCards.map(( card ) => (
+          <div class={`flex items-center p-4 bg-white rounded-lg shadow-xs ${card.color}`}>
+            <div class={`p-3 mr-4 rounded-full`}>
+              <Icon
+                size={ 48 }
+                name={ card.icon }
+                class="text-slate-800"
+              />
+            </div>
+            <div>
+              <p class="mb-2 text-sm font-medium text-gray-600">
+                {card.title}
+              </p>
+              <p class="text-lg font-semibold text-gray-700">
+                {card.value}
+              </p>
+            </div>
+          </div>
+          )) }
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div class="mt-8">
+        <div class="w-full bg-white rounded-lg shadow-xs p-4">
+          <h4 class="text-xl font-semibold mb-4">Actividad Reciente</h4>
+          <div class="flow-root">
+            <ul class="-mb-8">
+              { recentActivities.map((activity, index) => (
+              <li>
+                <div class="relative pb-8">
+                  {index !== recentActivities.length - 1 ? (
+                  <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                  ) : null}
+                  <div class="relative flex space-x-3">
+                    <div>
+                      <span class="h-8 w-8 rounded-full bg-primary flex items-center justify-center ring-8 ring-white">
+                        <Icon
+                          size={ 24 }
+                          name="mdi:account-group-outline"
+                        />
+                      </span>
+                    </div>
+                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                      <div>
+                        <p class="text-sm text-gray-500">
+                          <span class="font-medium text-gray-900">{activity.user}</span> {activity.action}
+                        </p>
+                      </div>
+                      <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                        <time>{activity.time}</time>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              )) }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</AdminLayout>

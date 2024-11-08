@@ -1,0 +1,83 @@
+---
+import { Icon } from 'astro-icon/components'
+
+---
+
+<footer class="bg-gray-900 text-gray-300 w-full">
+  <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
+    <div class="flex flex-col md:flex-row justify-center md:items-center">
+      <div class="space-y-8 xl:col-span-1 p-4">
+        <h2 class="text-2xl font-bold text-white"> 🚀 Jobs Now </h2>
+        <p class="text-gray-400 text-sm">
+          Conectamos profesionales calificados con clientes que necesitan servicios de calidad. 🤝
+        </p>
+        <div class="flex space-x-6">
+          <a href="#" class="text-gray-400 hover:text-white">
+            <span class="sr-only">Facebook</span>
+            <Icon name="mdi:facebook" size={ 24 } />
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white">
+            <span class="sr-only">Twitter</span>
+            <Icon name="mdi:twitter" size={ 24 } />
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white">
+            <span class="sr-only">Instagram</span>
+            <Icon name="mdi:instagram" size={ 24 } />
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white">
+            <span class="sr-only">aedIn</span>
+            <Icon name="mdi:linkedin" size={ 24 } />
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white">
+            <span class="sr-only">GitHub</span>
+            <Icon name="mdi:github" size={ 24 } />
+          </a>
+        </div>
+      </div>
+      <div class="flex flex-col p-4">
+        <h3 class="text-sm font-semibold text-white tracking-wider uppercase">Empresa</h3>
+        <div class="flex py-4 gap-8">
+          <ul class="flex flex-col gap-4">
+            <li>
+              <a href="#" class="text-base text-gray-400 hover:text-white">
+                🏢 Sobre nosotros
+              </a>
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-400 hover:text-white">
+                👥 Equipo
+              </a>
+            </li>
+          </ul>
+          <ul class="flex flex-col gap-4">
+            <li>
+              <a href="#" class="text-base text-gray-400 hover:text-white">
+                💼 Carreras
+              </a>
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-400 hover:text-white">
+                📰 Blog
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="mt-12 border-t border-gray-700 pt-8 w-full">
+      <p class="text-base text-gray-400 xl:text-center">
+        &copy;
+        <span id="year"></span>
+        Jobs Now. Todos los derechos reservados. 💼🌟
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+const yearElement = document.querySelector( '#year' ) as HTMLSpanElement
+const currentYear = new Date().getFullYear()
+yearElement.textContent = String( currentYear )
+
+</script>

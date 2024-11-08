@@ -9,6 +9,8 @@ interface User {
   gender?:    string | null
   birthDate?: string | null
   avatar?:    string | null
+  phone?:     string | null
+  address?:   string | null
 }
 
 declare namespace App {
