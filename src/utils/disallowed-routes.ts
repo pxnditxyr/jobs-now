@@ -17,8 +17,8 @@ export const routePermissions : IPermissions = {
     disallowed: [ '/my-services', '/portfolio', '/my-info' ]
   },
   notAuthenticated: {
-    allowed: [ '/auth/signin', '/auth/signup' ],
-    disallowed: [ '/profile', '/users', '/hire', '/hiring-history', '/my-services', '/portfolio', '/my-info' ]
+    //allowed: [ '/auth/signin', '/auth/signup' ],
+    disallowed: [ '/profile', '/users', '/hire', '/hiring-history', '/my-services', '/portfolio', '/my-info', '/admin' ]
   }
 }
 

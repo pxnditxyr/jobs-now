@@ -12,7 +12,7 @@ const code = btoa( unhashedCode )
     <div class="w-full flex flex-col items-center justify-center gap-4 md:p-8 md:w-1/2 md:max-w-[500px]">
       <img
         src="/logo.svg"
-        alt="QualitySoft"
+        alt="Jobs Now Logo"
         class="w-full max-w-[200px] md:max-w-[400px]"
         transition:name="logo-auth"
       />
@@ -57,7 +57,7 @@ const code = btoa( unhashedCode )
 
           <div class="flex flex-col gap-4">
             <label for="captcha" class="text-slate-800 text-sm font-bold"> Ingresa el código del CAPTCHA </label>
-              <audio id="captcha-audio" controls class="mb-4" data-ref={ code }>
+              <audio id="captcha-audio" controls data-ref={ code } class="w-full">
               <source src={ audioUrl } type="audio/mpeg" />
               Tu navegador no soporta la reproducción de audio.
             </audio>
@@ -95,6 +95,7 @@ const code = btoa( unhashedCode )
 import Swal from 'sweetalert2'
 
 const { signIn } = await import( 'auth-astro/client' )
+console.log( 'signIn', signIn )
 
 const handlerPageLoad = () => {
   const form = document.querySelector( 'form' ) as HTMLFormElement
@@ -103,12 +104,15 @@ const handlerPageLoad = () => {
   const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
   const captchaInput = document.querySelector( '#captcha' ) as HTMLInputElement
 
+  console.log({ captchaAudio, captchaInput, form, submitButton })
+
   if ( !form || !submitButton || !captchaAudio || !captchaInput ) {
     return
   }
 
   const encodedCode = captchaAudio.getAttribute( 'data-ref' ) as string
   const decodedCode = atob( encodedCode.trim() )
+  console.log( decodedCode )
 
   form.addEventListener( 'submit', async ( event ) => {
 
@@ -119,6 +123,7 @@ const handlerPageLoad = () => {
     const formData = new FormData( form )
 
     const userCaptcha = captchaInput.value.trim()
+    console.log({ userCaptcha })
 
     if ( userCaptcha !== decodedCode ) {
       console.log({ userCaptcha, decodedCode })
@@ -134,8 +139,10 @@ const handlerPageLoad = () => {
     const response = await signIn( 'credentials', {
       email: formData.get( 'email' ) as string,
       password: formData.get( 'password' ) as string,
-      redirect: false,
+      redirect: false
     } )
+
+    console.log( response )
 
     if ( response ) {
       Swal.fire( {
