@@ -1,5 +1,5 @@
 import { defineAction } from 'astro:actions'
-import { db, User } from 'astro:db'
+import { db, User, Wallet, WorkerProfile } from 'astro:db'
 import { z } from 'astro:schema'
 import { v4 as UUID } from 'uuid'
 import bcryptjs from 'bcryptjs'
@@ -21,14 +21,27 @@ export const signupUser = defineAction({
   } ) ,
   handler: async ( { name, email, lastName, password, typeOfUser } ) => {
 
+    const newUserId = UUID()
     await db.insert( User ).values({
-      id: UUID(),
+      id: newUserId,
       name,
       lastName,
       email,
       password: bcryptjs.hashSync( password, 10 ),
       roleId: typeOfUser ? 'worker' : 'user',
     })
+
+    if ( typeOfUser ) {
+      await db.insert( WorkerProfile ).values({
+        id: UUID(),
+        userId: newUserId,
+      })
+    } else {
+      await db.insert( Wallet ).values({
+        id: UUID(),
+        userId: newUserId,
+      })
+    }
 
     return {
       success: true,

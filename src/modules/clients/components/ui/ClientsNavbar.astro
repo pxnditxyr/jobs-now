@@ -1,38 +1,207 @@
 ---
-import Navbar from '@/modules/shared/components/ui/Navbar.astro'
+import { Icon } from 'astro-icon/components'
+import { getSession } from 'auth-astro/server'
 
-const links = [
+const session = await getSession( Astro.request )
+
+const { user } = session ?? {}
+
+if ( !user ) return Astro.redirect( '/auth/signin' )
+
+const navItems = [
   {
-    name: 'inicio',
-    url: '/',
+    name: 'Inicio',
+    href: '/',
+    icon: 'mdi:home'
   },
   {
-    name: 'servicios',
-    url: '/services',
+    name: 'Servicios',
+    href: '/services',
+    icon: 'mdi:bank-transfer'
   },
   {
-    name: 'acerca de',
-    url: '/about',
+    name: 'Billetera',
+    href: '/client/wallet',
+    icon: 'mdi:wallet'
   },
   {
-    name: 'Ingresar',
-    url: '/auth/signin',
-  }
+    name: 'Contrataciones',
+    href: '/client/hirings',
+    icon: 'mdi:clipboard-text'
+  },
 ]
+
+const currentPath = Astro.url.pathname
 ---
-<Navbar links={ links }>
-  <li id="logout" class="font-semibold text-gray-700 hover:text-blue-600 capitalize">
-    <a href="#">Cerrar sesión</a>
-  </li>
-</Navbar>
+
+<nav class="bg-teal-600 text-white shadow-lg">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center">
+        <a href="/" class="flex-shrink-0">
+          <span class="font-bold text-xl flex items-center gap-2">
+            <Icon name="mdi:briefcase-outline" size={ 30 } class="mr-2" />
+            Jobs Now 🚀
+          </span>
+        </a>
+        <div class="hidden lg:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            { navItems.map( ( item ) => (
+            <a
+              href={ item.href }
+              class={`px-3 py-2 rounded-md font-medium flex items-center gap-2 ${ ( currentPath === item.href ) ? 'bg-teal-700 text-white' : 'text-teal-100 hover:bg-teal-500 hover:text-white' }` }
+            >
+              <Icon name={ `${ item.icon }` } size={ 24 } />
+              { item.name }
+            </a>
+            ) ) }
+          </div>
+        </div>
+      </div>
+      <div class="hidden lg:block">
+        <div class="ml-4 flex items-center lg:ml-6">
+          <button
+            class="bg-teal-600 p-1 rounded-full text-teal-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
+            id="toggle-button-open-menu"
+          >
+            <span class="sr-only">Ver notificaciones</span>
+            <Icon name="mdi:bell" size={ 24 } />
+          </button>
+          <div class="ml-3 relative">
+            <div>
+              <button
+                class="max-w-xs bg-teal-600 rounded-full flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
+                id="user-menu"
+                aria-haspopup="true"
+                id="toggle-button-open-user-menu"
+              >
+                <span class="sr-only">Abrir menú de usuario</span>
+                <div class="h-8 w-8 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
+                  { user.name.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
+                </div>
+              </button>
+            </div>
+            <div
+              class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 hidden"
+              id="user-menu"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="user-menu"
+            >
+              <a href="/profile" class="block px-4 py-2 text-white hover:bg-gray-100">
+                <Icon name="mdi:account" size={ 24 } class="mr-2" />
+              </a>
+              <a href="/settings" class="block px-4 py-2 text-white hover:bg-gray-100">
+                <Icon name="mdi:cog" size={ 24 } class="mr-2" />
+              </a>
+              <button
+                class="block w-full text-left px-4 py-2 text-white hover:bg-gray-100"
+                id="signout-button"
+              >
+                <Icon name="mdi:logout" size={ 24 } class="mr-2" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="-mr-2 flex lg:hidden">
+        <button
+          type="button"
+          class="bg-teal-600 inline-flex items-center justify-center p-2 rounded-md text-teal-100 hover:text-white hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          id="open-mobile-menu"
+        >
+          <span class="sr-only">Abrir menú principal</span>
+          <Icon name="mdi:menu" size={ 24 } class="" />
+          <Icon name="mdi:close" size={ 24 } class="hidden" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hidden lg:hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      { navItems.map( (item) => (
+      <a
+        href={ item.href }
+        class={ `block px-3 py-2 rounded-md text-base font-medium flex items-center gap-2 ${
+          ( currentPath  === item.href ) ? 'bg-teal-700 text-white' : 'text-teal-100 hover:bg-teal-500 hover:text-white'
+        }` }
+      >
+        <Icon name={ `${ item.icon }` } size={ 24 } class="mr-2" />
+        { item.name }
+      </a>
+      ) ) }
+    </div>
+    <div class="pt-4 pb-3 border-t border-teal-700">
+      <div class="flex items-center px-5">
+        <div class="flex-shrink-0">
+          <div class="h-10 w-10 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
+            { user.name.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
+          </div>
+        </div>
+        <div class="ml-3 flex flex-col gap-2">
+          <div class="text-base font-medium leading-none text-white">{user.name}</div>
+          <div class="font-medium leading-none text-teal-100">{user.email}</div>
+        </div>
+      </div>
+      <div class="mt-3 px-2 space-y-1">
+        <a
+          href="/profile"
+          class="px-3 py-2 rounded-md text-base font-medium text-teal-100 hover:text-white hover:bg-teal-500 flex items-center gap-2"
+        >
+          <Icon name="mdi:account" size={ 24 } class="mr-2" />Perfil
+        </a>
+        <a
+          href="/settings"
+          class="px-3 py-2 rounded-md text-base font-medium text-teal-100 hover:text-white hover:bg-teal-500 flex items-center gap-2"
+        >
+          <Icon name="mdi:cog" size={ 24 } class="mr-2" />Configuración
+        </a>
+        <button
+          class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-teal-100 hover:text-white hover:bg-teal-500 flex items-center gap-2"
+          id="signout-button-mobile"
+        >
+          <Icon name="mdi:logout" size={ 24 } class="mr-2" />Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
 
 <script>
-  const { signOut } = await import( 'auth-astro/client' )
+import { navigate } from 'astro:transitions/client'
+const { signOut } = await import( 'auth-astro/client' )
 
-  const logoutElement = document.querySelector( '#logout' ) as HTMLLIElement
+const handlerPageLoad = () => {
+  console.log( 'Page loaded' )
+  const openMobileMenu = document.getElementById( 'open-mobile-menu' ) as HTMLButtonElement
+  const mobileMenu = document.getElementById( 'mobile-menu' ) as HTMLDivElement
+  const signoutButton = document.getElementById( 'signout-button' ) as HTMLButtonElement
+  const signoutButtonMobile = document.getElementById( 'signout-button-mobile' ) as HTMLButtonElement
 
-  logoutElement.addEventListener('click', async () => {
+  if ( !openMobileMenu || !mobileMenu || !signoutButton ) return
+
+  signoutButton.addEventListener( 'click', async () => {
     await signOut()
-    window.location.href = '/auth/signin'
-  });
+    navigate( '/auth/signin' )
+  } )
+
+  signoutButtonMobile.addEventListener( 'click', async () => {
+    await signOut()
+    navigate( '/auth/signin' )
+  } )
+
+  openMobileMenu.addEventListener( 'click', () => {
+    console.log( 'click' )
+    const isExpanded = openMobileMenu.getAttribute( 'aria-expanded' ) === 'true'
+    openMobileMenu.setAttribute( 'aria-expanded', String( !isExpanded ) )
+    mobileMenu.classList.toggle( 'hidden' )
+  } )
+
+}
+
+document.addEventListener( 'astro:page-load', handlerPageLoad )
+
 </script>

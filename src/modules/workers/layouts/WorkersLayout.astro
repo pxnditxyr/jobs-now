@@ -3,6 +3,12 @@ import { ClientRouter } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
 import { Icon } from 'astro-icon/components'
 import WorkerNav from '@/modules/workers/components/ui/WorkerNav.astro'
+import { getSession } from 'auth-astro/server
+
+
+const session = await getSession( Astro.request )
+
+const { user } = session ?? {}
 
 interface Props {
   title?: string
@@ -62,7 +68,7 @@ const {
 
       <div class="flex-1 flex flex-col overflow-hidden">
         <header class="shadow-sm bg-primary">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between px-4">
             <button
               id="openSidebar"
               class="text-gray-500 focus:outline-none focus:text-gray-700 lg:hidden"

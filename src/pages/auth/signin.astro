@@ -95,9 +95,9 @@ const code = btoa( unhashedCode )
 import Swal from 'sweetalert2'
 
 const { signIn } = await import( 'auth-astro/client' )
-console.log( 'signIn', signIn )
 
 const handlerPageLoad = () => {
+  console.log( 'Page loaded' )
   const form = document.querySelector( 'form' ) as HTMLFormElement
   const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
 

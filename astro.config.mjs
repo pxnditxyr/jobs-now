@@ -11,9 +11,11 @@ import netlify from '@astrojs/netlify';
 
 import icon from 'astro-icon';
 
+import react from '@astrojs/react';
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), db(), auth(), icon()],
+  integrations: [tailwind(), db(), auth(), icon(), react()],
   output: 'server',
   adapter: netlify()
 });

@@ -40,8 +40,8 @@ if ( !user ) return Astro.redirect( '/auth/signin' )
       </div>
       <span>
         <strong>Rol:</strong>
-        { ( user.role === 'worker' ) ? 'Trabajador'
-          : ( user.role === 'admin' ) ? 'Administrador'
+        { ( user.roleId === 'worker' ) ? 'Trabajador'
+          : ( user.roleId === 'admin' ) ? 'Administrador'
             : 'Usuario'
         }
       </span>
