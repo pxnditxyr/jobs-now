@@ -32,6 +32,7 @@ export const onRequest = defineMiddleware(
     }
 
     const isRouteAllowed = getIsRouteAllowed( roleId, url.pathname )
+    console.log( 'isRouteAllowed', isRouteAllowed )
 
     if ( !isRouteAllowed ) {
       const rootPath = getRootPathFromRole( roleId )

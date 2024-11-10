@@ -1,0 +1,28 @@
+---
+import SidebarNav from '@/modules/shared/components/ui/SidbarNav.astro'
+
+const links = [
+  {
+    title: 'Panel de Control',
+    icon: 'mdi:home-outline',
+    url: '/worker',
+  },
+  {
+    title: 'Mis Servicios',
+    icon: 'mdi:briefcase-outline',
+    url: '/worker/services',
+  },
+  {
+    title: 'Reseñas',
+    icon: 'mdi:star-outline',
+    url: '/worker/reviews',
+  },
+  {
+    title: 'Ayuda',
+    icon: 'mdi:help-circle-outline',
+    url: '#',
+  }
+]
+---
+
+<SidebarNav links={ links } />

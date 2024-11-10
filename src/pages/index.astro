@@ -3,8 +3,6 @@ import { getSession } from 'auth-astro/server'
 
 import Layout from '@/modules/shared/layouts/Layout.astro'
 import PublicNavbar from '@/modules/public/components/ui/PublicNavbar.astro'
-import AdminNavbar from '@/modules/admin/components/ui/AdminNavbar.astro'
-import WorkerNavbar from '@/modules/workers/components/ui/WorkersNavbar.astro'
 import ClientNavbar from '@/modules/clients/components/ui/ClientsNavbar.astro'
 import ServiceCategories from '@/modules/shared/components/services/ServiceCategories.astro'
 
@@ -18,19 +16,9 @@ console.log({ user })
 <Layout>
   {
     ( !user ) ? (
-      <>
-        <PublicNavbar />
-      </>
+      <PublicNavbar />
     ) : (
-      ( user.role === 'admin' ) ? (
-        <AdminNavbar user={ user } />
-      ) : (
-        ( user.role === 'worker' ) ? (
-          <WorkerNavbar user={ user } />
-        ) : (
-          <ClientNavbar user={ user } />
-        )
-      )
+      <ClientNavbar user={ user } />
     )
   }
 

@@ -11,14 +11,14 @@ export const routePermissions : IPermissions = {
     disallowed: [ '/', '/my-services', '/portfolio', '/my-info' ]
   },
   worker: {
-    disallowed: [ '/', '/hire', '/user', '/hire' ]
+    disallowed: [ '/', '/hire', '/user', '/hire', '/admin', '/client' ]
   },
   client: {
-    disallowed: [ '/my-services', '/portfolio', '/my-info' ]
+    disallowed: [ '/my-services', '/portfolio', '/my-info', '/admin', '/worker' ]
   },
   notAuthenticated: {
     //allowed: [ '/auth/signin', '/auth/signup' ],
-    disallowed: [ '/profile', '/users', '/hire', '/hiring-history', '/my-services', '/portfolio', '/my-info', '/admin' ]
+    disallowed: [ '/profile', '/users', '/hire', '/hiring-history', '/my-services', '/portfolio', '/my-info', '/admin', '/worker', '/client' ]
   }
 }
 

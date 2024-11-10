@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components'
-import AdminLayout from '@/modules/admin/layouts/AdminLayout.astro'
+import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
 
 const initialServices = [
   { id: 1, name: 'Reparación de Plomería', status: 'Completado', income: 150 },
@@ -30,133 +30,119 @@ const calculateAverageRating = () => {
 
 ---
 
-<AdminLayout>
-   <div class="min-h-screen bg-gray-100">
-      <nav class="bg-primary text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between h-16">
-            <div class="flex items-center">
-              <span class="font-bold text-xl">🛠️ Dashboard del Trabajador</span>
+<WorkersLayout>
+  <div class="bg-gray-100">
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div class="px-4 py-6 sm:px-0">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-6">Bienvenido, Juan 👋</h2>
+
+        <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 bg-primary-light rounded-md p-3 text-white">
+                  <Icon size={ 24 } name="mdi:currency-usd" />
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Ingresos Totales</dt>
+                    <dd class="text-lg font-semibold text-gray-900">${calculateTotalIncome()}</dd>
+                  </dl>
+                </div>
+              </div>
             </div>
-            <div class="flex items-center">
-              <span class="text-sm mr-4">Juan Pérez</span>
-              <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/men/1.jpg" alt="Perfil" />
+          </div>
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 bg-primary-light rounded-md p-3 text-white">
+                  <Icon size={ 24 } name="mdi:star" />
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Puntuación Promedio</dt>
+                    <dd class="text-lg font-semibold text-gray-900">{calculateAverageRating()} / 5</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 bg-primary-light rounded-md p-3 text-white">
+                  <Icon size={ 24 } name="mdi:briefcase" />
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Servicios Completados</dt>
+                    <dd class="text-lg font-semibold text-gray-900">
+                      {services.filter(s => s.status === 'Completado').length}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg mb-6">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Mis Servicios</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicio</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingresos</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  {services.map((service) => (
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.status}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${service.income}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      { service.status === 'Pendiente' && (
+                      <button
+                        class="text-primary hover:text-primary-dark"
+                      >
+                        Aceptar Trabajo
+                      </button>
+                      ) }
+                    </td>
+                  </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-      </nav>
 
-      <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-6">Bienvenido, Juan 👋</h2>
-
-          <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-              <div class="p-5">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 bg-primary-light rounded-md p-3">
-                    <i class="mdi mdi-currency-usd text-white text-2xl"></i>
-                  </div>
-                  <div class="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt class="text-sm font-medium text-gray-500 truncate">Ingresos Totales</dt>
-                      <dd class="text-lg font-semibold text-gray-900">${calculateTotalIncome()}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-              <div class="p-5">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 bg-primary-light rounded-md p-3">
-                    <i class="mdi mdi-star text-white text-2xl"></i>
-                  </div>
-                  <div class="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt class="text-sm font-medium text-gray-500 truncate">Puntuación Promedio</dt>
-                      <dd class="text-lg font-semibold text-gray-900">{calculateAverageRating()} / 5</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-              <div class="p-5">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 bg-primary-light rounded-md p-3">
-                    <i class="mdi mdi-briefcase text-white text-2xl"></i>
-                  </div>
-                  <div class="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt class="text-sm font-medium text-gray-500 truncate">Servicios Completados</dt>
-                      <dd class="text-lg font-semibold text-gray-900">
-                        {services.filter(s => s.status === 'Completado').length}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white shadow rounded-lg mb-6">
-            <div class="px-4 py-5 sm:p-6">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Mis Servicios</h3>
-              <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicio</th>
-                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingresos</th>
-                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    {services.map((service) => (
-                      <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.name}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.status}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${service.income}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          { service.status === 'Pendiente' && (
-                            <button
-                              class="text-primary hover:text-primary-dark"
-                            >
-                              Aceptar Trabajo
-                            </button>
-                          ) }
-                        </td>
-                      </tr>
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Comentarios Recientes</h3>
+            <div class="space-y-4">
+              {reviews.map((review) => (
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium text-gray-900">{review.service}</span>
+                  <span class="text-sm text-gray-500 flex items-center justify-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Icon size={ 24 } name={ i < review.rating ? 'mdi:star' : 'mdi:star-outline' } class={ i < review.rating ? 'text-yellow-400' : 'text-gray-300' } />
                     ))}
-                  </tbody>
-                </table>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600">{review.comment}</p>
               </div>
-            </div>
-          </div>
-
-          <div class="bg-white shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Comentarios Recientes</h3>
-              <div class="space-y-4">
-                {reviews.map((review) => (
-                  <div key={review.id} class="bg-gray-50 p-4 rounded-lg">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-sm font-medium text-gray-900">{review.service}</span>
-                      <span class="text-sm text-gray-500">
-                        {[...Array(5)].map((_, i) => (
-                          <i key={i} class={`mdi mdi-star${i < review.rating ? ' text-yellow-400' : '-outline text-gray-300'}`}></i>
-                        ))}
-                      </span>
-                    </div>
-                    <p class="text-sm text-gray-600">{review.comment}</p>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </div>
-      </main>
-    </div>
-</AdminLayout>
+      </div>
+    </main>
+  </div>
+</WorkersLayout>
