@@ -40,6 +40,8 @@ const WorkerProfile = defineTable({
     portfolio: column.text({ optional: true }),
 
     approved: column.boolean({ default: false }),
+    rating: column.number({ default: 0 }),
+    reviews: column.number({ default: 0 }),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
@@ -113,6 +115,7 @@ const Hiring = defineTable({
     userId: column.text({ references: () => User.columns.id }),
     serviceId: column.text({ references: () => Service.columns.id }),
     contractDate: column.date(),
+    state: column.text({ default: 'pending' }),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),

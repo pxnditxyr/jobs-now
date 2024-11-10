@@ -5,7 +5,7 @@ interface User {
   name:       string
   lastName:   string
   email:      string
-  role:       string
+  roleId:     string
   gender?:    string | null
   birthDate?: string | null
   avatar?:    string | null

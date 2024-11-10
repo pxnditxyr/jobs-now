@@ -9,8 +9,8 @@ const code = btoa( unhashedCode )
 ---
 
 <AuthLayout class="bg-gradient-to-br from-[#800020] via-red-500 to-orange-500 min-h-screen flex justify-center items-center font-sans">
-  <div class="w-full flex flex-col-reverse gap-4 p-8 md:flex-row md:items-center md:justify-center md:py-20">
-    <div class="w-full flex flex-col items-center justify-center gap-12 md:p-8 border-r-2 border-r-white md:w-1/2 md:max-w-[700px]">
+  <div class="w-full flex flex-col-reverse gap-4 p-8 lg:flex-row lg:items-center lg:justify-center lg:py-20">
+    <div class="w-full flex flex-col items-center justify-center gap-12 lg:p-8 border-r-2 border-r-white lg:w-1/2 lg:max-w-[700px]">
       <div class="bg-white bg-opacity-80 backdrop-blur-lg p-8 rounded-lg shadow-[0_0_25px_12px_rgba(0,0,0,0.6)] w-full flex flex-col gap-8">
         <div class="bg-red-600 w-16 h-16 rounded-full flex justify-center items-center mx-auto -mt-20 mb-5 shadow-md">
           <svg
@@ -25,8 +25,8 @@ const code = btoa( unhashedCode )
         </div>
         <h2 class="text-center text-3xl font-bold text-slate-800"> Crear una cuenta </h2>
         <form class="w-full flex flex-col gap-4">
-          <div class="flex flex-col gap-4 lg:flex-row">
-            <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 md:flex-row">
+            <div class="flex flex-col gap-4 w-full">
               <label for="name" class="text-slate-800 text-sm font-bold"> Nombres </label>
               <input
                 id="name"
@@ -38,7 +38,7 @@ const code = btoa( unhashedCode )
               />
             </div>
 
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4 w-full">
               <label for="lastName" class="text-slate-800 text-sm font-bold"> Apellidos </label>
               <input
                 id="lastName"
@@ -62,28 +62,32 @@ const code = btoa( unhashedCode )
               required
             />
           </div>
-          <div class="flex flex-col gap-4">
-            <label for="password" class="text-slate-800 text-sm font-bold"> Contraseña </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Contraseña"
-              class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
-              required
-            />
-          </div>
 
-          <div class="flex flex-col gap-4">
-            <label for="confirmPassword" class="text-slate-800 text-sm font-bold"> Confirmar contraseña </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              placeholder="Confirmar contraseña"
-              class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
-              required
-            />
+
+          <div class="flex flex-col gap-4 md:flex-row">
+            <div class="flex flex-col gap-4 w-full">
+              <label for="password" class="text-slate-800 text-sm font-bold"> Contraseña </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Contraseña"
+                class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              />
+            </div>
+
+            <div class="flex flex-col gap-4 w-full">
+              <label for="confirmPassword" class="text-slate-800 text-sm font-bold"> Confirmar contraseña </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirmar contraseña"
+                class="w-full p-2 border border-gray-200 rounded bg-white bg-opacity-90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              />
+            </div>
           </div>
 
           <div class="flex flex-col gap-2 mt-4">
@@ -149,11 +153,11 @@ const code = btoa( unhashedCode )
       </div>
     </div>
 
-    <div class="w-full flex flex-col items-center justify-center gap-4 py-8 md:p-8 md:w-1/2 md:max-w-[500px]">
+    <div class="w-full flex flex-col items-center justify-center gap-4 py-8 md:p-8 lg:w-1/2 lg:max-w-[500px]">
       <img
-        src="/logo.svg"
+        src="/logo.jpg"
         alt="Jobs Now Logo"
-        class="w-full max-w-[200px] md:max-w-[400px]"
+        class="w-full max-w-[200px] md:max-w-[400px] rounded-lg shadow-black shadow-2xl"
         transition:name="logo-auth"
       />
     </div>
@@ -172,7 +176,6 @@ const handlerPageLoad = () => {
 
   const termsCheckbox = document.querySelector( '#terms' ) as HTMLInputElement
 
-
   const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
   const captchaInput = document.querySelector( '#captcha' ) as HTMLInputElement
 
@@ -180,13 +183,14 @@ const handlerPageLoad = () => {
     return
   }
 
-  const encodedCode = captchaAudio.getAttribute( 'data-ref' ) as string
-  const decodedCode = atob( encodedCode.trim() )
-
   termsCheckbox.addEventListener( 'change', ( event ) => {
     const target = event.target as HTMLInputElement
     submitButton.disabled = !target.checked
   } )
+
+  const encodedCode = captchaAudio.getAttribute( 'data-ref' ) as string
+  const decodedCode = atob( encodedCode.trim() )
+
 
   form.addEventListener( 'submit', async ( event ) => {
     event.preventDefault()

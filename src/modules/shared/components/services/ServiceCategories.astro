@@ -3,11 +3,11 @@ import { actions } from 'astro:actions'
 import ServiceCategoryCard from './ServiceCategoryCard.astro'
 import Title from '@/modules/shared/components/ui/Title.astro'
 
-const { data, error } = await actions.findAllCategories({})
+const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
 
-if ( error ) return Astro.redirect( '/404' )
+if ( serviceCategoriesError ) return Astro.redirect( '/404' )
 
-const { data: categories } = data
+const { serviceCategories } = serviceCategoriesData
 ---
 
 
@@ -17,8 +17,8 @@ const { data: categories } = data
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {
-      categories.map( ( category ) => (
-        <ServiceCategoryCard category={ category } />
+      serviceCategories.map( ( serviceCategory ) => (
+        <ServiceCategoryCard category={ serviceCategory } />
       ) )
     }
   </div>

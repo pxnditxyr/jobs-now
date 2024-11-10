@@ -54,12 +54,23 @@ const currentPath = Astro.url.pathname
     ) )
   }
 </nav>
-<div class="absolute bottom-0 w-full">
-  <a href="#" class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-200 gap-2">
+<div class="w-full mt-5 border-t-2 border-gray-600">
+<button
+    class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-200 gap-2 mt-2 w-full"
+    id="signout"
+  >
     <Icon size={ 24 } name="mdi:logout" />
     Cerrar sesión
-  </a>
+  </button>
 </div>
 
+<script>
+  const { signOut } = await import( 'auth-astro/client' )
 
+  const signoutElement = document.querySelector( '#signout' ) as HTMLLIElement
 
+  signoutElement.addEventListener( 'click', async () => {
+    await signOut()
+    window.location.href = '/auth/signin'
+  } )
+</script>

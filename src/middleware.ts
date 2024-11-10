@@ -13,14 +13,14 @@ export const onRequest = defineMiddleware(
     locals.isLoggedIn = isLoggedIn
     locals.user = null
 
-    let role : TRole = 'notAuthenticated'
+    let roleId : TRole = 'notAuthenticated'
 
     if ( user ) {
       locals.user = {
         name:      user.name!,
         email:     user.email!,
         lastName:  user.lastName!,
-        role:      user.role,
+        roleId:    user.roleId,
         gender:    user.gender,
         phone:     user.phone,
         address:   user.address,
@@ -28,13 +28,13 @@ export const onRequest = defineMiddleware(
         avatar:    user.avatar,
       }
 
-      role = user.role as TRole
+      roleId = user.roleId as TRole
     }
 
-    const isRouteAllowed = getIsRouteAllowed( role, url.pathname )
+    const isRouteAllowed = getIsRouteAllowed( roleId, url.pathname )
 
     if ( !isRouteAllowed ) {
-      const rootPath = getRootPathFromRole( role )
+      const rootPath = getRootPathFromRole( roleId )
       return redirect( rootPath )
     }
 
