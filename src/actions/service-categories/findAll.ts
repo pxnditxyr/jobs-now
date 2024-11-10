@@ -1,14 +1,9 @@
 import { defineAction } from 'astro:actions'
-import { db, desc, eq, ServiceCategory } from 'astro:db'
-import { z } from 'astro:schema'
+import { db, desc, ServiceCategory } from 'astro:db'
 
-
-export const findAllCategories = defineAction({
+export const findAllServiceCategories = defineAction({
   accept: 'json',
-  input: z.object({
-    search: z.string().optional(),
-  }),
-  handler: async ( { search } ) => {
+  handler: async () => {
     const data = await db
       .select()
       .from( ServiceCategory )
@@ -17,7 +12,8 @@ export const findAllCategories = defineAction({
           ServiceCategory.createdAt
         )
       )
-
-    return { data }
+    return {
+      serviceCategories: data
+    }
   }
 })

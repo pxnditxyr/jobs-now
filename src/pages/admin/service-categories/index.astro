@@ -9,30 +9,23 @@ import EditButton from '@/modules/shared/components/tables/EditButton.astro'
 
 import 'sweetalert2/dist/sweetalert2.min.css'
 
-const { data: usersData, error: usersError } = await actions.findAllUsers()
+const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
 
-if ( usersError ) return Astro.redirect( '/admin/dashboard' )
+if ( serviceCategoriesError ) return Astro.redirect( '/admin' )
 
-const { users } = usersData
-
-const roleColors = {
-  'admin': 'bg-blue-100 text-blue-800',
-  'worker': 'bg-green-100 text-green-800',
-  'client': 'bg-purple-100 text-purple-800',
-}
-
+const { serviceCategories } = serviceCategoriesData
 ---
 
 <AdminLayout>
   <div class="w-full px-4 py-8 flex flex-col gap-6 justify-center md:px-12">
-    <Title>👥 Administración de Usuarios</Title>
+    <Title>👥 Administración de Categorías de Servicios</Title>
 
     <div class="mb-4 flex justify-between items-center">
       <CreateButton
-        href="/admin/users/create"
+        href="/admin/service-categories/create"
         icon="mdi:account-plus"
       >
-        Agregar Usuario
+        Agregar Categoria
       </CreateButton>
       <div class="relative">
         <input
@@ -49,59 +42,57 @@ const roleColors = {
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            { users.map( ( user ) => (
+            { serviceCategories.map( ( serviceCategory ) => (
             <tr>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10">
-                    <img class="h-10 w-10 rounded-full" src={`https://ui-avatars.com/api/?name=${user.name}+${user.lastName}&background=random`} alt="" />
+                    <Icon
+                      name={ serviceCategory.icon }
+                      size={ 20 }
+                      class="h-10 w-10 rounded-full"
+                    />
                   </div>
                   <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{ user.name } {user.lastName}</div>
+                    <div class="text-sm font-medium text-gray-900">{ serviceCategory.name }</div>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{ user.email }</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ roleColors[ user.roleId ] }`}>
-                  { user.role }
-                </span>
+                <div class="text-sm text-gray-900">{ serviceCategory.description }</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
-                  class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
-                  id={`span-status-${user.id}`}
+                  class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${serviceCategory.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                  id={`span-status-${ serviceCategory.id }`}
                 >
-                  {user.status ? 'Activo' : 'Inactivo'}
+                  { serviceCategory.status ? 'Activo' : 'Inactivo' }
                 </span>
               </td>
               <td class="px-6 py-8 whitespace-nowrap text-sm font-medium flex items-center">
-                <ViewButton href={`/admin/users/${ user.id }`} />
-                <EditButton href={`/admin/users/edit/${ user.id }`} />
+                <ViewButton href={`/admin/service-categories/${ serviceCategory.id }`} />
+                <EditButton href={`/admin/service-categories/edit/${ serviceCategory.id }`} />
                 <button
                   class="toggle-button"
-                  data-id={ user.id }
-                  data-current-status={ user.status }
+                  data-id={ serviceCategory.id }
+                  data-current-status={ serviceCategory.status }
                 >
                   <Icon
                     name="mdi:delete"
                     size={ 20 }
-                    class={ `text-red-600 hover:text-red-900 ${ ( !user.status ) ? 'hidden' : '' } delete-icon` }
+                    class={ `text-red-600 hover:text-red-900 ${ ( !serviceCategory.status ) ? 'hidden' : '' } delete-icon` }
                   />
                   <Icon
                     name="mdi:restore"
                     size={ 20 }
-                    class={ `text-green-600 hover:text-green-900 ${ user.status ? 'hidden' : '' } restore-icon` }
+                    class={ `text-green-600 hover:text-green-900 ${ serviceCategory.status ? 'hidden' : '' } restore-icon` }
                   />
                 </button>
               </td>
@@ -117,7 +108,6 @@ const roleColors = {
 import { actions } from 'astro:actions'
 import Swal from 'sweetalert2'
 
-
 const handlerPageLoad = () => {
   const deleteButtons = document.querySelectorAll( '.toggle-button' )
   if ( !deleteButtons ) return
@@ -130,7 +120,7 @@ const handlerPageLoad = () => {
 
       if ( !id ) return
 
-      const { error } = await actions.toggleStatusUser( { id, currentStatus } )
+      const { error } = await actions.toggleStatusServiceCategory( { id, currentStatus } )
 
       if ( error ) {
         Swal.fire( {

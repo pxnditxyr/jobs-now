@@ -1,0 +1,121 @@
+---
+import { Icon } from 'astro-icon/components'
+import Label from '@/modules/shared/components/ui/Label.astro'
+
+const inputClass = 'w-full pl-10 pr-3 py-3 border-2 border-gray-300 rounded-md focus:outline-none focus:border-indigo-600 sm:text-sm'
+
+---
+
+<form
+  id="form"
+  class="px-4 py-5 sm:p-6"
+>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div>
+      <Label for="name" isRequired> Nombre </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:rename-outline" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          class={ inputClass }
+          placeholder="Ingrese su nombre"
+        />
+
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="name-error"></p>
+    </div>
+
+    <div>
+      <Label for="description" isRequired> Descripción </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:text-box-edit-outline" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="description"
+          type="text"
+          name="description"
+          class={ inputClass }
+          placeholder="Ingrese su apellido"
+        />
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="description-error"></p>
+    </div>
+
+    <div class="sm:col-span-2">
+      <Label for="icon">
+        Icono(MDI)
+        <a href="https://materialdesignicons.com/" target="_blank" class="text-blue-500"> Ver iconos </a>
+      </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:image-edit-outline" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="icon"
+          type="text"
+          name="icon"
+          class={ inputClass }
+          placeholder="usuario@ejemplo.com"
+        />
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="icon-error"></p>
+    </div>
+  </div>
+  <div class="mt-8">
+    <p class="mt-2 text-sm text-red-600 hidden" id="default-error"></p>
+  </div>
+
+  <div class="mt-8">
+    <button
+      class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark' focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+    >
+      <Icon name="mdi:account-plus" size={ 24 } class="mr-2" />
+      Agregar Categoria
+    </button>
+  </div>
+</form>
+
+<script>
+import { actions } from 'astro:actions'
+import { navigate } from 'astro:transitions/client'
+import { getErrorList } from '@/utils'
+
+const handlerPageLoad = () => {
+  const form = document.getElementById( 'form' ) as HTMLFormElement
+
+  if ( !form ) return
+
+  form.addEventListener( 'submit', async ( event ) => {
+    event.preventDefault()
+
+    const formData = new FormData( form )
+
+    const { error } = await actions.createServiceCategory( formData )
+
+    if ( error ) {
+      console.log({ error, errorType: typeof error })
+      const errorMessages = getErrorList( error )
+      for ( const errorMessage of errorMessages ) {
+        const { field, message } = errorMessage
+        const errorElement = document.getElementById( `${ field }-error` )
+        if ( errorElement ) {
+          errorElement.textContent = message
+          errorElement.classList.remove( 'hidden' )
+        }
+      }
+
+      return
+    }
+
+    navigate( '/admin/service-categories' )
+  } )
+
+}
+
+document.addEventListener( 'astro:page-load', handlerPageLoad )
+</script>
