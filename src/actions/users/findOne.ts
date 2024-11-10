@@ -1,19 +1,25 @@
-import { defineAction } from "astro:actions";
-import { db, DisasterType, eq } from "astro:db";
+import { defineAction } from 'astro:actions'
+import { db, eq, Role, User } from 'astro:db'
 
-export const findOneDisasterType = defineAction({
+export const findOneUser = defineAction({
   accept: 'json',
   handler: async ({ id }) => {
-    const [ disasterType ] = await db
+    const [ data ] = await db
       .select()
-      .from( DisasterType )
-      .where( eq( DisasterType.id, id ) )
+      .from( User )
+      .innerJoin( Role, eq( User.roleId, Role.id ) )
+      .where( eq( User.id, id ) )
 
-    if ( !disasterType )
-      throw new Error( 'Parece que el desastre no existe' )
+    console.log({ data })
+
+    if ( !data )
+      throw new Error( 'No se encontró el usuario. 💁‍♂️' )
 
     return {
-      disasterType
+      user: {
+        ...data.User,
+        role: data.Role.name,
+      }
     }
   }
 })

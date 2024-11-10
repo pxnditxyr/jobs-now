@@ -1,0 +1,199 @@
+---
+import { actions } from 'astro:actions'
+import { Icon } from 'astro-icon/components'
+import AdminLayout from '@/modules/admin/layouts/AdminLayout.astro'
+import { formatDate } from '@/utils'
+import 'sweetalert2/dist/sweetalert2.min.css'
+
+const id = Astro.params.id
+const { data: userData, error: userError } = await actions.findOneUser({ id })
+
+if ( userError ) return Astro.redirect( '/404' )
+
+const { user } = userData
+const {
+  name,
+  lastName,
+  email,
+  phone,
+  address,
+  role,
+  gender,
+  birthDate,
+  createdAt,
+  updatedAt,
+  status,
+} = user
+
+---
+
+<AdminLayout>
+  <div class="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-10">
+          <div class="flex flex-col sm:flex-row items-center">
+            <div class="mb-4 sm:mb-0 sm:mr-6">
+              <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center text-6xl text-primary">
+                { user.name.charAt( 0 ) }{ user.lastName.charAt(0) }
+              </div>
+            </div>
+            <div class="text-center sm:text-left">
+              <h1 class="text-3xl font-bold text-white mb-2 capitalize">{ name } { lastName } 👤</h1>
+              <p class="text-xl text-white opacity-90">{ user.role } 🌟</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 sm:p-10">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex items-center">
+              <Icon name="mdi:email-outline" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600">Email</p>
+                <p class="font-medium">{ email }</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <Icon name="mdi:phone-outline" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600">Teléfono</p>
+                <p class="font-medium">
+                  {
+                    ( phone ) ? (
+                      phone
+                    ) : (
+                      'No disponible ❌'
+                    )
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <Icon name="mdi:map-marker" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600">Dirección</p>
+                <p class="font-medium">
+                  {
+                    ( address ) ? (
+                      address
+                    ) : (
+                      'No disponible ❌'
+                    )
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <Icon name="mdi:briefcase-outline" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600">Rol</p>
+                <p class="font-medium">{ role }</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <Icon name="mdi:gender-male-female" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600"> Genero </p>
+                <p class="font-medium">
+                  {
+                  ( gender ) ? (
+                    gender
+                  ) : (
+                      'No disponible ❌'
+                    )
+                  }
+              </div>
+            </div>
+            <div class="flex items-center">
+              <Icon name="mdi:calendar" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600"> Fecha de nacimiento </p>
+                <p class="font-medium">
+                  {
+                  ( birthDate ) ? (
+                    formatDate( birthDate )
+                  ) : (
+                      'No disponible ❌'
+                    )
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <Icon name="mdi:calendar" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600">Fecha de registro</p>
+                <p class="font-medium">{ formatDate( createdAt ) }</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <Icon name="mdi:calendar" size={ 24 } class="mr-3 text-primary" />
+              <div>
+                <p class="text-gray-600">Fecha de última actualización</p>
+                <p class="font-medium">{ formatDate( updatedAt ) }</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-10 flex flex-col sm:flex-row justify-between items-center">
+            <div class="mb-4 sm:mb-0">
+              <span class="font-medium text-gray-500 mr-2">Estado:</span>
+              <span class={`px-3 py-1 rounded-full font-medium ${
+                status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                { status ? '✅ Activo' : '❌ Inactivo' }
+              </span>
+            </div>
+            <div class="flex space-x-4 mt-6 md:mt-0">
+              <!--<button class="flex items-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">-->
+              <!--  <Icon name="mdi:toggle-switch" size={ 24 } class="mr-2" />-->
+              <!--  { status ? 'Desactivar' : 'Activar' }-->
+              <!--</button>-->
+              <a
+                class="flex items-center px-4 py-2 border border-gray-300 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                href={ `/admin/users/edit/${ id }` }
+              >
+                <Icon name="mdi:pencil" size={ 24 } class="mr-2" />
+                Editar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 text-center">
+        <p class="text-gray-600">
+          🎉 ¡{ name } es parte de nuestra comunidad desde { formatDate( createdAt ) }! 🚀
+        </p>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+const handlerPageLoad = () => {
+  const form = document.getElementById( 'form' ) as HTMLFormElement
+  if ( !form ) return
+
+  form.addEventListener( 'submit', async ( event ) => {
+    event.preventDefault()
+
+    const formData = new FormData( form )
+    console.log({ formData })
+    const data = Object.fromEntries( formData )
+
+    console.log({ data })
+  } )
+
+}
+
+
+document.addEventListener( 'astro:page-load', handlerPageLoad )
+</script>

@@ -3,10 +3,6 @@ import { getSession } from 'auth-astro/server'
 import { getIsRouteAllowed, getRootPathFromRole } from './utils'
 import type { TRole } from './interfaces'
 
-const clientRoutes = [ '/hire', '/profile', 'hiring-history' ]
-const adminRoutes  = [ '/profile', '/users', ]
-const workerRoutes = [ '/profile', '/my-services', '/portfolio', '/my-info' ]
-
 export const onRequest = defineMiddleware(
   async ( { url, locals, redirect, request }, next ) => {
 
@@ -41,14 +37,6 @@ export const onRequest = defineMiddleware(
       const rootPath = getRootPathFromRole( role )
       return redirect( rootPath )
     }
-
-    //if ( !isLoggedIn && url.pathname.startsWith( '/dashboard' ) ) {
-    //  return redirect( '/auth/signin' )
-    //}
-    //
-    //if ( isLoggedIn && notAuthenticatedRoutes.includes( url.pathname ) ) {
-    //  return redirect( '/' )
-    //}
 
     return next()
   }

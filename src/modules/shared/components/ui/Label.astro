@@ -1,0 +1,17 @@
+---
+interface Props {
+  for: string
+  isRequired?: boolean
+}
+
+const { for: htmlFor, isRequired = false } = Astro.props
+---
+
+<label for={ htmlFor } class="text-sm font-medium text-gray-700 mb-1">
+  <slot />
+  {
+    ( isRequired ) && (
+      <span class="text-red-500">*</span>
+    )
+  }
+</label>

@@ -1,6 +1,6 @@
 import { signinUser, signoutUser, signupUser } from './auth'
 import { findAllCategories } from './service-categories'
-import { findAllUsers, toggleStatusUser } from './users'
+import { createUser, findAllUsers, findOneUser, toggleStatusUser, updateUser } from './users'
 
 export const server = {
 
@@ -10,7 +10,11 @@ export const server = {
   signoutUser,
 
   findAllUsers,
+  findOneUser,
+  createUser,
+  updateUser,
   toggleStatusUser,
 
   findAllCategories,
+
 }

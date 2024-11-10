@@ -1,0 +1,36 @@
+---
+import { Icon } from 'astro-icon/components'
+import AdminLayout from '@/modules/admin/layouts/AdminLayout.astro'
+import CreateUserForm from '@/modules/admin/components/forms/CreateUserForm.astro'
+
+import 'sweetalert2/dist/sweetalert2.min.css'
+
+---
+
+<AdminLayout>
+  <div class="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+          👤 Agregar Nuevo Usuario
+        </h1>
+        <p class="mt-5 max-w-xl mx-auto text-xl text-gray-500">
+          Complete el formulario para registrar un nuevo usuario en nuestro increíble sistema de servicios 🚀
+        </p>
+      </div>
+
+      <div class="bg-white shadow-2xl rounded-lg overflow-hidden">
+        <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-primary to-primary-dark">
+          <h3 class="text-lg leading-6 font-medium text-white flex">
+            <Icon name="mdi:account-plus" size={ 24 } class="mr-2" /> Información del Usuario
+          </h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-100">
+            Todos los campos marcados con <span class="text-red-300">*</span> son obligatorios.
+          </p>
+        </div>
+
+        <CreateUserForm />
+      </div>
+    </div>
+  </div>
+</AdminLayout>

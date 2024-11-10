@@ -1,29 +1,58 @@
 import { defineAction } from 'astro:actions'
-import { db, DisasterType, eq } from 'astro:db'
+import { db, eq, User } from 'astro:db'
 import { z } from 'astro:schema'
+import { v4 as UUID } from 'uuid'
 
-export const updateDisasterType = defineAction({
+
+export const updateUser = defineAction({
   accept: 'form',
   input: z.object({
-    id: z.number({ message: 'Parece que el ID no es válido.' } ),
-    name: z.string().min( 2, { message: '👤 El nombre debe tener al menos 2 caracteres.' } ),
-    description: z.string().min( 2, { message: '📝 La descripción debe tener al menos 2 caracteres.' } ),
-    icon: z.string({ message: '📸 La imagen debe ser una URL válida.' } ).optional(),
-    imageUrl: z.string({ message: '📸 La imagen debe ser una URL válida.' } ).optional(),
-  }),
-  handler: async ( { name, description, icon, imageUrl, id } ) => {
-    await db.update( DisasterType ).set({
-      name,
-      description,
-      icon,
-      imageUrl,
-      updatedAt: new Date(),
-    }).where(
-      eq( DisasterType.id, id )
-    )
+    name: z.string({ message: '👤 El nombre es requerido.' }).min( 2, { message: '👤 El nombre debe tener al menos 2 caracteres.' } ),
+    lastName: z.string({ message: '👥 El apellido es requerido' }).min( 2, { message: '👥 El apellido debe tener al menos 2 caracteres.' } ),
+    email: z.string({ message: '📧 El correo electrónico es requerido.' }).email( { message: '📧 El correo electrónico debe ser válido.' } ),
+    gender: z.string().optional(),
+    birthDate: z.string().optional(),
+    phone: z.string().optional(),
+    address: z.string().optional(),
 
-    return {
-      success: true,
+    roleId: z.string({ message: '👤 El rol es requerido.' }),
+    id: z.string({ message: '👤 El id es requerido.' }),
+  }),
+  handler: async ( {
+    id,
+    name,
+    email,
+    lastName,
+    gender,
+    birthDate,
+    phone,
+    address,
+    roleId,
+  } ) => {
+
+
+    try {
+      await db.update( User ).set({
+        id: UUID(),
+        name,
+        lastName,
+        email,
+        gender,
+        birthDate,
+        phone,
+        address,
+
+        roleId,
+      }).where(
+        eq( User.id, id )
+      )
+
+      return {
+        success: true,
+      }
+    } catch ( error : any ) {
+      throw new Error( error )
     }
+
   }
 })

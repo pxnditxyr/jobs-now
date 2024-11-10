@@ -1,0 +1,16 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  href: string
+}
+
+const { href } = Astro.props
+---
+
+<a
+  class="text-yellow-600 hover:text-yellow-900 mr-3"
+  href={ href }
+>
+  <Icon name="mdi:eye" size={ 20 }/>
+</a>

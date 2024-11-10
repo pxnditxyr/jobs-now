@@ -1,0 +1,252 @@
+---
+import { Icon } from 'astro-icon/components'
+import Label from '@/modules/shared/components/ui/Label.astro'
+import 'sweetalert2/dist/sweetalert2.min.css'
+
+const inputClass = 'w-full pl-10 pr-3 py-3 border-2 border-gray-300 rounded-md focus:outline-none focus:border-indigo-600 sm:text-sm'
+
+interface Props {
+  data: {
+    id: string
+    name: string
+    lastName: string
+    email: string
+    roleId: string
+    birthDate: string | null
+    gender: string | null
+    address: string | null
+    phone: string | null
+  }
+}
+
+const { data } = Astro.props
+---
+
+<form
+  id="form"
+  class="px-4 py-5 sm:p-6"
+>
+  <input type="hidden" name="id" value={ data.id } />
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div>
+      <Label for="name" isRequired> Nombre </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:account" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          class={ inputClass }
+          value={ data.name }
+          placeholder="Ingrese su nombre"
+        />
+
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="name-error"></p>
+    </div>
+
+    <div>
+      <Label for="lastName" isRequired> Apellido </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:account-outline" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="lastName"
+          type="text"
+          name="lastName"
+          class={ inputClass }
+          value={ data.lastName }
+          placeholder="Ingrese su apellido"
+        />
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="lastName-error"></p>
+    </div>
+
+    <div class="sm:col-span-2">
+      <Label for="email" isRequired> Email </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:email" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="email"
+          type="text"
+          name="email"
+          class={ inputClass }
+          value={ data.email }
+          placeholder="usuario@ejemplo.com"
+        />
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="email-error"></p>
+    </div>
+
+
+    <div>
+      <Label for="gender"> Género </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:gender-male-female" size={ 24 } class="text-gray-400" />
+        </div>
+        <select
+          id="gender"
+          class={ inputClass }
+          name="gender"
+        >
+          <option value="">Seleccionar género</option>
+          <option
+            value="male"
+            selected={ ( data.gender === 'male' ) ? 'selected' : '' }
+          > Masculino </option>
+          <option
+            value="female"
+            selected={ data.gender === 'female' ? 'selected' : '' }
+          > Femenino </option>
+          <option
+            value="other"
+            selected={ data.gender === 'other' ? 'selected' : '' }
+          > Otro </option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <Label for="birthDate"> Fecha de Nacimiento </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:calendar" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="birthDate"
+          type="date"
+          name="birthDate"
+          class={ inputClass }
+          value={ data.birthDate }
+          max={ new Date().toISOString().split( 'T' )[ 0 ] }
+        />
+      </div>
+    </div>
+
+    <div>
+      <Label for="phone"> Teléfono </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:phone" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="phone"
+          type="tel"
+          name="phone"
+          class={ inputClass }
+          value={ data.phone }
+          placeholder="77777777"
+        />
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="phone-error"></p>
+    </div>
+
+    <div class="sm:col-span-2">
+      <Label for="address"> Dirección </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:map-marker" size={ 24 } class="text-gray-400" />
+        </div>
+        <input
+          id="address"
+          type="text"
+          name="address"
+          value={ data.address }
+          class={ inputClass }
+          placeholder="Calle, Ciudad, País"
+        />
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden error" id="address-error"></p>
+    </div>
+
+    <div class="sm:col-span-2">
+      <Label for="role" isRequired> Rol </Label>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon name="mdi:account-cog" size={ 24 } class="text-gray-400" />
+        </div>
+        <select
+          id="roleId"
+          class={ inputClass }
+          name="roleId"
+        >
+          <option value="">Seleccionar Rol</option>
+          <option
+            value="client"
+            selected={ data.roleId === 'client' ? 'selected' : '' }
+          > 👤 Cliente </option>
+          <option
+            value="worker"
+            selected={ data.roleId === 'worker' ? 'selected' : '' }
+          > 🛠️ Trabajador </option>
+          <option
+            value="admin"
+            selected={ data.roleId === 'admin' ? 'selected' : '' }
+          > 👑 Administrador </option>
+        </select>
+      </div>
+      <p class="mt-2 text-sm text-red-600 hidden" id="role-error"></p>
+    </div>
+  </div>
+  <div class="mt-8">
+    <p class="mt-2 text-sm text-red-600 hidden" id="default-error"></p>
+  </div>
+
+  <div class="mt-8">
+    <button
+      class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark' focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+    >
+      <Icon name="mdi:account-plus" size={ 24 } class="mr-2" />
+      Editar
+    </button>
+  </div>
+</form>
+
+<script>
+import { actions } from 'astro:actions'
+import { getErrorList } from '@/utils'
+import Swal from 'sweetalert2'
+
+const handlerPageLoad = () => {
+  const form = document.getElementById( 'form' ) as HTMLFormElement
+
+  if ( !form ) return
+
+  form.addEventListener( 'submit', async ( event ) => {
+    event.preventDefault()
+
+    const formData = new FormData( form )
+
+    const { error } = await actions.updateUser( formData )
+
+    if ( error ) {
+      const errorMessages = getErrorList( error )
+      for ( const errorMessage of errorMessages ) {
+        const { field, message } = errorMessage
+        const errorElement = document.getElementById( `${ field }-error` )
+        if ( errorElement ) {
+          errorElement.textContent = message
+          errorElement.classList.remove( 'hidden' )
+        }
+      }
+      return
+    }
+
+    Swal.fire( {
+      title: 'Usuario editado',
+      text: 'El usuario ha sido editado exitosamente',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+    } )
+  } )
+
+}
+
+document.addEventListener( 'astro:page-load', handlerPageLoad )
+</script>

@@ -8,7 +8,7 @@ export const seedUsers = [
     lastName: 'Ricaldi',
     email: 'pxndxs@jobsnow.com',
     password: bcryptjs.hashSync( '123456', 10 ),
-    role: 'admin',
+    roleId: 'admin',
   },
   {
     id: UUID(),
@@ -16,7 +16,7 @@ export const seedUsers = [
     lastName: 'Administrador',
     email: 'admin@jobsnow.com',
     password: bcryptjs.hashSync( '123456', 10 ),
-    role: 'admin',
+    roleId: 'admin',
   },
   {
     id: UUID(),
@@ -24,7 +24,7 @@ export const seedUsers = [
     lastName: 'Worker Last Name',
     email: 'worker@jobsnow.com',
     password: bcryptjs.hashSync( '123456', 10 ),
-    role: 'worker',
+    roleId: 'worker',
   },
   {
     id: UUID(),
@@ -32,7 +32,7 @@ export const seedUsers = [
     lastName: 'User Last Name',
     email: 'user@jobsnow.com',
     password: bcryptjs.hashSync( '123456', 10 ),
-    role: 'client',
+    roleId: 'client',
   },
 ]
 

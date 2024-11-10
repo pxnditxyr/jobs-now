@@ -1,6 +1,13 @@
+import type { IErrorDetail } from '@/interfaces'
 
 
 export const getErrorMessage = ( error : any ) : string => {
+  const errorMessages = getListErrorMessage( error ).join( ' ' )
+  return errorMessages
+}
+
+export const getListErrorMessage = ( error : any ) : string[] => {
+
   const prefix = 'Failed to validate: '
   let errorDetails = []
 
@@ -23,6 +30,34 @@ export const getErrorMessage = ( error : any ) : string => {
     }
   }
 
-  const errorMessages = errorDetails.map( ( detail : { message: string } ) => detail.message ).join( ' ' )
+  const errorMessages = errorDetails.map( ( detail : { message: string } ) => detail.message )
   return errorMessages
+
+}
+
+export const getErrorList = ( error : any ) : IErrorDetail[] => {
+  console.log( 'error:', error )
+  console.log( 'error.message:', error.message )
+  if ( error.message.startsWith( 'Failed to validate: ' ) ) {
+    const prefix = 'Failed to validate: '
+    const textErrors = error.message
+    const textErrorsWithoutPrefix = textErrors.slice( prefix.length ).trim()
+    const errorList = JSON.parse( textErrorsWithoutPrefix )
+
+    const errorDetails = errorList.map( ( detail : any ) => ( {
+      field: detail.path[ 0 ],
+      message: detail.message,
+    } ) )
+
+    return errorDetails
+  }
+
+  if ( error.message.startsWith( 'LibsqlError: SQLITE_CONSTRAINT_UNIQUE:' ) ) {
+    const message = error.message
+    const field = message.split( ':' )[ 3 ].trim().split( '.' )[ 1 ]
+    const errorDetails = [ { field, message: `El ${ field } ya está en uso 🔑` } ]
+    return errorDetails
+  }
+
+  return [ { field: 'default', message: error.message } ]
 }

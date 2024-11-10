@@ -1,6 +1,11 @@
 ---
-import AdminLayout from '@/modules/admin/layouts/AdminLayout.astro'
 import { actions } from 'astro:actions'
+import { Icon } from 'astro-icon/components'
+import AdminLayout from '@/modules/admin/layouts/AdminLayout.astro'
+import Title from '@/modules/shared/components/ui/Title.astro'
+import CreateButton from '@/modules/shared/components/ui/CreateButton.astro'
+import ViewButton from '@/modules/shared/components/tables/ViewButton.astro'
+import EditButton from '@/modules/shared/components/tables/EditButton.astro'
 
 const { data: usersData, error: usersError } = await actions.findAllUsers()
 
@@ -9,145 +14,168 @@ if ( usersError ) return Astro.redirect( '/admin/dashboard' )
 const { users } = usersData
 
 const roleColors = {
-  admin: 'bg-blue-100 text-blue-800',
-  worker: 'bg-green-100 text-green-800',
-  client: 'bg-purple-100 text-purple-800',
+  'admin': 'bg-blue-100 text-blue-800',
+  'worker': 'bg-green-100 text-green-800',
+  'client': 'bg-purple-100 text-purple-800',
 }
+
 ---
 
 <AdminLayout>
-   <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold mb-6 text-gray-800">👥 Administración de Usuarios</h1>
+  <div class="w-full px-4 py-8 flex flex-col gap-6 justify-center md:px-12">
+    <Title>👥 Administración de Usuarios</Title>
 
-      <div class="mb-4 flex justify-between items-center">
-        <a
-          class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors"
-          href="/admin/users/create"
-        >
-          <i class="mdi mdi-account-plus mr-2"></i>
-          Agregar Usuario
-        </a>
-        <div class="relative">
-          <input
-            type="text"
-            placeholder="Buscar usuarios..."
-            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-          <i class="mdi mdi-magnify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-        </div>
-      </div>
-
-      <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
-                      <img class="h-10 w-10 rounded-full" src={`https://ui-avatars.com/api/?name=${user.name}+${user.lastName}&background=random`} alt="" />
-                    </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">{user.name} {user.lastName}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{user.email}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ roleColors[ user.role ] }`}>
-                    { user.role }
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {user.status ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button class="text-indigo-600 hover:text-indigo-900 mr-3">
-                    <i class="mdi mdi-pencil"></i> Editar
-                  </button>
-                  <button class="text-red-600 hover:text-red-900">
-                    <i class="mdi mdi-delete"></i> Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div class="mb-4 flex justify-between items-center">
+      <CreateButton
+        href="/admin/users/create"
+        icon="mdi:account-plus"
+      >
+        Agregar Usuario
+      </CreateButton>
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Buscar usuarios..."
+          class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <Icon name="mdi:magnify" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       </div>
     </div>
 
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          { users.map( ( user ) => (
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10">
+                  <img class="h-10 w-10 rounded-full" src={`https://ui-avatars.com/api/?name=${user.name}+${user.lastName}&background=random`} alt="" />
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-gray-900">{ user.name } {user.lastName}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{ user.email }</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ roleColors[ user.roleId ] }`}>
+                { user.role }
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                id={`span-status-${user.id}`}
+              >
+                {user.status ? 'Activo' : 'Inactivo'}
+              </span>
+            </td>
+            <td class="px-6 py-8 whitespace-nowrap text-sm font-medium flex items-center">
+              <ViewButton href={`/admin/users/${ user.id }`} />
+              <EditButton href={`/admin/users/edit/${ user.id }`} />
+              <button
+                class="toggle-button"
+                data-id={ user.id }
+                data-current-status={ user.status }
+              >
+                <Icon
+                  name="mdi:delete"
+                  size={ 20 }
+                  class={ `text-red-600 hover:text-red-900 ${ ( !user.status ) ? 'hidden' : '' } delete-icon` }
+                />
+                <Icon
+                  name="mdi:restore"
+                  size={ 20 }
+                  class={ `text-green-600 hover:text-green-900 ${ user.status ? 'hidden' : '' } restore-icon` }
+                />
+              </button>
+            </td>
+          </tr>
+          ) ) }
+        </tbody>
+      </table>
+    </div>
+  </div>
 </AdminLayout>
 <script>
 import { actions } from 'astro:actions'
 import Swal from 'sweetalert2'
 
 
-const deleteButtons = document.querySelectorAll( '.delete-button' )
+const handlerPageLoad = () => {
+  const deleteButtons = document.querySelectorAll( '.toggle-button' )
+  if ( !deleteButtons ) return
 
-deleteButtons.forEach( ( button ) => {
-  button.addEventListener( 'click', async ( _e ) => {
+  deleteButtons.forEach( ( button ) => {
+    button.addEventListener( 'click', async ( _e ) => {
+      const id = button.getAttribute( 'data-id' )
 
-    const id = button.getAttribute( 'data-id' )
+      const currentStatus = button.getAttribute( 'data-current-status' ) === 'true'
 
-    const currentStatus = button.getAttribute( 'data-current-status' ) === 'true'
-    console.log({ currentStatusPrim: currentStatus })
+      if ( !id ) return
 
-    if ( !id ) return
+      const { error } = await actions.toggleStatusUser( { id, currentStatus } )
 
-    const { error } = await actions.toggleStatusUser( { id, currentStatus } )
+      if ( error ) {
+        Swal.fire( {
+          icon: 'error',
+          title: 'Error al eliminar el usuario',
+          text: 'No se pudo eliminar el usuario. Por favor, inténtelo de nuevo.',
+        } )
+        return
+      }
 
-    if ( error ) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Perfecto!',
+        text: `Se realizo la accion`,
+      })
 
-      Swal.fire( {
-        icon: 'error',
-        title: 'Error al eliminar el usuario',
-        text: 'No se pudo eliminar el usuario. Por favor, inténtelo de nuevo.',
-      } )
-      return
-    }
+      button.setAttribute('data-current-status', (!currentStatus).toString())
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Perfecto!',
-      text: `Se realizo la accion`,
-    })
+      const statusSpan = document.querySelector( `#span-status-${ id }` ) as HTMLElement
 
-    button.setAttribute('data-current-status', (!currentStatus).toString())
+      if ( !currentStatus ) {
+        statusSpan.classList.add( 'bg-green-100' )
+        statusSpan.classList.add( 'text-green-800' )
+        statusSpan.classList.remove( 'bg-red-100' )
+        statusSpan.classList.remove( 'text-red-800' )
+        statusSpan.textContent = 'Activo'
+        // add code for button with children
+      } else {
+        statusSpan.classList.add( 'bg-red-100' )
+        statusSpan.classList.add( 'text-red-800' )
+        statusSpan.classList.remove( 'bg-green-100' )
+        statusSpan.classList.remove( 'text-green-800' )
+        statusSpan.textContent = 'Inactivo'
+        // add code for button with children
+      }
 
-    const statusSpan = document.querySelector( `#span-status-${ id }` ) as HTMLElement
+      const deleteIcon = button.querySelector( '.delete-icon' ) as HTMLElement
+      const restoreIcon = button.querySelector( '.restore-icon' ) as HTMLElement
 
-    if ( !currentStatus ) {
-      statusSpan.classList.add( 'bg-green-100' )
-      statusSpan.classList.add( 'text-green-800' )
-      statusSpan.classList.remove( 'bg-red-100' )
-      statusSpan.classList.remove( 'text-red-800' )
-      statusSpan.textContent = 'Activo'
-      console.log({ statusSpan: statusSpan.innerText })
-    } else {
-      statusSpan.classList.add( 'bg-red-100' )
-      statusSpan.classList.add( 'text-red-800' )
-      statusSpan.classList.remove( 'bg-green-100' )
-      statusSpan.classList.remove( 'text-green-800' )
-      statusSpan.textContent = 'Inactivo'
-      console.log({ statusSpan1: statusSpan.innerText })
-    }
-
-    button.textContent = currentStatus ? 'Restaurar' : 'Eliminar'
-
+      if ( !currentStatus ) {
+        deleteIcon.classList.remove('hidden')
+        restoreIcon.classList.add('hidden')
+      } else {
+        deleteIcon.classList.add('hidden')
+        restoreIcon.classList.remove('hidden')
+      }
+    } )
   } )
-} )
+}
 
+document.addEventListener( 'astro:page-load', handlerPageLoad )
 </script>

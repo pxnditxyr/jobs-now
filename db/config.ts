@@ -19,7 +19,7 @@ const User = defineTable({
     address: column.text({ optional: true }),
 
 
-    role: column.text({ references: () => Role.columns.id }),
+    roleId: column.text({ references: () => Role.columns.id }),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),

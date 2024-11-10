@@ -19,7 +19,7 @@ export const signupUser = defineAction({
       message: '🔑 La confirmación de la contraseña debe ser igual a la contraseña.',
       path: [ 'confirmPassword' ],
   } ) ,
-  handler: async ( { name, email, lastName, password, typeOfUser }, { cookies } ) => {
+  handler: async ( { name, email, lastName, password, typeOfUser } ) => {
 
     await db.insert( User ).values({
       id: UUID(),
@@ -27,7 +27,7 @@ export const signupUser = defineAction({
       lastName,
       email,
       password: bcryptjs.hashSync( password, 10 ),
-      role: typeOfUser ? 'worker' : 'user',
+      roleId: typeOfUser ? 'worker' : 'user',
     })
 
     return {
