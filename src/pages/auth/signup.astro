@@ -24,7 +24,7 @@ const code = btoa( unhashedCode )
           </svg>
         </div>
         <h2 class="text-center text-3xl font-bold text-slate-800"> Crear una cuenta </h2>
-        <form class="w-full flex flex-col gap-4">
+        <form class="w-full flex flex-col gap-4" id="form-signup">
           <div class="flex flex-col gap-4 md:flex-row">
             <div class="flex flex-col gap-4 w-full">
               <label for="name" class="text-slate-800 text-sm font-bold"> Nombres </label>
@@ -111,7 +111,7 @@ const code = btoa( unhashedCode )
                   <input
                     name="terms"
                     type="checkbox"
-                    id="terms"
+                    id="terms-checkbox"
                     class="mr-2"
                   /> Acepto los <a href="#" class="text-blue-500 hover:underline"> Términos y condiciones </a>
                 </label>
@@ -171,13 +171,14 @@ import Swal from 'sweetalert2'
 const { signIn } = await import( 'auth-astro/client' )
 
 const handlerPageLoad = () => {
-  const form = document.querySelector( 'form' ) as HTMLFormElement
+  const form = document.getElementById( 'form-signup' ) as HTMLFormElement
   const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
 
-  const termsCheckbox = document.querySelector( '#terms' ) as HTMLInputElement
+  const termsCheckbox = document.getElementById( 'terms-checkbox' ) as HTMLInputElement
 
   const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
   const captchaInput = document.querySelector( '#captcha' ) as HTMLInputElement
+
 
   if ( !form || !submitButton || !captchaAudio || !captchaInput || !termsCheckbox ) {
     return
@@ -216,6 +217,7 @@ const handlerPageLoad = () => {
     if ( error ) {
 
       const errorMessages = getErrorMessage( error )
+      console.log({ errorMessages })
 
       Swal.fire({
         icon: 'error',

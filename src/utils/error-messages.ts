@@ -2,7 +2,8 @@ import type { IErrorDetail } from '@/interfaces'
 
 
 export const getErrorMessage = ( error : any ) : string => {
-  const errorMessages = getListErrorMessage( error ).join( ' ' )
+  const errorMessages = getErrorList( error ).map( ( detail : IErrorDetail ) => detail.message ).join( '\n' )
+
   return errorMessages
 }
 

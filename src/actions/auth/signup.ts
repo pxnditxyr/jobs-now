@@ -18,29 +18,37 @@ export const signupUser = defineAction({
   }, {
       message: '🔑 La confirmación de la contraseña debe ser igual a la contraseña.',
       path: [ 'confirmPassword' ],
-  } ) ,
+  }) ,
   handler: async ( { name, email, lastName, password, typeOfUser } ) => {
+    const roleId = typeOfUser ? 'worker' : 'client'
 
-    const newUserId = UUID()
-    await db.insert( User ).values({
-      id: newUserId,
-      name,
-      lastName,
-      email,
-      password: bcryptjs.hashSync( password, 10 ),
-      roleId: typeOfUser ? 'worker' : 'user',
-    })
+    try {
+      const id = UUID()
+      await db.insert( User ).values({
+        id,
+        name,
+        lastName,
+        email,
+        password: bcryptjs.hashSync( password, 10 ),
 
-    if ( typeOfUser ) {
-      await db.insert( WorkerProfile ).values({
-        id: UUID(),
-        userId: newUserId,
+        roleId,
       })
-    } else {
-      await db.insert( Wallet ).values({
-        id: UUID(),
-        userId: newUserId,
-      })
+
+      if ( roleId === 'worker' ) {
+        await db.insert( WorkerProfile ).values({
+          id: UUID(),
+          userId: id,
+        })
+
+      } else {
+        await db.insert( Wallet ).values({
+          id: UUID(),
+          userId: id,
+        })
+      }
+    } catch ( error : any ) {
+      console.error( error )
+      throw new Error( error )
     }
 
     return {

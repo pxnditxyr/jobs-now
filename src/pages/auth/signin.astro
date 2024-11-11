@@ -32,7 +32,7 @@ const code = btoa( unhashedCode )
           </svg>
         </div>
         <h2 class="text-center text-3xl font-bold text-slate-800"> Iniciar sesión </h2>
-        <form class="w-full flex flex-col gap-8">
+        <form class="w-full flex flex-col gap-8" id="form-signin">
           <div class="flex flex-col gap-4">
             <label for="email" class="text-slate-800 text-sm font-bold"> Correo electrónico </label>
             <input
@@ -96,9 +96,9 @@ import Swal from 'sweetalert2'
 
 const { signIn } = await import( 'auth-astro/client' )
 
-const handlerPageLoad = () => {
+const handlerPageLoadSignin = () => {
   console.log( 'Page loaded' )
-  const form = document.querySelector( 'form' ) as HTMLFormElement
+  const form = document.querySelector( '#form-signin' ) as HTMLFormElement
   const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
 
   const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
@@ -158,5 +158,5 @@ const handlerPageLoad = () => {
   } )
 }
 
-document.addEventListener( 'astro:page-load', handlerPageLoad )
+document.addEventListener( 'astro:page-load', handlerPageLoadSignin )
 </script>
