@@ -1,22 +1,22 @@
 import { defineAction } from 'astro:actions'
-import { db, desc, eq, Role, User } from 'astro:db'
+import { db, desc, eq, User, Wallet } from 'astro:db'
 
-export const findAllUsers = defineAction({
+export const findAllWallets = defineAction({
   accept: 'json',
   handler: async () => {
     const data = await db
       .select()
-      .from( User )
-      .innerJoin( Role, eq( User.roleId, Role.id ) )
+      .from( Wallet )
+      .innerJoin( User, eq( Wallet.userId, User.id ) )
       .orderBy(
         desc(
-          User.createdAt
+          Wallet.createdAt
         )
       )
     return {
-      users: data.map( ( { User, Role } ) => ( {
-        ...User,
-        role: Role.name,
+      users: data.map( ( { User, Wallet } ) => ( {
+        ...Wallet,
+        user: User
       } ) )
     }
   }

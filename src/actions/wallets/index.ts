@@ -1,5 +1,3 @@
-export * from './create'
-export * from './update'
 export * from './toggleStatus'
 export * from './findAll'
 export * from './findOne'

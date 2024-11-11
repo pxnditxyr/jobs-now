@@ -71,13 +71,12 @@ const currentPath = Astro.url.pathname
             <div>
               <button
                 class="max-w-xs bg-teal-600 rounded-full flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
-                id="user-menu"
                 aria-haspopup="true"
                 id="toggle-button-open-user-menu"
               >
                 <span class="sr-only">Abrir menú de usuario</span>
                 <div class="h-8 w-8 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
-                  { user.name.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
+                  { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
                 </div>
               </button>
             </div>
@@ -88,17 +87,17 @@ const currentPath = Astro.url.pathname
               aria-orientation="vertical"
               aria-labelledby="user-menu"
             >
-              <a href="/profile" class="block px-4 py-2 text-white hover:bg-gray-100">
-                <Icon name="mdi:account" size={ 24 } class="mr-2" />
+              <a href="/profile" class="px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2">
+                <Icon name="mdi:account" size={ 24 } class="mr-2" /> Perfil
               </a>
-              <a href="/settings" class="block px-4 py-2 text-white hover:bg-gray-100">
-                <Icon name="mdi:cog" size={ 24 } class="mr-2" />
+              <a href="/settings" class="px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2">
+                <Icon name="mdi:cog" size={ 24 } class="mr-2" /> Configuración
               </a>
               <button
-                class="block w-full text-left px-4 py-2 text-white hover:bg-gray-100"
+                class="w-full text-left px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2"
                 id="signout-button"
               >
-                <Icon name="mdi:logout" size={ 24 } class="mr-2" />
+                <Icon name="mdi:logout" size={ 24 } class="mr-2" /> Cerrar sesión
               </button>
             </div>
           </div>
@@ -125,7 +124,7 @@ const currentPath = Astro.url.pathname
       { navItems.map( (item) => (
       <a
         href={ item.href }
-        class={ `block px-3 py-2 rounded-md text-base font-medium flex items-center gap-2 ${
+        class={ `px-3 py-2 rounded-md text-base font-medium flex items-center gap-2 ${
           ( currentPath  === item.href ) ? 'bg-teal-700 text-white' : 'text-teal-100 hover:bg-teal-500 hover:text-white'
         }` }
       >
@@ -138,7 +137,7 @@ const currentPath = Astro.url.pathname
       <div class="flex items-center px-5">
         <div class="flex-shrink-0">
           <div class="h-10 w-10 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
-            { user.name.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
+            { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
           </div>
         </div>
         <div class="ml-3 flex flex-col gap-2">
@@ -175,13 +174,13 @@ import { navigate } from 'astro:transitions/client'
 const { signOut } = await import( 'auth-astro/client' )
 
 const handlerPageLoad = () => {
-  console.log( 'Page loaded' )
   const openMobileMenu = document.getElementById( 'open-mobile-menu' ) as HTMLButtonElement
   const mobileMenu = document.getElementById( 'mobile-menu' ) as HTMLDivElement
   const signoutButton = document.getElementById( 'signout-button' ) as HTMLButtonElement
   const signoutButtonMobile = document.getElementById( 'signout-button-mobile' ) as HTMLButtonElement
+  const toggleButtonOpenUserMenu = document.getElementById( 'toggle-button-open-user-menu' ) as HTMLButtonElement
 
-  if ( !openMobileMenu || !mobileMenu || !signoutButton ) return
+  if ( !openMobileMenu || !mobileMenu || !signoutButton || !signoutButtonMobile || !toggleButtonOpenUserMenu ) return
 
   signoutButton.addEventListener( 'click', async () => {
     await signOut()
@@ -200,6 +199,10 @@ const handlerPageLoad = () => {
     mobileMenu.classList.toggle( 'hidden' )
   } )
 
+  toggleButtonOpenUserMenu.addEventListener( 'click', () => {
+    const userMenu = document.getElementById( 'user-menu' ) as HTMLDivElement
+    userMenu.classList.toggle( 'hidden' )
+  } )
 }
 
 document.addEventListener( 'astro:page-load', handlerPageLoad )

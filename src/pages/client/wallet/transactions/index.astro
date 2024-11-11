@@ -1,0 +1,121 @@
+---
+import { Icon } from 'astro-icon/components'
+import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
+import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
+import { formatDate } from '@/utils'
+
+
+const session = await getSession( Astro.request )
+
+const { user } = session ?? {}
+
+if ( !user ) return Astro.redirect( '/auth/signin' )
+
+const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+if ( walletError ) return Astro.redirect( '/' )
+
+const { wallet } = walletData
+
+const { data: transactionsData, error: transactionsError } = await actions.findAllTransactionsByWalletId({ walletId: wallet.id })
+if ( transactionsError ) return Astro.redirect( '/' )
+
+const { transactions } = transactionsData
+
+const getAmountColor = ( amount: number ) => {
+  return amount >= 10 ? 'text-green-600' : 'text-yellow-600'
+}
+
+---
+
+<ClientLayout>
+  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl py-8 w-full">
+    <div class="p-6 sm:p-8">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center text-teal-800 flex items-center gap-2">
+        <Icon name="mdi:bank-transfer" size={ 30 } class="mr-2" />
+        Mis Transacciones 💳
+      </h1>
+      <div class="mb-6 bg-teal-50 border border-teal-200 rounded-lg p-4 shadow-inner">
+        <h2 class="text-xl font-semibold mb-2 text-teal-700 flex items-center gap-2">
+          <Icon name="mdi:information-outline" size={ 24 } class="mr-2" />Resumen de Transacciones
+        </h2>
+        <p class="text-gray-600 mt-3">
+          Total de transacciones: <span class="font-semibold">{ transactions.length }</span> 📊
+        </p>
+        <p class="text-gray-600 mt-3">
+          Última transacción: <span class="font-semibold">{ transactions[ 0 ]?.createdAt.toLocaleDateString() }</span> 🗓️
+        </p>
+      </div>
+
+      <div class="w-full overflow-x-auto rounded-xl shadow-lg mt-12">
+        <table class="w-full bg-white">
+          <thead class="bg-teal-500 text-white">
+            <tr>
+              <th class="py-3 px-4 text-left rounded-tl-xl">Fecha 📅</th>
+              <th class="py-3 px-4 text-left">Descripción 📝</th>
+              <th class="py-3 px-4 text-right">Monto 💰</th>
+              <th class="py-3 px-4 text-center rounded-tr-xl">Estado ✅</th>
+            </tr>
+          </thead>
+          <tbody>
+            { transactions.map( ( transaction, index ) => (
+            <tr
+              class={`border-b border-gray-200 transition-colors hover:bg-teal-50 ${
+                index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+              }`}
+            >
+              <td class="py-3 px-4">
+                <div class="flex items-center">
+                  <Icon name="mdi:calendar-blank" size={ 24 } class="mr-2 text-teal-500" />
+                  { formatDate( transaction.createdAt ) }
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="flex items-center">
+                  <Icon name="mdi:text-box-outline" size={ 24 } class="mr-2 text-teal-500" />
+                  { transaction.description }
+                </div>
+              </td>
+              <td class={`py-3 px-4 text-right font-semibold ${ getAmountColor( transaction.amount ) }`}>
+                <div class="flex items-center justify-end">
+                  <Icon name={ transaction.amount >= 0 ? 'mdi:arrow-up-bold' : 'mdi:arrow-down-bold' } size={ 24 } class="mr-2" />
+                  ${ Math.abs( transaction.amount ).toFixed(2) }
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center">
+                  <Icon name={ ( transaction.status ) ? 'mdi:check-circle' : 'mdi:alert-circle' } size={ 24 } class="text-green-500 text-xl" />
+                  <span class="ml-2 text-sm">
+                    { transaction.status ? 'Completada' : 'Pendiente' }
+                  </span>
+                </div>
+              </td>
+            </tr>
+            ) ) }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-12 bg-yellow-50 border border-yellow-200 rounded-lg p-4 shadow-inner">
+        <h3 class="text-lg font-semibold mb-2 text-yellow-700 flex items-center gap-2">
+          <Icon name="mdi:lightbulb-on" size={ 24 } class="mr-2" />Consejo 💡
+        </h3>
+        <p class="text-gray-600">
+          Mantén un registro de tus transacciones para un mejor control de tus finanzas.
+          Si notas alguna transacción inusual, contacta a nuestro soporte inmediatamente.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 text-center text-teal-800 w-full flex flex-col items-center justify-center">
+    <p class="text-xl mb-4">¿Necesitas ayuda con tus transacciones? 🤔</p>
+    <a
+      class="bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-colors shadow-lg hover:shadow-xl flex justify-center"
+      href="/support"
+    >
+      <Icon name="mdi:help-circle" size={ 24 } class="mr-2" />Contactar Soporte
+    </a>
+  </div>
+</ClientLayout>
+

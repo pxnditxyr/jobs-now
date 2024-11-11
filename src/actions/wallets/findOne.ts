@@ -1,24 +1,22 @@
 import { defineAction } from 'astro:actions'
-import { db, eq, Role, User } from 'astro:db'
+import { db, eq, User, Wallet } from 'astro:db'
 
-export const findOneUser = defineAction({
+export const findOneWallet = defineAction({
   accept: 'json',
   handler: async ({ id }) => {
     const [ data ] = await db
       .select()
-      .from( User )
-      .innerJoin( Role, eq( User.roleId, Role.id ) )
-      .where( eq( User.id, id ) )
-
-    console.log({ data })
+      .from( Wallet )
+      .innerJoin( User, eq( Wallet.userId, User.id ) )
+      .where( eq( Wallet.id, id ) )
 
     if ( !data )
-      throw new Error( 'No se encontró el usuario. 💁‍♂️' )
+      throw new Error( 'No se encontró la billetera. 💁‍♂️' )
 
     return {
-      user: {
-        ...data.User,
-        role: data.Role.name,
+      wallet: {
+        ...data.Wallet,
+        user: data.User
       }
     }
   }

@@ -18,7 +18,7 @@ const { wallet } = walletData
 ---
 
 <ClientLayout>
-  <div class="min-h-screen bg-gradient-to-br from-teal-100 to-teal-200 p-8">
+  <div class="bg-gradient-to-br from-teal-100 to-teal-200 p-8">
     <h1 class="text-4xl font-bold mb-8 text-center text-teal-800 flex items-center gap-2 justify-center">
       <Icon name="mdi:wallet" size={ 60 } class="text-amber-900" />Mi Billetera Virtual
     </h1>
@@ -58,13 +58,14 @@ const { wallet } = walletData
         <div class="mb-8">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-xl font-semibold mb-4 text-teal-700 flex items-center gap-2">
-              <Icon name="mdi:cash-plus" size={ 24 } class="mr-2" />Recargar Saldo
+              <Icon name="mdi:history" size={ 24 } class="mr-2" />Historial de Transacciones
             </h3>
             <a
               class="bg-teal-500 text-white px-6 py-3 rounded-lg hover:bg-teal-600 transition-colors flex items-center"
-              href="/client/wallet/recharge"
+              href="/client/wallet/transactions"
             >
-              <Icon name="mdi:cash-plus" size={ 24 } class="ml-2" />Recargar
+              <Icon name="mdi:history" size={ 24 } class="mr-2" />
+              Ver Historial de Transacciones
             </a>
           </div>
           <div class="flex items-center space-x-4">
@@ -82,46 +83,13 @@ const { wallet } = walletData
               </div>
               <div class="mb-4">
                 <h3 class="text-xl font-semibold text-teal-700 mb-2 flex items-center">
-                  💳 Métodos de Pago Flexibles 💳
-                </h3>
-                <p class="text-gray-700">
-                  Puedes recargar tu billetera fácilmente a través de <strong>PayPal</strong> 🅿️, garantizando transacciones seguras y confiables. 🔒✅
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class="text-xl font-semibold text-teal-700 mb-2 flex items-center">
                   💡 Dinero Siempre Disponible 💡
                 </h3>
                 <p class="text-gray-700">
                   Tu dinero permanecerá en tu billetera hasta que decidas utilizarlo. No hay límites de tiempo ⏳, ¡así que úsalo cuando lo necesites! 📅✨
                 </p>
               </div>
-              <div class="mb-4">
-                <h3 class="text-xl font-semibold text-teal-700 mb-2 flex items-center">
-                  🚀 Beneficios Adicionales 🚀
-                </h3>
-                <ul class="list-disc list-inside text-gray-700">
-                  <li><strong>Sin Límites de Tiempo</strong>: Mantén tu saldo activo sin restricciones ⏱️</li>
-                  <li><strong>Seguridad Garantizada</strong>: Tus fondos están protegidos con los más altos estándares 🔐</li>
-                  <li><strong>Comodidad y Flexibilidad</strong>: Accede a tu dinero en cualquier momento y lugar 🌍📱</li>
-                </ul>
-              </div>
-              <div class="mb-4">
-                <h3 class="text-xl font-semibold text-teal-700 mb-2 flex items-center">
-                  🔗 ¡Empieza Hoy Mismo! 🔗
-                </h3>
-                <p class="text-gray-700">
-                  No esperes más para disfrutar de todas las ventajas que te ofrece nuestra billetera digital. 💳✨ ¡Recarga ahora y simplifica tus transacciones! 🚀🔥
-                </p>
-              </div>
-              <div class="mt-6 bg-teal-100 p-4 rounded-lg">
-                <h4 class="text-lg font-semibold text-teal-800 mb-2 flex items-center">
-                  🌟 ¿Tienes alguna duda? 🌟
-                </h4>
-                <p class="text-gray-700">
-                  Nuestro equipo de soporte está aquí para ayudarte. 🤗💬 ¡Contáctanos y te asistiremos en todo lo que necesites! 📞✉️
-                </p>
-              </div>
+
               <div class="text-center py-4">
                 <a
                   class="bg-blue-500 text-white px-8 py-4 rounded-lg hover:bg-blue-600 transition-colors text-lg font-semibold flex items-center justify-center mx-auto"
