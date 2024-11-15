@@ -9,9 +9,10 @@ export const rechargeAmountWallet = defineAction({
   input: z.object({
     id: z.string({ message: 'El id del usuario es obligatorio.' }),
     amount: z.number({ message: 'El monto es obligatorio.' }),
+    stars: z.number({ message: 'Las estrellas son obligatorias.' }),
   }),
 
-  handler: async ({ id, amount }) => {
+  handler: async ({ id, amount, stars }) => {
 
     const [ currentWallet ] = await db
       .select()
@@ -24,6 +25,7 @@ export const rechargeAmountWallet = defineAction({
 
     await db.update( Wallet ).set({
       balance: currentWallet.balance + amount,
+      stars: currentWallet.stars + stars,
       updatedAt: new Date()
     }).where(
       eq( Wallet.id, id )
@@ -33,6 +35,7 @@ export const rechargeAmountWallet = defineAction({
       id: UUID(),
       walletId: id,
       amount,
+      stars,
       description: `Recarga de $${ amount }`,
     })
 

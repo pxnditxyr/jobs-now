@@ -34,14 +34,13 @@ export const signupUser = defineAction({
         roleId,
       })
 
+      await db.insert( Wallet ).values({
+        id: UUID(),
+        userId: id,
+      })
+
       if ( roleId === 'worker' ) {
         await db.insert( WorkerProfile ).values({
-          id: UUID(),
-          userId: id,
-        })
-
-      } else {
-        await db.insert( Wallet ).values({
           id: UUID(),
           userId: id,
         })

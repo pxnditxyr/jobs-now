@@ -54,6 +54,7 @@ const getAmountColor = ( amount: number ) => {
               <th class="py-3 px-4 text-left rounded-tl-xl">Fecha 📅</th>
               <th class="py-3 px-4 text-left">Descripción 📝</th>
               <th class="py-3 px-4 text-right">Monto 💰</th>
+              <th class="py-3 px-4 text-center">Estrellas ⭐️</th>
               <th class="py-3 px-4 text-center rounded-tr-xl">Estado ✅</th>
             </tr>
           </thead>
@@ -80,6 +81,12 @@ const getAmountColor = ( amount: number ) => {
                 <div class="flex items-center justify-end">
                   <Icon name={ transaction.amount >= 0 ? 'mdi:arrow-up-bold' : 'mdi:arrow-down-bold' } size={ 24 } class="mr-2" />
                   ${ Math.abs( transaction.amount ).toFixed(2) }
+                </div>
+              </td>
+              <td class={`py-3 px-4 text-right font-semibold ${ getAmountColor( transaction.amount ) }`}>
+                <div class="flex items-center justify-end">
+                  <Icon name={ transaction.amount >= 0 ? 'mdi:arrow-up-bold' : 'mdi:arrow-down-bold' } size={ 24 } class="mr-2" />
+                  { transaction.stars } ⭐️
                 </div>
               </td>
               <td class="py-3 px-4 text-center">
