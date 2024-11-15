@@ -4,14 +4,6 @@ import bcryptjs from 'bcryptjs'
 export const seedUsers = [
   {
     id: UUID(),
-    name: 'Pxndxs 🐼',
-    lastName: 'Ricaldi',
-    email: 'pxndxs@jobsnow.com',
-    password: bcryptjs.hashSync( '123456', 10 ),
-    roleId: 'admin',
-  },
-  {
-    id: UUID(),
     name: 'Admin',
     lastName: 'Administrador',
     email: 'admin@jobsnow.com',
