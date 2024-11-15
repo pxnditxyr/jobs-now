@@ -1,12 +1,18 @@
 ---
 import { Icon } from 'astro-icon/components'
 import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
 
 const session = await getSession( Astro.request )
 
 const { user } = session ?? {}
 
 if ( !user ) return Astro.redirect( '/auth/signin' )
+
+const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+
+if ( walletError ) return Astro.redirect( '/404' )
+const { wallet } = walletData
 
 const navItems = [
   {
@@ -60,6 +66,9 @@ const currentPath = Astro.url.pathname
       </div>
       <div class="hidden lg:block">
         <div class="ml-4 flex items-center lg:ml-6">
+          <span>
+            { wallet.stars } ⭐
+          </span>
           <button
             class="bg-teal-600 p-1 rounded-full text-teal-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
             id="toggle-button-open-menu"
