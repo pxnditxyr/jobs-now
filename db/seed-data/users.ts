@@ -31,7 +31,7 @@ export const seedUsers = [
 export const seedWorkerProfiles = [
   {
     id: UUID(),
-    userId: seedUsers[ 2 ].id,
+    userId: seedUsers[ 1 ].id,
     description: 'Worker Description',
   }
 ]
@@ -39,6 +39,6 @@ export const seedWorkerProfiles = [
 export const seedWallets = [
   {
     id: UUID(),
-    userId: seedUsers[ 3 ].id,
+    userId: seedUsers[ 2 ].id,
   }
 ]
