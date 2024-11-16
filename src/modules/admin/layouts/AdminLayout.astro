@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
 import { Icon } from 'astro-icon/components'
 import AdminNav from '@/modules/admin/components/ui/AdminNav.astro'
@@ -48,7 +47,6 @@ const {
     <meta property="og:image" content={ image } />
 
     <title>{ title }</title>
-    <ClientRouter />
   </head>
   <body>
     <main class:list={[
@@ -118,24 +116,17 @@ const {
 </html>
 
 <script>
-const handlerPageLoad = () => {
-  const sidebar = document.getElementById( 'sidebar' ) as HTMLDivElement;
-  const openSidebarBtn = document.getElementById('openSidebar') as HTMLButtonElement;
-  const closeSidebarBtn = document.getElementById('closeSidebar') as HTMLButtonElement;
+const sidebar = document.getElementById( 'sidebar' ) as HTMLDivElement;
+const openSidebarBtn = document.getElementById('openSidebar') as HTMLButtonElement;
+const closeSidebarBtn = document.getElementById('closeSidebar') as HTMLButtonElement;
 
-  if ( !sidebar || !openSidebarBtn || !closeSidebarBtn ) return;
+openSidebarBtn.addEventListener('click', () => {
+  sidebar.classList.remove( '-translate-x-full' );
+  sidebar.classList.add( 'translate-x-0' );
+});
 
-
-  openSidebarBtn.addEventListener('click', () => {
-    sidebar.classList.remove( '-translate-x-full' );
-    sidebar.classList.add( 'translate-x-0' );
-  });
-
-  closeSidebarBtn.addEventListener('click', () => {
-    sidebar.classList.remove('translate-x-0');
-    sidebar.classList.add('-translate-x-full');
-  });
-}
-
-document.addEventListener( 'astro:page-load', handlerPageLoad )
+closeSidebarBtn.addEventListener('click', () => {
+  sidebar.classList.remove('translate-x-0');
+  sidebar.classList.add('-translate-x-full');
+});
 </script>

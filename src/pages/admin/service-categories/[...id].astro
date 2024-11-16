@@ -97,27 +97,3 @@ const {
     </div>
   </div>
 </AdminLayout>
-
-<script>
-import { actions } from 'astro:actions'
-import Swal from 'sweetalert2'
-
-const handlerPageLoad = () => {
-  const form = document.getElementById( 'form' ) as HTMLFormElement
-  if ( !form ) return
-
-  form.addEventListener( 'submit', async ( event ) => {
-    event.preventDefault()
-
-    const formData = new FormData( form )
-    console.log({ formData })
-    const data = Object.fromEntries( formData )
-
-    console.log({ data })
-  } )
-
-}
-
-
-document.addEventListener( 'astro:page-load', handlerPageLoad )
-</script>

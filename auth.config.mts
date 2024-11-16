@@ -18,11 +18,24 @@ export default defineConfig({
           .where( eq( User.email, `${ email }` ) )
 
         if ( !user ) {
-          throw new Error( 'Parece que el correo electrónico o la contraseña son incorrectos' )
+          const error = new Error( 'UserNotFound' )
+          error.name = 'UserNotFound'
+          throw error
+          //throw new Error( 'Parece que el correo electrónico o la contraseña son incorrectos' )
         }
 
         if ( bcrypt.compareSync( password as string, user.password ) !== true ) {
-          throw new Error( 'Parece que el correo electrónico o la contraseña son incorrectos' )
+          const error = new Error( 'InvalidCredentials' )
+          error.name = 'InvalidCredentials'
+          throw error
+          //throw new Error( 'Parece que el correo electrónico o la contraseña son incorrectos' )
+        }
+
+        if ( !user.status ) {
+          const error = new Error( 'AccountDisabled' )
+          error.name = 'AccountDisabled'
+          throw error
+          //throw new Error( 'Tu cuenta ha sido deshabilitada, por favor contacta a soporte' )
         }
 
         const { password: _, ...userData } = user

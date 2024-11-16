@@ -213,40 +213,33 @@ import { actions } from 'astro:actions'
 import { getErrorList } from '@/utils'
 import Swal from 'sweetalert2'
 
-const handlerPageLoad = () => {
-  const form = document.getElementById( 'form' ) as HTMLFormElement
+const form = document.getElementById( 'form' ) as HTMLFormElement
 
-  if ( !form ) return
+form.addEventListener( 'submit', async ( event ) => {
+  event.preventDefault()
 
-  form.addEventListener( 'submit', async ( event ) => {
-    event.preventDefault()
+  const formData = new FormData( form )
 
-    const formData = new FormData( form )
+  const { error } = await actions.updateUser( formData )
 
-    const { error } = await actions.updateUser( formData )
-
-    if ( error ) {
-      const errorMessages = getErrorList( error )
-      for ( const errorMessage of errorMessages ) {
-        const { field, message } = errorMessage
-        const errorElement = document.getElementById( `${ field }-error` )
-        if ( errorElement ) {
-          errorElement.textContent = message
-          errorElement.classList.remove( 'hidden' )
-        }
+  if ( error ) {
+    const errorMessages = getErrorList( error )
+    for ( const errorMessage of errorMessages ) {
+      const { field, message } = errorMessage
+      const errorElement = document.getElementById( `${ field }-error` )
+      if ( errorElement ) {
+        errorElement.textContent = message
+        errorElement.classList.remove( 'hidden' )
       }
-      return
     }
+    return
+  }
 
-    Swal.fire( {
-      title: 'Usuario editado',
-      text: 'El usuario ha sido editado exitosamente',
-      icon: 'success',
-      confirmButtonText: 'Aceptar',
-    } )
+  Swal.fire( {
+    title: 'Usuario editado',
+    text: 'El usuario ha sido editado exitosamente',
+    icon: 'success',
+    confirmButtonText: 'Aceptar',
   } )
-
-}
-
-document.addEventListener( 'astro:page-load', handlerPageLoad )
+} )
 </script>

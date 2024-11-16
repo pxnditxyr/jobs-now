@@ -85,37 +85,30 @@ import { actions } from 'astro:actions'
 import { navigate } from 'astro:transitions/client'
 import { getErrorList } from '@/utils'
 
-const handlerPageLoad = () => {
-  const form = document.getElementById( 'form' ) as HTMLFormElement
+const form = document.getElementById( 'form' ) as HTMLFormElement
 
-  if ( !form ) return
+form.addEventListener( 'submit', async ( event ) => {
+  event.preventDefault()
 
-  form.addEventListener( 'submit', async ( event ) => {
-    event.preventDefault()
+  const formData = new FormData( form )
 
-    const formData = new FormData( form )
+  const { error } = await actions.createServiceCategory( formData )
 
-    const { error } = await actions.createServiceCategory( formData )
-
-    if ( error ) {
-      console.log({ error, errorType: typeof error })
-      const errorMessages = getErrorList( error )
-      for ( const errorMessage of errorMessages ) {
-        const { field, message } = errorMessage
-        const errorElement = document.getElementById( `${ field }-error` )
-        if ( errorElement ) {
-          errorElement.textContent = message
-          errorElement.classList.remove( 'hidden' )
-        }
+  if ( error ) {
+    console.log({ error, errorType: typeof error })
+    const errorMessages = getErrorList( error )
+    for ( const errorMessage of errorMessages ) {
+      const { field, message } = errorMessage
+      const errorElement = document.getElementById( `${ field }-error` )
+      if ( errorElement ) {
+        errorElement.textContent = message
+        errorElement.classList.remove( 'hidden' )
       }
-
-      return
     }
 
-    navigate( '/admin/service-categories' )
-  } )
+    return
+  }
 
-}
-
-document.addEventListener( 'astro:page-load', handlerPageLoad )
+  navigate( '/admin/service-categories' )
+} )
 </script>

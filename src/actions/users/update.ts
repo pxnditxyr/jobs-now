@@ -30,10 +30,8 @@ export const updateUser = defineAction({
     roleId,
   } ) => {
 
-
     try {
       await db.update( User ).set({
-        id: UUID(),
         name,
         lastName,
         email,
@@ -51,6 +49,7 @@ export const updateUser = defineAction({
         success: true,
       }
     } catch ( error : any ) {
+      console.log( error )
       throw new Error( error )
     }
 

@@ -142,14 +142,23 @@ const handlerPageLoadSignin = () => {
       redirect: false
     } )
 
-    console.log( response )
-
     if ( response ) {
+      const data = await response.json()
+      const urlParams = new URLSearchParams(response.url.split('?')[1]);
+      const errorCode = urlParams.get('error');
+      console.log({ errorCode, data })
+      const errorMessages : Record<string, string> = {
+        AccountDisabled: 'Tu cuenta ha sido deshabilitada, por favor contacta a soporte',
+        InvalidCredentials: 'Parece que el correo electrónico o la contraseña son incorrectos',
+        UserNotFound: 'Parece que el correo electrónico o la contraseña son incorrectos',
+      }
+
+      const errorMessage = errorMessages[ response.error ] || 'Ha ocurrido un error al iniciar sesion, por favor contacta con soporte si tus credenciales son correctas'
+
       Swal.fire( {
         icon: 'error',
         title: 'Error en el Inicio de sesión',
-        //text: error.message,
-        text: `Parece que el correo electrónico o la contraseña son incorrectos`
+        text: errorMessage,
       } )
       submitButton.disabled = false
       return

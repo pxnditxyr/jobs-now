@@ -118,66 +118,61 @@ import { actions } from 'astro:actions'
 import Swal from 'sweetalert2'
 
 
-const handlerPageLoad = () => {
-  const deleteButtons = document.querySelectorAll( '.toggle-button' )
-  if ( !deleteButtons ) return
+const deleteButtons = document.querySelectorAll( '.toggle-button' )
 
-  deleteButtons.forEach( ( button ) => {
-    button.addEventListener( 'click', async ( _e ) => {
-      const id = button.getAttribute( 'data-id' )
+deleteButtons.forEach( ( button ) => {
+  button.addEventListener( 'click', async ( _e ) => {
+    const id = button.getAttribute( 'data-id' )
 
-      const currentStatus = button.getAttribute( 'data-current-status' ) === 'true'
+    const currentStatus = button.getAttribute( 'data-current-status' ) === 'true'
 
-      if ( !id ) return
+    if ( !id ) return
 
-      const { error } = await actions.toggleStatusUser( { id, currentStatus } )
+    const { error } = await actions.toggleStatusUser( { id, currentStatus } )
 
-      if ( error ) {
-        Swal.fire( {
-          icon: 'error',
-          title: 'Error al eliminar el usuario',
-          text: 'No se pudo eliminar el usuario. Por favor, inténtelo de nuevo.',
-        } )
-        return
-      }
+    if ( error ) {
+      Swal.fire( {
+        icon: 'error',
+        title: 'Error al eliminar el usuario',
+        text: 'No se pudo eliminar el usuario. Por favor, inténtelo de nuevo.',
+      } )
+      return
+    }
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Perfecto!',
-        text: `Se realizo la accion`,
-      })
+    Swal.fire({
+      icon: 'success',
+      title: 'Perfecto!',
+      text: `Se realizo la accion`,
+    })
 
-      button.setAttribute('data-current-status', (!currentStatus).toString())
+    button.setAttribute('data-current-status', (!currentStatus).toString())
 
-      const statusSpan = document.querySelector( `#span-status-${ id }` ) as HTMLElement
+    const statusSpan = document.querySelector( `#span-status-${ id }` ) as HTMLElement
 
-      if ( !currentStatus ) {
-        statusSpan.classList.add( 'bg-green-100' )
-        statusSpan.classList.add( 'text-green-800' )
-        statusSpan.classList.remove( 'bg-red-100' )
-        statusSpan.classList.remove( 'text-red-800' )
-        statusSpan.textContent = 'Activo'
-      } else {
-        statusSpan.classList.add( 'bg-red-100' )
-        statusSpan.classList.add( 'text-red-800' )
-        statusSpan.classList.remove( 'bg-green-100' )
-        statusSpan.classList.remove( 'text-green-800' )
-        statusSpan.textContent = 'Inactivo'
-      }
+    if ( !currentStatus ) {
+      statusSpan.classList.add( 'bg-green-100' )
+      statusSpan.classList.add( 'text-green-800' )
+      statusSpan.classList.remove( 'bg-red-100' )
+      statusSpan.classList.remove( 'text-red-800' )
+      statusSpan.textContent = 'Activo'
+    } else {
+      statusSpan.classList.add( 'bg-red-100' )
+      statusSpan.classList.add( 'text-red-800' )
+      statusSpan.classList.remove( 'bg-green-100' )
+      statusSpan.classList.remove( 'text-green-800' )
+      statusSpan.textContent = 'Inactivo'
+    }
 
-      const deleteIcon = button.querySelector( '.delete-icon' ) as HTMLElement
-      const restoreIcon = button.querySelector( '.restore-icon' ) as HTMLElement
+    const deleteIcon = button.querySelector( '.delete-icon' ) as HTMLElement
+    const restoreIcon = button.querySelector( '.restore-icon' ) as HTMLElement
 
-      if ( !currentStatus ) {
-        deleteIcon.classList.remove('hidden')
-        restoreIcon.classList.add('hidden')
-      } else {
-        deleteIcon.classList.add('hidden')
-        restoreIcon.classList.remove('hidden')
-      }
-    } )
+    if ( !currentStatus ) {
+      deleteIcon.classList.remove('hidden')
+      restoreIcon.classList.add('hidden')
+    } else {
+      deleteIcon.classList.add('hidden')
+      restoreIcon.classList.remove('hidden')
+    }
   } )
-}
-
-document.addEventListener( 'astro:page-load', handlerPageLoad )
+} )
 </script>
