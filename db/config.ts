@@ -17,7 +17,7 @@ const User = defineTable({
 
     phone: column.text({ optional: true }),
     address: column.text({ optional: true }),
-
+    avatar: column.text({ optional: true }),
 
     roleId: column.text({ references: () => Role.columns.id }),
 

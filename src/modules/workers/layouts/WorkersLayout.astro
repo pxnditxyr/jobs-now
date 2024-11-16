@@ -3,7 +3,7 @@ import { ClientRouter } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
 import { Icon } from 'astro-icon/components'
 import WorkerNav from '@/modules/workers/components/ui/WorkerNav.astro'
-import { getSession } from 'auth-astro/server
+import { getSession } from 'auth-astro/server'
 
 
 const session = await getSession( Astro.request )
@@ -81,10 +81,14 @@ const {
                   <div class="flex items-center">
                     <span class="font-bold text-xl">🛠️ Dashboard del Trabajador</span>
                   </div>
-                  <div class="flex items-center">
-                    <span class="text-sm mr-4">Juan Pérez</span>
-                    <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/men/1.jpg" alt="Perfil" />
-                  </div>
+                  <a class="flex items-center" href="/profile">
+                    <span class="text-sm mr-4"> { user?.name } </span>
+                    <img
+                      class="h-8 w-8 rounded-full bg-white"
+                      src={ ( user?.avatar ) ? user.avatar : 'https://qualitysoft-1f745.web.app/img/ing.png' }
+                      alt="Perfil"
+                    />
+                  </a>
                 </div>
               </div>
             </nav>

@@ -1,4 +1,5 @@
 ---
+import Layout from '@/modules/shared/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getSession } from 'auth-astro/server'
 
@@ -9,62 +10,395 @@ const { user } = session ?? {}
 if ( !user ) return Astro.redirect( '/auth/signin' )
 ---
 
-<div class="bg-white rounded-2xl shadow-lg max-w-xl w-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl py-8">
-  <div class="bg-gradient-to-r from-green-600 to-green-500 text-white p-8 text-center relative overflow-hidden">
-    <Icon name="avatar" class="w-36 h-36 rounded-full border-4 border-white mx-auto mb-4 shadow-lg relative z-10 bg-white" />
-    <h1 class="text-3xl font-bold mb-2">¡Bienvenido a Jobs Now! 🎉</h1>
-    <p class="text-lg">Estamos encantados de tenerte con nosotros</p>
+<Layout>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
+    <form id="profile-edit-form">
+      <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div class="p-6 sm:p-8">
+          <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-800">
+            <Icon name="mdi:account-circle" class="text-blue-500 mr-2" size={ 30 } />Mi Perfil 😎
+          </h1>
+
+          <div class="mb-6 text-center">
+            <img
+              src={ ( user?.avatar ) ? user.avatar : '/avatar.svg' }
+              alt="Foto de perfil"
+              class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-blue-500 shadow-lg bg-white"
+            />
+            <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <Icon name="mdi:image" class="text-blue-500 text-xl mr-2" />
+                  <span class="font-semibold text-gray-700">URL de la imagen:</span>
+                </div>
+                <button
+                  id="edit-imageUrl-button"
+                  class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+                >
+                  <Icon name="mdi:pencil" size={ 24 } />
+                </button>
+              </div>
+              <div
+                class="mt-2 items-center hidden"
+                id="imageUrl-field"
+              >
+                <input
+                  type="text"
+                  name="imageUrl"
+                  class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  id="close-imageUrl-button"
+                  class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+                >
+                  <Icon name="mdi:close" size={ 24 } />
+                </button>
+              </div>
+              <p
+                class="mt-1 text-gray-600 text-start"
+                id="imageUrl-value"
+              >
+                {
+                ( user?.avatar ) ? (
+                  user?.avatar
+                ) : (
+                <span class="text-red-500 flex items-center gap-2">No has configurado una foto de perfil. <Icon name="mdi:alert-circle" class="text-red-500" /></span>
+                )
+                }
+              </p>
+            </div>
+          </div>
+
+
+          <!--{renderField('name', 'Nombre', 'mdi-account')}-->
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name={ `mdi:account` } class="text-blue-500 mr-2" size={ 30 } />
+                <span class="font-semibold text-gray-700">{ 'Nombre' }</span>
+              </div>
+              <button
+                id="edit-name-button"
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden"
+              id="name-field"
+            >
+              <input
+                type="text"
+                name="name"
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                id="close-name-button"
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 p-values"
+              id="name-value"
+            >{ user?.name }</p>
+          </div>
+
+
+
+          <!--{renderField('lastName', 'Apellido', 'mdi-account')}-->
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name={ `mdi:account` } class="text-blue-500 mr-2" size={ 30 } />
+                <span class="font-semibold text-gray-700">{ 'Apellido' }</span>
+              </div>
+              <button
+                id="edit-lastName-button"
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden"
+              id="lastName-field"
+            >
+              <input
+                name="lastName"
+                type="text"
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                id="close-lastName-button"
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 p-values"
+              id="lastName-value"
+            >{ user.lastName }</p>
+          </div>
+
+          <!--{renderField('email', 'Correo electrónico', 'mdi-email')}-->
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name={ `mdi:email` } class="text-blue-500 mr-2" size={ 30 } />
+                <span class="font-semibold text-gray-700">{ 'Correo electrónico' }</span>
+              </div>
+              <button
+                id="edit-email-button"
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden"
+              id="email-field"
+            >
+              <input
+                name="email"
+                type="email"
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                id="close-email-button"
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 p-values"
+              id="email-value"
+            >{ user.email }</p>
+          </div>
+
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name={ `mdi:email` } class="text-blue-500 mr-2" size={ 30 } />
+                <span class="font-semibold text-gray-700">{ 'Género' }</span>
+              </div>
+              <button
+                id="edit-gender-button"
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden"
+              id="email-field"
+            >
+
+              <select
+                id="gender"
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                name="gender"
+              >
+                <option value="">Seleccionar género</option>
+                <option value="male">Masculino</option>
+                <option value="female">Femenino</option>
+                <option value="other">Otro</option>
+              </select>
+              <button
+                id="close-gender-button"
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 p-values"
+              id="gender-value"
+            >
+              {
+              ( user.gender ) ? (
+                user.gender
+              ) : (
+              <span class="text-red-500 flex items-center gap-2">No has configurado tu género. <Icon name="mdi:alert-circle" class="text-red-500" /></span>
+              )
+              }</p>
+          </div>
+
+          <!--{renderField('birthDate', 'Fecha de nacimiento', 'mdi-cake-variant')}-->
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name={ `mdi:cake-variant` } class="text-blue-500 mr-2" size={ 30 } />
+                <span class="font-semibold text-gray-700">{ 'Fecha de nacimiento' }</span>
+              </div>
+              <button
+                id="edit-birthDate-button"
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden"
+              id="birthDate-field"
+            >
+              <input
+                name="birthDate"
+                type="date"
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                id="close-birthDate-button"
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 p-values"
+              id="birthDate-value"
+            >
+              {
+              ( user.birthDate ) ? (
+                new Date( user.birthDate ).toLocaleDateString()
+              ) : (
+              <span class="text-red-500 flex items-center gap-2">No has configurado tu fecha de nacimiento. <Icon name="mdi:alert-circle" class="text-red-500" /></span>
+              )
+              }
+            </p>
+
+          </div>
+
+          <!--{renderField('phone', 'Teléfono', 'mdi-phone')}-->
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name={ `mdi:phone` } class="text-blue-500 mr-2" size={ 30 } />
+                <span class="font-semibold text-gray-700">{ 'Teléfono' }</span>
+              </div>
+              <button
+                id="edit-phone-button"
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden"
+              id="phone-field"
+            >
+              <input
+                name="phone"
+                type="tel"
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                id="close-phone-button"
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 p-values"
+              id="phone-value"
+            >
+              {
+              ( user.phone ) ? (
+                user.phone
+              ) : (
+              <span class="text-red-500 flex items-center gap-2">No has configurado tu número de teléfono. <Icon name="mdi:alert-circle" class="text-red-500" /></span>
+              )
+              }
+            </p>
+          </div>
+
+
+          <!--{renderField('address', 'Dirección', 'mdi-map-marker')}-->
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name={ `mdi:map-marker` } class="text-blue-500 mr-2" size={ 30 } />
+                <span class="font-semibold text-gray-700">{ 'Dirección' }</span>
+              </div>
+              <button
+                id="edit-address-button"
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden"
+              id="address-field"
+            >
+              <input
+                name="address"
+                type="text"
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                id="close-address-button"
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 p-values"
+              id="address-value"
+            >
+              {
+              ( user.address ) ? (
+                user.address
+              ) : (
+              <span class="text-red-500 flex items-center gap-2">No has configurado tu dirección. <Icon name="mdi:alert-circle" class="text-red-500" /></span>
+              )
+              }
+            </p>
+          </div>
+
+          <div class="mt-6 text-center hidden" id="save-field">
+            <button
+              id="save-button"
+              class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors shadow-lg hover:shadow-xl"
+            >
+              <Icon name="mdi:content-save" class="mr-2" />Guardar Cambios
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </form>
+
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-inner">
+      <h3 class="text-lg font-semibold mb-2 text-blue-700 flex items-center gap-2">
+        <Icon name="mdi:lightbulb-on" size={ 24 }/>Recomendaciones 💡
+      </h3>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li>Mantén tu información de contacto actualizada para recibir notificaciones importantes.</li>
+        <li>Una foto de perfil profesional puede mejorar tu presencia en la plataforma.</li>
+        <li>Considera agregar una breve biografía para que otros usuarios te conozcan mejor.</li>
+        <li>Revisa regularmente tu configuración de privacidad para controlar quién puede ver tu información.</li>
+      </ul>
+    </div>
+
+    <div class="mt-8 text-center text-gray-800 flex w-full flex-col gap-6 justify-center items-center">
+      <p class="text-xl mb-4">¿Necesitas ayuda con tu perfil? 🤔</p>
+      <button class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+        <Icon name="mdi:help-circle" size={ 24 }/>Contactar Soporte
+      </button>
+    </div>
   </div>
-  <div class="p-8">
-    <p class="mb-6 text-gray-700">Hola,
-      { user?.name } { user?.lastName }
-      Aquí tienes un resumen de tu información:</p>
+</Layout>
+<script>
+import { actions } from 'astro:actions'
 
-    <div class="flex items-center mb-5 text-gray-700 hover:translate-x-1 transition-transform duration-200">
-      <div class="bg-green-500 text-white w-10 h-10 rounded-full flex justify-center items-center mr-4 shadow">
-        👤
-      </div>
-      <span><strong>Nombre:</strong> { user?.name } { user?.lastName }</span>
-    </div>
+const editButtons = document.querySelectorAll( '.edit-button' )
+const closeButtons = document.querySelectorAll( '.close-button' )
 
-    <div class="flex items-center mb-5 text-gray-700 hover:translate-x-1 transition-transform duration-200">
-      <div class="bg-green-500 text-white w-10 h-10 rounded-full flex justify-center items-center mr-4 shadow">
-        ✉️
-      </div>
-      <span><strong>Correo electrónico:</strong> { user?.email }</span>
-    </div>
-
-    <div class="flex items-center mb-5 text-gray-700 hover:translate-x-1 transition-transform duration-200">
-      <div class="bg-green-500 text-white w-10 h-10 rounded-full flex justify-center items-center mr-4 shadow">
-        🔑
-      </div>
-      <span>
-        <strong>Rol:</strong>
-        { ( user.roleId === 'worker' ) ? 'Trabajador'
-          : ( user.roleId === 'admin' ) ? 'Administrador'
-            : 'Usuario'
-        }
-      </span>
-    </div>
-
-    <div class="my-6 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
-
-    <h2 class="text-2xl font-semibold mb-4">🚀 Próximos pasos</h2>
-    <p class="mb-4">Para comenzar tu viaje con nosotros, te sugerimos:</p>
-    <ul class="list-disc list-inside text-gray-700 mb-6">
-      <li>📝 Completa tu perfil añadiendo tu género y fecha de nacimiento</li>
-      <li>🔍 Explora las características de nuestra plataforma</li>
-      <li>🤝 Conéctate con otros usuarios y expande tu red</li>
-      <li>🎯 Establece tus primeros objetivos y metas en la plataforma</li>
-      <li>📚 Revisa nuestros tutoriales y recursos de aprendizaje</li>
-    </ul>
-
-    <div class="my-6 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
-
-    <h2 class="text-2xl font-semibold mb-4 mt-4">💡 ¿Sabías que...?</h2>
-    <p class="mb-6">JobsNow ofrece herramientas de productividad que pueden aumentar tu eficiencia hasta en un 30%. ¡Descúbrelas en tu panel de control!</p>
-
-    <a href="#" class="bg-green-500 text-white rounded-full py-3 px-6 font-semibold text-lg transition-transform duration-300 hover:bg-green-600 hover:-translate-y-0.5 hover:shadow-lg block text-center mt-6">Comenzar a Explorar 🚀</a>
-  </div>
-</div>
-
+</script>
