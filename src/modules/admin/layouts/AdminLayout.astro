@@ -3,6 +3,18 @@ import { ClientRouter } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
 import { Icon } from 'astro-icon/components'
 import AdminNav from '@/modules/admin/components/ui/AdminNav.astro'
+import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
+
+const session = await getSession( Astro.request )
+
+const { user: sessionUser } = session ?? {}
+if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
+const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
+
 
 interface Props {
   title?: string
@@ -86,15 +98,15 @@ const {
                 <Icon size={ 24 } name="mdi:bell-outline" />
               </button>
               <div class="relative">
-                <button class="flex items-center text-gray-600 focus:outline-none">
+                <a class="flex items-center text-gray-600 focus:outline-none" href="/admin/profile">
                   <img
                     class="h-8 w-8 rounded-full object-cover"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src={ user?.avatar ?? '/avatar.svg' }
                     alt="Admin avatar"
                   />
-                  <span class="ml-2"> Admin </span>
-                  <Icon size={ 24 } name="mdi:chevron-down" />
-                </button>
+                  <span class="ml-2"> { user?.name } </span>
+                  <!--<Icon size={ 24 } name="mdi:chevron-down" />-->
+                </a>
               </div>
             </div>
           </div>

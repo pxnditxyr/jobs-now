@@ -1,0 +1,341 @@
+---
+import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
+import { Icon } from 'astro-icon/components'
+import { actions } from 'astro:actions'
+import { getSession } from 'auth-astro/server'
+
+const session = await getSession( Astro.request )
+
+const { user: sessionUser } = session ?? {}
+
+if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
+const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
+
+const inputs = [
+  {
+    id: 'avatar',
+    label: 'Foto de perfil',
+    icon: 'mdi-image',
+    value: user?.avatar,
+    type: 'text',
+    noData: 'No has configurado una foto de perfil.',
+  },
+  {
+    id: 'name',
+    label: 'Nombre',
+    icon: 'mdi-account',
+    value: user?.name,
+    type: 'text',
+    noData: 'No has configurado tu nombre.',
+  },
+  {
+    id: 'lastName',
+    label: 'Apellido',
+    icon: 'mdi-account',
+    value: user?.lastName,
+    type: 'text',
+    noData: 'No has configurado tu apellido.',
+  },
+  {
+    id: 'email',
+    label: 'Correo electrónico',
+    icon: 'mdi-email',
+    value: user?.email,
+    type: 'email',
+    noData: 'No has configurado tu correo electrónico.',
+  },
+  {
+    id: 'gender',
+    label: 'Género',
+    icon: 'mdi:gender-male-female',
+    value: user?.gender,
+    type: 'select',
+    noData: 'No has configurado tu género.',
+    options: [
+      { value: 'Masculino', label: 'Masculino' },
+      { value: 'Femenino', label: 'Femenino' },
+      { value: 'Otro', label: 'Otro' },
+    ],
+  },
+  {
+    id: 'birthDate',
+    label: 'Fecha de nacimiento',
+    icon: 'mdi-cake-variant',
+    value: user?.birthDate,
+    type: 'date',
+    noData: 'No has configurado tu fecha de nacimiento.',
+  },
+  {
+    id: 'phone',
+    label: 'Teléfono',
+    icon: 'mdi-phone',
+    value: user?.phone,
+    type: 'tel',
+    noData: 'No has configurado tu teléfono.',
+  },
+  {
+    id: 'address',
+    label: 'Dirección',
+    icon: 'mdi-map-marker',
+    value: user?.address,
+    type: 'text',
+    noData: 'No has configurado tu dirección.',
+  },
+]
+---
+
+<WorkersLayout>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
+    <form id="profile-edit-form">
+      <input type="hidden" name="id" value={ user?.id } />
+      <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div class="p-6 sm:p-8">
+          <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-800">
+            <Icon name="mdi:account-circle" class="text-blue-500 mr-2" size={ 30 } />Mi Perfil 😎
+          </h1>
+
+          <div class="mb-6 text-center">
+            <img
+              src={ ( user?.avatar ) ? user.avatar : '/avatar.svg' }
+              alt="Foto de perfil"
+              class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-blue-500 shadow-lg bg-white"
+            />
+          </div>
+
+          {
+          inputs.map( input => () => (
+          ( input.type === 'select' ) ? (
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name="mdi:image" class="text-blue-500 text-xl mr-2" />
+                <span class="font-semibold text-gray-700"> { input.label }:</span>
+              </div>
+              <button
+                id={ `edit-${ input.id }-button` }
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+                data-id={ input.id }
+                type="button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden w-full gap-2"
+              id={ `${ input.id }-field` }
+            >
+              <select
+                name={ input.id }
+                class="w-full flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Selecciona una opción</option>
+                {
+                  input.options?.map( option => () => (
+                  <option
+                    value={ option.value }
+                    selected={ ( input.value === option.value ) ? 'selected' : '' }
+                  >
+                    { option.label }
+                  </option>
+                  ) )
+                }
+              </select>
+              <button
+                id={ `close-${ input.id }-button` }
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+                type="button"
+                data-original={ input.value }
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 text-start"
+              id={ `${ input.id }-value` }
+            >
+              {
+              ( input.value ) ? (
+                input.value
+              ) : (
+              <span class="text-red-500 flex items-center gap-2">{ input.noData } <Icon name="mdi:alert-circle" class="text-red-500" /></span>
+              )
+              }
+            </p>
+          </div>
+          ) : (
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <Icon name="mdi:image" class="text-blue-500 text-xl mr-2" />
+                <span class="font-semibold text-gray-700"> { input.label }:</span>
+              </div>
+              <button
+                id={ `edit-${ input.id }-button` }
+                class="text-blue-500 hover:text-blue-700 transition-colors edit-button"
+                data-id={ input.id }
+                type="button"
+              >
+                <Icon name="mdi:pencil" size={ 24 } />
+              </button>
+            </div>
+            <div
+              class="mt-2 items-center hidden w-full gap-2"
+              id={ `${ input.id }-field` }
+            >
+              <input
+                type={ input.type as any }
+                name={ input.id }
+                class="w-full flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={ input.value }
+              />
+              <button
+                id={ `close-${ input.id }-button` }
+                class="ml-2 text-red-500 hover:text-red-700 transition-colors close-button"
+                type="button"
+                data-original={ input.value }
+              >
+                <Icon name="mdi:close" size={ 24 } />
+              </button>
+            </div>
+            <p
+              class="mt-1 text-gray-600 text-start"
+              id={ `${ input.id }-value` }
+            >
+              {
+              ( input.value ) ? (
+                input.value
+              ) : (
+              <span class="text-red-500 flex items-center gap-2">{ input.noData } <Icon name="mdi:alert-circle" class="text-red-500" /></span>
+              )
+              }
+            </p>
+          </div>
+          )
+          ) )
+          }
+
+          <div class="mt-6 text-center hidden bottom-12 right-10" id="save-field">
+            <button
+              id="save-button"
+              class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors shadow-lg hover:shadow-xl flex items-center gap-2"
+              type="submit"
+            >
+              <Icon name="mdi:content-save" class="mr-2" />Guardar Cambios
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </form>
+
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-inner">
+      <h3 class="text-lg font-semibold mb-2 text-blue-700 flex items-center gap-2">
+        <Icon name="mdi:lightbulb-on" size={ 24 }/>Recomendaciones 💡
+      </h3>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li>Mantén tu información de contacto actualizada para recibir notificaciones importantes.</li>
+        <li>Una foto de perfil profesional puede mejorar tu presencia en la plataforma.</li>
+        <li>Considera agregar una breve biografía para que otros usuarios te conozcan mejor.</li>
+        <li>Revisa regularmente tu configuración de privacidad para controlar quién puede ver tu información.</li>
+      </ul>
+    </div>
+
+    <div class="mt-8 text-center text-gray-800 flex w-full flex-col gap-6 justify-center items-center">
+      <p class="text-xl mb-4">¿Necesitas ayuda con tu perfil? 🤔</p>
+      <button class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+        <Icon name="mdi:help-circle" size={ 24 }/>Contactar Soporte
+      </button>
+    </div>
+  </div>
+</WorkersLayout>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+const editButtons = document.querySelectorAll( '.edit-button' ) as NodeListOf<HTMLButtonElement>
+const closeButtons = document.querySelectorAll( '.close-button' ) as NodeListOf<HTMLButtonElement>
+const saveField = document.getElementById( 'save-field' ) as HTMLElement
+const profileEditForm = document.getElementById( 'profile-edit-form' ) as HTMLFormElement
+
+editButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.dataset.id
+    const fieldElement = document.getElementById( `${ id }-field` ) as HTMLElement
+    const valueElement = document.getElementById( `${ id }-value` ) as HTMLElement
+
+    fieldElement.classList.toggle( 'hidden' )
+    fieldElement.classList.toggle( 'flex' )
+    valueElement.classList.toggle( 'hidden' )
+    saveField.classList.remove( 'hidden' )
+    saveField.classList.add( 'fixed' )
+    saveField.dataset.count = ( saveField.dataset.count ) ? `${ parseInt( saveField.dataset.count ) + 1 }` : '1'
+    button.disabled = true
+  } )
+} )
+
+closeButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.id.split( '-' )[ 1 ]
+    const fieldElement = document.getElementById( `${ id }-field` ) as HTMLElement
+    const valueElement = document.getElementById( `${ id }-value` ) as HTMLElement
+    const editButton = document.getElementById( `edit-${ id }-button` ) as HTMLButtonElement
+
+    fieldElement.classList.toggle( 'hidden' )
+    fieldElement.classList.toggle( 'flex' )
+    valueElement.classList.toggle( 'hidden' )
+    saveField.dataset.count = ( saveField.dataset.count ) ? `${ parseInt( saveField.dataset.count ) - 1 }` : '0'
+    if ( saveField.dataset.count === '0' ) {
+      saveField.classList.add( 'hidden' )
+      saveField.classList.remove( 'fixed' )
+    }
+    editButton.disabled = false
+
+
+
+    const originalValue = button.dataset.original
+    console.log({ data: button.dataset, originalValue })
+
+    const input = fieldElement.querySelector( 'input' ) as HTMLInputElement
+    const select = fieldElement.querySelector( 'select' ) as HTMLSelectElement
+    if ( input ) {
+      console.log({ originalValue, type: 'input', value: input.value })
+      input.value = originalValue ?? ''
+    }
+    if ( select ) {
+      console.log({ originalValue, type: 'select', value: select.value })
+      select.value = originalValue ?? ''
+    }
+  } )
+} )
+
+profileEditForm.addEventListener( 'submit', async event => {
+  event.preventDefault()
+
+  const formData = new FormData( profileEditForm )
+
+  const { error } = await actions.updateProfile( formData )
+
+  if ( error ) {
+    console.log({ error })
+    Swal.fire( {
+      title: '¡Error al Actualizar!',
+      text: 'Ocurrió un error al intentar actualizar tu información de perfil. Por favor, intenta de nuevo.',
+      icon: 'error',
+      confirmButtonText: '¡Entendido!',
+    } )
+    return
+  }
+  Swal.fire( {
+    title: '¡Perfil Actualizado!',
+    text: 'Tu información de perfil ha sido actualizada correctamente.',
+    icon: 'success',
+    confirmButtonText: '¡Entendido!',
+  } )
+
+} )
+
+</script>

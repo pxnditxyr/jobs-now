@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
 import ClientNavbar from '@/modules/clients/components/ui/ClientsNavbar.astro'
 import Footer from '@/modules/shared/components/ui/Footer.astro'
@@ -36,7 +35,6 @@ const {
     <meta property="og:image" content={ image } />
 
     <title>{ title }</title>
-    <ClientRouter />
   </head>
   <body>
     <main class:list={[
@@ -50,7 +48,3 @@ const {
     <Footer />
   </body>
 </html>
-
-<script>
-
-</script>

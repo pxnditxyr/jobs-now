@@ -1,4 +1,5 @@
 import { signupUser } from './auth'
+import { updateProfile } from './profile'
 import { createServiceCategory, findAllServiceCategories, findOneServiceCategory, toggleStatusServiceCategory, updateServiceCategory } from './service-categories'
 import { findAllTransactionsByWalletId } from './transactions'
 import { createUser, findAllUsers, findOneUser, toggleStatusUser, updateUser } from './users'
@@ -22,6 +23,7 @@ export const server = {
   findOneWalletByUserId,
   rechargeAmountWallet,
 
+  updateProfile,
 
   findAllTransactionsByWalletId,
 }

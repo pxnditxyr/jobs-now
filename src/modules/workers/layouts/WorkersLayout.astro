@@ -1,14 +1,19 @@
 ---
-import { ClientRouter } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
 import { Icon } from 'astro-icon/components'
 import WorkerNav from '@/modules/workers/components/ui/WorkerNav.astro'
 import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
 
 
 const session = await getSession( Astro.request )
 
-const { user } = session ?? {}
+const { user: sessionUser } = session ?? {}
+if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
+const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
 
 interface Props {
   title?: string
@@ -42,7 +47,6 @@ const {
     <meta property="og:image" content={ image } />
 
     <title>{ title }</title>
-    <ClientRouter />
   </head>
   <body>
     <main class:list={[
@@ -81,11 +85,11 @@ const {
                   <div class="flex items-center">
                     <span class="font-bold text-xl">🛠️ Dashboard del Trabajador</span>
                   </div>
-                  <a class="flex items-center" href="/profile">
+                  <a class="flex items-center" href="/worker/profile">
                     <span class="text-sm mr-4"> { user?.name } </span>
                     <img
                       class="h-8 w-8 rounded-full bg-white"
-                      src={ ( user?.avatar ) ? user.avatar : 'https://qualitysoft-1f745.web.app/img/ing.png' }
+                      src={ ( user?.avatar ) ? user.avatar : '/avatar.svg' }
                       alt="Perfil"
                     />
                   </a>
@@ -101,24 +105,18 @@ const {
 </html>
 
 <script>
-const handlerPageLoad = () => {
-  const sidebar = document.getElementById( 'sidebar' ) as HTMLDivElement;
-  const openSidebarBtn = document.getElementById('openSidebar') as HTMLButtonElement;
-  const closeSidebarBtn = document.getElementById('closeSidebar') as HTMLButtonElement;
+const sidebar = document.getElementById( 'sidebar' ) as HTMLDivElement;
 
-  if ( !sidebar || !openSidebarBtn || !closeSidebarBtn ) return;
+const openSidebarBtn = document.getElementById('openSidebar') as HTMLButtonElement;
+const closeSidebarBtn = document.getElementById('closeSidebar') as HTMLButtonElement;
 
+openSidebarBtn.addEventListener('click', () => {
+  sidebar.classList.remove( '-translate-x-full' );
+  sidebar.classList.add( 'translate-x-0' );
+});
 
-  openSidebarBtn.addEventListener('click', () => {
-    sidebar.classList.remove( '-translate-x-full' );
-    sidebar.classList.add( 'translate-x-0' );
-  });
-
-  closeSidebarBtn.addEventListener('click', () => {
-    sidebar.classList.remove('translate-x-0');
-    sidebar.classList.add('-translate-x-full');
-  });
-}
-
-document.addEventListener( 'astro:page-load', handlerPageLoad )
+closeSidebarBtn.addEventListener('click', () => {
+  sidebar.classList.remove('translate-x-0');
+  sidebar.classList.add('-translate-x-full');
+});
 </script>

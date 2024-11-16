@@ -5,9 +5,12 @@ import { actions } from 'astro:actions'
 
 const session = await getSession( Astro.request )
 
-const { user } = session ?? {}
+const { user: sessionUser } = session ?? {}
 
-if ( !user ) return Astro.redirect( '/auth/signin' )
+if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
+const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
 
 const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
 
@@ -84,9 +87,19 @@ const currentPath = Astro.url.pathname
                 id="toggle-button-open-user-menu"
               >
                 <span class="sr-only">Abrir menú de usuario</span>
-                <div class="h-8 w-8 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
-                  { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
-                </div>
+                {
+                  ( user.avatar ) ? (
+                  <img
+                    class="h-12 w-12 rounded-full"
+                    src={ user.avatar }
+                    alt="Foto de perfil"
+                  />
+                  ) : (
+                  <div class="h-12 w-12 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
+                  { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) } { JSON.stringify( user.avatar ) }
+                  </div>
+                  )
+                }
               </button>
             </div>
             <div
@@ -96,7 +109,7 @@ const currentPath = Astro.url.pathname
               aria-orientation="vertical"
               aria-labelledby="user-menu"
             >
-              <a href="/profile" class="px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2">
+              <a href="/client/profile" class="px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2">
                 <Icon name="mdi:account" size={ 24 } class="mr-2" /> Perfil
               </a>
               <a href="/settings" class="px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2">
@@ -156,7 +169,7 @@ const currentPath = Astro.url.pathname
       </div>
       <div class="mt-3 px-2 space-y-1">
         <a
-          href="/profile"
+          href="/client/profile"
           class="px-3 py-2 rounded-md text-base font-medium text-teal-100 hover:text-white hover:bg-teal-500 flex items-center gap-2"
         >
           <Icon name="mdi:account" size={ 24 } class="mr-2" />Perfil
@@ -182,38 +195,33 @@ const currentPath = Astro.url.pathname
 import { navigate } from 'astro:transitions/client'
 const { signOut } = await import( 'auth-astro/client' )
 
-const handlerPageLoad = () => {
-  const openMobileMenu = document.getElementById( 'open-mobile-menu' ) as HTMLButtonElement
-  const mobileMenu = document.getElementById( 'mobile-menu' ) as HTMLDivElement
-  const signoutButton = document.getElementById( 'signout-button' ) as HTMLButtonElement
-  const signoutButtonMobile = document.getElementById( 'signout-button-mobile' ) as HTMLButtonElement
-  const toggleButtonOpenUserMenu = document.getElementById( 'toggle-button-open-user-menu' ) as HTMLButtonElement
+const openMobileMenu = document.getElementById( 'open-mobile-menu' ) as HTMLButtonElement
+const mobileMenu = document.getElementById( 'mobile-menu' ) as HTMLDivElement
+const signoutButton = document.getElementById( 'signout-button' ) as HTMLButtonElement
+const signoutButtonMobile = document.getElementById( 'signout-button-mobile' ) as HTMLButtonElement
+const toggleButtonOpenUserMenu = document.getElementById( 'toggle-button-open-user-menu' ) as HTMLButtonElement
 
-  if ( !openMobileMenu || !mobileMenu || !signoutButton || !signoutButtonMobile || !toggleButtonOpenUserMenu ) return
+signoutButton.addEventListener( 'click', async () => {
+  await signOut()
+  navigate( '/auth/signin' )
+} )
 
-  signoutButton.addEventListener( 'click', async () => {
-    await signOut()
-    navigate( '/auth/signin' )
-  } )
+signoutButtonMobile.addEventListener( 'click', async () => {
+  await signOut()
+  navigate( '/auth/signin' )
+} )
 
-  signoutButtonMobile.addEventListener( 'click', async () => {
-    await signOut()
-    navigate( '/auth/signin' )
-  } )
+openMobileMenu.addEventListener( 'click', () => {
+  console.log( 'click' )
+  const isExpanded = openMobileMenu.getAttribute( 'aria-expanded' ) === 'true'
+  openMobileMenu.setAttribute( 'aria-expanded', String( !isExpanded ) )
+  mobileMenu.classList.toggle( 'hidden' )
+} )
 
-  openMobileMenu.addEventListener( 'click', () => {
-    console.log( 'click' )
-    const isExpanded = openMobileMenu.getAttribute( 'aria-expanded' ) === 'true'
-    openMobileMenu.setAttribute( 'aria-expanded', String( !isExpanded ) )
-    mobileMenu.classList.toggle( 'hidden' )
-  } )
-
-  toggleButtonOpenUserMenu.addEventListener( 'click', () => {
-    const userMenu = document.getElementById( 'user-menu' ) as HTMLDivElement
-    userMenu.classList.toggle( 'hidden' )
-  } )
-}
-
-document.addEventListener( 'astro:page-load', handlerPageLoad )
+toggleButtonOpenUserMenu.addEventListener( 'click', () => {
+  console.log( 'click' )
+  const userMenu = document.getElementById( 'user-menu' ) as HTMLDivElement
+  userMenu.classList.toggle( 'hidden' )
+} )
 
 </script>
