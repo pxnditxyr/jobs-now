@@ -4,6 +4,7 @@ import { createServiceCategory, findAllServiceCategories, findOneServiceCategory
 import { findAllTransactionsByWalletId } from './transactions'
 import { createUser, findAllUsers, findOneUser, toggleStatusUser, updateUser } from './users'
 import { findOneWalletByUserId, rechargeAmountWallet } from './wallets'
+import { approveDisapproveWorkerProfile, createWorkerProfile, findAllWorkerProfiles, findOneWorkerProfile, findOneWorkerProfileByUserId, updateWorkerProfile } from './worker-profiles'
 
 export const server = {
   signupUser,
@@ -26,4 +27,11 @@ export const server = {
   updateProfile,
 
   findAllTransactionsByWalletId,
+
+  findAllWorkerProfiles,
+  findOneWorkerProfile,
+  createWorkerProfile,
+  updateWorkerProfile,
+  approveDisapproveWorkerProfile,
+  findOneWorkerProfileByUserId,
 }

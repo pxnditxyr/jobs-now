@@ -1,13 +1,13 @@
 import { defineAction } from 'astro:actions'
-import { db, eq, WorkerProfile, } from 'astro:db'
+import { db, eq, WorkerProfile } from 'astro:db'
 
-export const findOneWorkerProfile = defineAction({
+export const findOneWorkerProfileByUserId = defineAction({
   accept: 'json',
-  handler: async ({ id }) => {
+  handler: async ({ userId }) => {
     const [ data ] = await db
       .select()
       .from( WorkerProfile )
-      .where( eq( WorkerProfile.id, id ) )
+      .where( eq( WorkerProfile.userId, userId ) )
 
     if ( !data )
       throw new Error( 'No se encontró el perfil del trabajador. 🤵‍♂️' )
