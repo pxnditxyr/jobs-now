@@ -96,7 +96,7 @@ const currentPath = Astro.url.pathname
                   />
                   ) : (
                   <div class="h-12 w-12 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
-                  { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) } { JSON.stringify( user.avatar ) }
+                  { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
                   </div>
                   )
                 }
@@ -158,9 +158,19 @@ const currentPath = Astro.url.pathname
     <div class="pt-4 pb-3 border-t border-teal-700">
       <div class="flex items-center px-5">
         <div class="flex-shrink-0">
+          {
+          ( user.avatar ) ? (
+          <img
+            class="h-10 w-10 rounded-full"
+            src={ user.avatar }
+            alt="Foto de perfil"
+          />
+          ) : (
           <div class="h-10 w-10 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
             { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
           </div>
+          )
+          }
         </div>
         <div class="ml-3 flex flex-col gap-2">
           <div class="text-base font-medium leading-none text-white">{user.name}</div>

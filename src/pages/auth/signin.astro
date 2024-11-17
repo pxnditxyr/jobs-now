@@ -2,6 +2,13 @@
 import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 import { getRandomCaptcha } from '@/utils'
 import 'sweetalert2/dist/sweetalert2.min.css'
+import { actions } from 'astro:actions'
+
+const { data, error } = await actions.findAllUsers()
+if ( !error ) {
+  const { users } = data
+  console.log( users )
+}
 
 const { audio: audioUrl, code: unhashedCode } = getRandomCaptcha()
 const code = btoa( unhashedCode )

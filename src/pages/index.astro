@@ -7,7 +7,6 @@ import ClientNavbar from '@/modules/clients/components/ui/ClientsNavbar.astro'
 import ServiceCategories from '@/modules/shared/components/services/ServiceCategories.astro'
 
 const session = await getSession( Astro.request )
-const { isLoggedIn } = Astro.locals
 
 const { user } = session ?? {}
 console.log({ user })

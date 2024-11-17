@@ -44,7 +44,7 @@ export default defineConfig({
     })
   ],
   callbacks: {
-    jwt: ({ token, user }) => {
+    jwt: async ({ token, user }) => {
       if ( user ) token.user = user
       return token
     },

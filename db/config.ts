@@ -76,7 +76,8 @@ const Service = defineTable({
     categoryId: column.text({ references: () => ServiceCategory.columns.id }),
     title: column.text(),
     description: column.text(),
-    price: column.number(),
+    imageUrl: column.text(),
+    starCost: column.number(),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
