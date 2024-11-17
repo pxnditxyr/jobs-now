@@ -85,6 +85,20 @@ const Service = defineTable({
   }
 })
 
+const CommentService = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true, unique: true }),
+    userId: column.text({ references: () => User.columns.id }),
+    serviceId: column.text({ references: () => Service.columns.id }),
+    comment: column.text(),
+    rating: column.number(),
+
+    createdAt: column.date({ default: new Date() }),
+    updatedAt: column.date({ default: new Date() }),
+    status: column.boolean({ default: true }),
+  }
+})
+
 const Wallet = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
@@ -187,5 +201,7 @@ export default defineDb({
     Review,
     ReviewWorker,
     Analytic,
+    CommentService,
+    Follower,
   }
 });

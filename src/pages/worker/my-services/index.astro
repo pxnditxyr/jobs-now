@@ -8,30 +8,76 @@ const session = await getSession( Astro.request )
 const { user } = session ?? {}
 if ( !user ) return Astro.redirect( '/auth/signin' )
 
-const initialServices = [
-  { id: 1, name: 'Reparación de Plomería', status: 'Completado', income: 150 },
-  { id: 2, name: 'Instalación Eléctrica', status: 'En Progreso', income: 0 },
-  { id: 3, name: 'Pintura de Interiores', status: 'Pendiente', income: 0 },
+const categories = ['Limpieza', 'Reparación', 'Enseñanza', 'Diseño', 'Programación']
+
+const services = [
+  {
+    id: '1',
+    workerId: 'worker1',
+    categoryId: 'category1',
+    title: 'Limpieza de hogar',
+    description: 'Servicio de limpieza profunda para hogares',
+    imageUrl: 'https://example.com/cleaning.jpg',
+    starCost: 2,
+    createdAt: new Date('2023-06-01'),
+    updatedAt: new Date('2023-06-01'),
+    status: true
+  },
+  {
+    id: '2',
+    workerId: 'worker1',
+    categoryId: 'category2',
+    title: 'Reparación de computadoras',
+    description: 'Arreglo todo tipo de problemas en computadoras',
+    imageUrl: 'https://example.com/repair.jpg',
+    starCost: 2,
+    createdAt: new Date('2023-06-15'),
+    updatedAt: new Date('2023-06-15'),
+    status: true
+  },
 ]
 
-const initialReviews = [
-  { id: 1, service: 'Reparación de Plomería', rating: 5, comment: 'Excelente trabajo, muy profesional.' },
-  { id: 2, service: 'Instalación Eléctrica', rating: 4, comment: 'Buen servicio, pero llegó un poco tarde.' },
-]
-
-
-const reviews = initialReviews
-
-const services = initialServices
-
-const calculateTotalIncome = () => {
-  return services.reduce((total, service) => total + service.income, 0)
+const comments = {
+  '1': [
+    {
+      id: 'comment1',
+      userId: 'user1',
+      serviceId: '1',
+      comment: 'Excelente servicio',
+      rating: 5,
+      createdAt: new Date('2023-06-05'),
+      updatedAt: new Date('2023-06-05'),
+      status: true,
+      user: { id: 'user1', name: 'María', lastName: 'González', avatar: 'https://example.com/maria.jpg' }
+    },
+    {
+      id: 'comment2',
+      userId: 'user2',
+      serviceId: '1',
+      comment: 'Muy buen trabajo',
+      rating: 4,
+      createdAt: new Date('2023-06-10'),
+      updatedAt: new Date('2023-06-10'),
+      status: true,
+      user: { id: 'user2', name: 'Pedro', lastName: 'Sánchez', avatar: 'https://example.com/pedro.jpg' }
+    },
+  ],
+  '2': [
+    {
+      id: 'comment3',
+      userId: 'user3',
+      serviceId: '2',
+      comment: 'Rápido y eficiente',
+      rating: 5,
+      createdAt: new Date('2023-06-20'),
+      updatedAt: new Date('2023-06-20'),
+      status: true,
+      user: { id: 'user3', name: 'Ana', lastName: 'Martínez', avatar: 'https://example.com/ana.jpg' }
+    },
+  ],
 }
 
-const calculateAverageRating = () => {
-  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-  return reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : 'N/A'
-}
+
 
 ---
 
@@ -41,109 +87,198 @@ const calculateAverageRating = () => {
       <div class="px-4 py-6 sm:px-0">
         <h2 class="text-2xl font-semibold text-gray-900 mb-6">Bienvenido, { user.name } 👋</h2>
 
-        <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 bg-primary-light rounded-md p-3 text-white">
-                  <Icon size={ 24 } name="mdi:account-group" />
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate"> Seguidores </dt>
-                    <dd class="text-lg font-semibold text-gray-900"> {calculateTotalIncome()} </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 bg-primary-light rounded-md p-3 text-white">
-                  <Icon size={ 24 } name="mdi:star" />
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Puntuación Promedio</dt>
-                    <dd class="text-lg font-semibold text-gray-900">{calculateAverageRating()} / 5</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 bg-primary-light rounded-md p-3 text-white">
-                  <Icon size={ 24 } name="mdi:briefcase" />
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Servicios Completados</dt>
-                    <dd class="text-lg font-semibold text-gray-900">
-                      {services.filter(s => s.status === 'Completado').length}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
+          <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">
+              <i class="mdi mdi-account-hard-hat text-blue-500 mr-2"></i>Panel de Trabajador
+            </h1>
 
-        <div class="bg-white shadow rounded-lg mb-6">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Mis Servicios</h3>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicio</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ingresos</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  {services.map((service) => (
-                  <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.status}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${service.income}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      { service.status === 'Pendiente' && (
-                      <button
-                        class="text-primary hover:text-primary-dark"
-                      >
-                        Aceptar Trabajo
-                      </button>
-                      ) }
-                    </td>
-                  </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+              <button
+                class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center"
+              >
+                <i class="mdi mdi-plus-circle-outline mr-2"></i>Crear Nuevo Servicio
+              </button>
             </div>
-          </div>
-        </div>
 
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Comentarios Recientes</h3>
-            <div class="space-y-4">
-              {reviews.map((review) => (
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-sm font-medium text-gray-900">{review.service}</span>
-                  <span class="text-sm text-gray-500 flex items-center justify-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Icon size={ 24 } name={ i < review.rating ? 'mdi:star' : 'mdi:star-outline' } class={ i < review.rating ? 'text-yellow-400' : 'text-gray-300' } />
-                    ))}
-                  </span>
+            <div class="space-y-6">
+              {services.map(service => (
+              <div id={`service-${service.id}`} class="bg-white rounded-lg shadow-md overflow-hidden">
+                <img src={service.imageUrl} alt={service.title} class="w-full h-48 object-cover" />
+                <div class="p-6 relative">
+                  <div class="absolute top-2 right-2">
+                    <button
+                      class="text-gray-500 hover:text-gray-700"
+                    >
+                      <i class="mdi mdi-dots-vertical text-xl"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden">
+                      <div class="py-1">
+                        <button
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <h3 class="text-xl font-semibold mb-2 text-gray-800">{service.title}</h3>
+                  <p class="text-gray-600 mb-4">{service.description}</p>
+                  <div class="flex justify-between items-center mb-4">
+                    <span class="text-sm text-gray-500">
+                      <i class="mdi mdi-calendar mr-1"></i>
+                      {service.createdAt.toLocaleDateString()}
+                    </span>
+                    <span class="text-sm font-semibold text-yellow-500">
+                      <i class="mdi mdi-star mr-1"></i>
+                      {service.starCost} estrellas
+                    </span>
+                  </div>
+                  <div class="flex items-center mb-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                      { categories.find( ( _, index ) => index.toString() === service.categoryId ) || 'Sin categoría' }
+                    </span>
+                  </div>
+                  <h4 class="text-lg font-semibold mb-2 text-gray-700">Comentario Reciente</h4>
+
+                  <button
+                    class="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    <i class="mdi mdi-comment-multiple-outline mr-2"></i>Ver todos los comentarios
+                  </button>
                 </div>
-                <p class="text-sm text-gray-600">{review.comment}</p>
               </div>
               ))}
+            </div>
+          </div>
+
+          {/* Modal para editar servicio */}
+          <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg p-6 w-full max-w-md">
+              <h2 class="text-2xl font-semibold mb-4 text-gray-700">
+                <i class="mdi mdi-pencil text-blue-500 mr-2"></i>Editar Servicio
+              </h2>
+              <form class="space-y-4">
+                <div>
+                  <label for="editTitle" class="block text-sm font-medium text-gray-700">Título</label>
+                  <input
+                    type="text"
+                    id="editTitle"
+                    name="title"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="editDescription" class="block text-sm font-medium text-gray-700">Descripción</label>
+                  <textarea
+                    id="editDescription"
+                    name="description"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    rows={3}
+                    required
+                  ></textarea>
+                </div>
+                <div>
+                  <label for="editImageUrl" class="block text-sm font-medium text-gray-700">URL de la imagen</label>
+                  <input
+                    type="url"
+                    id="editImageUrl"
+                    name="imageUrl"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="editStarCost" class="block text-sm font-medium text-gray-700">Costo en estrellas</label>
+                  <input
+                    type="number"
+                    id="editStarCost"
+                    name="starCost"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="editCategoryId" class="block text-sm font-medium text-gray-700">Categoría</label>
+                  <select
+                    id="editCategoryId"
+                    name="categoryId"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    required
+                  >
+                    <option value="">Selecciona una categoría</option>
+                    {categories.map((category, index) => (
+                    <option value={index.toString()}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                    Guardar Cambios
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Modal para comentarios */}
+          <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+              <h2 class="text-2xl font-semibold mb-4 text-gray-700">
+                <i class="mdi mdi-comment-multiple-outline text-green-500 mr-2"></i>Comentarios
+              </h2>
+              <div class="space-y-4 mb-6">
+
+              </div>
+              <form  class="space-y-4">
+                <div>
+                  <label for="rating" class="block text-sm font-medium text-gray-700">Calificación</label>
+                  <select
+                    id="rating"
+                    name="rating"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    required
+                  >
+                    {[1, 2, 3, 4, 5].map(num => (
+                    <option value={num}>{num} estrellas</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label for="comment" class="block text-sm font-medium text-gray-700">Comentario</label>
+                  <textarea
+                    id="comment"
+                    name="comment"
+                    rows={3}
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    required
+                  ></textarea>
+                </div>
+                <div class="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                  <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
+                    Agregar Comentario
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
