@@ -4,7 +4,7 @@ import { createServiceCategory, findAllServiceCategories, findOneServiceCategory
 import { createService, deleteService, findAllServices, findAllServicesByWorkerId, findOneService, updateService } from './services'
 import { findAllTransactionsByWalletId } from './transactions'
 import { createUser, findAllUsers, findOneUser, toggleStatusUser, updateUser } from './users'
-import { findOneWalletByUserId, rechargeAmountWallet } from './wallets'
+import { findOneWalletByUserId, paymentAmountWallet, rechargeAmountWallet } from './wallets'
 import { approveDisapproveWorkerProfile, createWorkerProfile, findAllWorkerProfiles, findOneWorkerProfile, findOneWorkerProfileByUserId, updateWorkerProfile } from './worker-profiles'
 
 export const server = {
@@ -24,6 +24,7 @@ export const server = {
 
   findOneWalletByUserId,
   rechargeAmountWallet,
+  paymentAmountWallet,
 
   updateProfile,
 
@@ -36,10 +37,13 @@ export const server = {
   approveDisapproveWorkerProfile,
   findOneWorkerProfileByUserId,
 
+<<<<<<< Updated upstream
   findAllServices,
   findAllServicesByWorkerId,
   findOneService,
   createService,
   updateService,
   deleteService,
+=======
+>>>>>>> Stashed changes
 }

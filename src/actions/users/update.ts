@@ -34,7 +34,7 @@ export const updateUser = defineAction({
       await db.update( User ).set({
         name,
         lastName,
-        email,
+        email: email.toLowerCase().trim(),
         gender,
         birthDate,
         phone,

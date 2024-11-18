@@ -1,0 +1,21 @@
+---
+import { actions } from 'astro:actions'
+import { getSession } from 'auth-astro/server'
+import { Icon } from 'astro-icon/components'
+import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
+
+const session = await getSession( Astro.request )
+const { user } = session ?? {}
+
+if ( !user ) return Astro.redirect( '/auth/signin' )
+---
+
+<ClientLayout>
+  <div class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-6">
+        <h1 class="text-2xl font-bold mb-4 text-center"> Tu Historial de Contrataciones 📝</h1>
+      </div>
+    </div>
+  </div>
+</ClientLayout>

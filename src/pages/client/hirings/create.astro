@@ -1,0 +1,126 @@
+---
+import { actions } from 'astro:actions'
+import { getSession } from 'auth-astro/server'
+import { Icon } from 'astro-icon/components'
+import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
+
+const session = await getSession( Astro.request )
+const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
+console.log({ workerId })
+
+const { user } = session ?? {}
+
+if ( !user ) return Astro.redirect( '/auth/signin' )
+
+const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+if ( walletError ) return Astro.redirect( '/' )
+
+const { wallet } = walletData
+
+const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+if ( workerError ) return Astro.redirect( '/client' )
+const { user: worker } = workerData
+
+const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
+if ( workerProfileError ) return Astro.redirect( '/client' )
+const { workerProfile } = workerProfileData
+---
+
+<ClientLayout>
+  <div class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-6">
+        <h1 class="text-2xl font-bold mb-4 text-center">Contratación de Servicio 📝</h1>
+
+        <div class="flex items-center mb-6">
+          <img
+            src={ worker?.avatar || '/placeholder.svg?height=64&width=64' }
+            alt={`${ worker?.name } ${worker?.lastName}`}
+            class="w-16 h-16 rounded-full mr-4"
+          />
+          <div>
+            <h2 class="text-xl font-semibold">{worker?.name} {worker?.lastName}</h2>
+            <!--<p class="text-gray-600">{service?.title}</p>-->
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Descripción del Servicio 🔧</h3>
+          <!--<p class="text-gray-700">{service?.description}</p>-->
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Costo del Servicio 💰</h3>
+          <p class="text-2xl font-bold text-green-600 flex items-center gap-2">
+            <Icon name="mdi:star" size={ 24 } class="text-yellow-400" />
+            { 2 } estrellas
+            <!--{service?.starCost} estrellas-->
+          </p>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Tus Estrellas Disponibles  💳</h3>
+          <p class="text-xl flex items-center gap-2">
+            <Icon name="mdi:star" size={ 24 } class="text-yellow-400" />
+            { wallet?.stars } estrellas
+          </p>
+        </div>
+
+        <form class="mb-6" id="create-hiring-form" data-wallet-id={ wallet.id }>
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2"> Fecha de Inicio  del Servicio 📅</h3>
+            <input
+              type="date"
+              class="w-full p-2 border border-gray-300 rounded-md"
+              min={ new Date().toISOString().split( 'T' )[ 0 ] }
+              value={ new Date().toISOString().split( 'T' )[ 0 ] }
+            />
+          </div>
+
+          <button
+            class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
+          >
+            <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
+            Confirmar Contratación
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ClientLayout>
+
+<script>
+import { actions } from 'astro:actions'
+import { getErrorList } from '@/utils'
+import Swal from 'sweetalert2'
+
+const createHiringForm = document.getElementById( 'create-hiring-form' ) as HTMLFormElement
+  createHiringForm.addEventListener( 'submit', async ( event ) => {
+    event.preventDefault()
+    const walletId = createHiringForm.dataset.walletId ?? ''
+
+    const { error } = await actions.paymentAmountWallet({
+      id: walletId,
+      amount: 0.5,
+      stars: 2,
+    })
+
+    if ( error ) {
+      const errorMessages = getErrorList( error )
+      const errorMessage = errorMessages.map( ( { message } ) => message ).join( '\n' )
+      Swal.fire({
+        icon: 'error',
+        title: '¡Ups! Algo salió mal en la transferencia 😢',
+        text: errorMessage,
+      })
+      return
+    }
+    Swal.fire( {
+      icon: 'success',
+      title: '¡Transferencia realizada! 🎉',
+      text: 'La transferencia ha sido realizada con éxito.',
+    })
+    window.location.reload()
+    return
+  } )
+</script>

@@ -8,7 +8,7 @@ export const rootPathFromRole : IRolePath = {
   'admin': '/admin',
   'worker': '/worker',
   'client': '/client',
-  'notAuthenticated': '/'
+  'notAuthenticated': '/auth/signin'
 }
 
 export const getRootPathFromRole = ( role : TRole ) : string => {

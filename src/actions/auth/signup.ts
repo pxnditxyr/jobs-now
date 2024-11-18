@@ -28,7 +28,7 @@ export const signupUser = defineAction({
         id,
         name,
         lastName,
-        email,
+        email: email.toLowerCase().trim(),
         password: bcryptjs.hashSync( password, 10 ),
 
         roleId,

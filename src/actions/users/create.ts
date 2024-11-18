@@ -46,7 +46,7 @@ export const createUser = defineAction({
         id,
         name,
         lastName,
-        email,
+        email: email.toLowerCase().trim(),
         password: bcryptjs.hashSync( password, 10 ),
 
         gender,

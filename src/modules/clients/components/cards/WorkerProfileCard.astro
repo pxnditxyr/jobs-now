@@ -1,0 +1,75 @@
+---
+import { Icon } from 'astro-icon/components'
+import { actions } from 'astro:actions'
+
+interface Props {
+  workerId: string
+}
+
+const { workerId } = Astro.props
+
+const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+if ( workerError ) return Astro.redirect( '/client' )
+const { user: worker } = workerData
+
+const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
+if ( workerProfileError ) return Astro.redirect( '/client' )
+const { workerProfile } = workerProfileData
+---
+
+<div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center gap-4">
+  <div class="relative w-full h-40 overflow-hidden rounded-lg">
+    <img
+      src={ worker.avatar || '/avatar.svg' }
+      alt={ `${ worker.name } ${ worker.lastName }` }
+      class="absolute h-40 w-full object-cover"
+    />
+  </div>
+  <div class="p-4 w-full">
+    <h2 class="text-xl font-semibold text-gray-800 mb-2">{worker.name} {worker.lastName}</h2>
+    <p class="text-gray-600 mb-2 line-clamp-2">{workerProfile.description}</p>
+    <div class="flex items-center mb-2 gap-2">
+      <Icon name="mdi:map-marker" size={ 24 } class="text-red-500" />
+      <span class="text-sm text-gray-600 truncate">
+        {
+        ( worker.address ) ? (
+          worker.address
+        ) : (
+          'Sin información'
+        )
+        }
+      </span>
+    </div>
+    <div class="flex items-center mb-2 gap-2">
+      <Icon name="mdi:school" size={ 24 } class="text-blue-500" />
+      <span class="text-sm text-gray-600 truncate">
+        {
+        ( workerProfile.education ) ? (
+          workerProfile.education
+        ) : (
+          'Sin información'
+        )
+        }
+      </span>
+    </div>
+    <div class="flex items-center mb-4 gap-2">
+      <Icon name="mdi:briefcase" size={ 24 } class="text-green-500" />
+      <span class="text-sm text-gray-600 truncate">
+        {
+        ( workerProfile.experience ) ? (
+          workerProfile.experience
+        ) : (
+          'Sin información'
+        )
+        }
+      </span>
+    </div>
+    <a
+      class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
+      href={ `/job-profiles/${ workerId }` }
+    >
+      <Icon name="mdi:briefcase-edit" size={ 24 } class="text-white" />
+      Revisar Perfil
+    </a>
+  </div>
+</div>

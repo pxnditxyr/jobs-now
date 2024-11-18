@@ -1,5 +1,6 @@
 ---
 import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
+import { Icon } from 'astro-icon/components'
 import { getRandomCaptcha } from '@/utils'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import { actions } from 'astro:actions'
@@ -15,6 +16,12 @@ const code = btoa( unhashedCode )
 ---
 
 <AuthLayout class="bg-gradient-to-br from-[#800020] via-red-500 to-orange-500 min-h-screen flex justify-center items-center font-sans">
+  <a
+    class="mb-4 px-4 py-2 text-white bg-slate-900 rounded hover:text-slate-800 hover:bg-white transition-colors flex items-center gap-2"
+    href="/"
+  >
+    <Icon name="mdi:home" size={ 24 } />Volver a Inicio
+  </a>
   <div class="w-full flex flex-col gap-4 p-8 md:flex-row md:items-center md:justify-center md:py-20">
     <div class="w-full flex flex-col items-center justify-center gap-4 md:p-8 md:w-1/2 md:max-w-[500px]">
       <img
