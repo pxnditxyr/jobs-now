@@ -37,13 +37,10 @@ export const server = {
   approveDisapproveWorkerProfile,
   findOneWorkerProfileByUserId,
 
-<<<<<<< Updated upstream
   findAllServices,
   findAllServicesByWorkerId,
   findOneService,
   createService,
   updateService,
   deleteService,
-=======
->>>>>>> Stashed changes
 }
