@@ -1,0 +1,130 @@
+---
+import { Icon } from 'astro-icon/components'
+import { actions } from 'astro:actions'
+import { getSession } from 'auth-astro/server'
+
+const session = await getSession( Astro.request )
+const { user } = session ?? {}
+if ( !user ) return Astro.redirect( '/auth/signin' )
+const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: user.id })
+if ( workerProfileError ) return Astro.redirect( '/404' )
+const { workerProfile } = workerProfileData
+
+interface Props {
+  publicationId: string
+}
+
+const { publicationId } = Astro.props
+
+const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
+if ( serviceCategoriesError ) return Astro.redirect( '/404' )
+const { serviceCategories } = serviceCategoriesData
+
+const { data: publicationData, error: publicationError } = await actions.findOneService({ id: publicationId })
+if ( publicationError ) return Astro.redirect( '/404' )
+const { service: publication } = publicationData
+---
+
+<div class="w-full">
+  <h2 class="text-2xl font-semibold mb-4 text-gray-700 flex items-center gap-2">
+    <Icon name="mdi:account-plus" size={ 24 } class="mr-2" />Editar Publicación
+  </h2>
+  <form
+    class="space-y-4 edit-publication-form"
+  >
+    <input type="hidden" name="id" value={ publication.id } />
+    <div>
+      <label for="editTitle" class="block text-sm font-medium text-gray-700">Título</label>
+      <input
+        type="text"
+        id="editTitle"
+        name="title"
+        value={ publication.title }
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-4 py-2"
+        required
+      />
+    </div>
+    <div>
+      <label for="editDescription" class="block text-sm font-medium text-gray-700">Descripción</label>
+      <textarea
+        id="editDescription"
+        name="description"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-4 py-2"
+        rows={3}
+        required
+      >{ publication.description }</textarea>
+    </div>
+    <div>
+      <label for="editImageUrl" class="block text-sm font-medium text-gray-700">URL de la imagen</label>
+      <input
+        type="url"
+        id="editImageUrl"
+        name="imageUrl"
+        value={ publication.imageUrl }
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-4 py-2"
+      />
+    </div>
+    <div>
+      <label for="editCategoryId" class="block text-sm font-medium text-gray-700">Categoría</label>
+      <select
+        id="editCategoryId"
+        name="categoryId"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-4 py-2"
+        required
+      >
+        <option value="">Selecciona una categoría</option>
+        {
+          serviceCategories.map( ( serviceCategory ) => (
+        <option
+          value={ serviceCategory.id }
+          selected={ publication.categoryId === serviceCategory.id }
+        >{ serviceCategory.name }</option>
+          ) )
+        }
+      </select>
+    </div>
+    <div class="flex justify-end space-x-2">
+
+      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+        Guardar Cambios
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+import { getErrorList } from '@/utils'
+
+const editPublicationForms = document.querySelectorAll( '.edit-publication-form' ) as NodeListOf<HTMLFormElement>
+
+editPublicationForms.forEach( form => {
+  form.addEventListener( 'submit', async ( event ) => {
+    event.preventDefault()
+    const formData = new FormData( form )
+
+    const { error } = await actions.updateService( formData )
+    if ( error ) {
+      const errorMessages = getErrorList( error )
+      const errorMessage = errorMessages.map( error => error.message ).join( '\n' )
+      Swal.fire( {
+        title: 'Error al editar la publicación',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+      } )
+      return
+    }
+    Swal.fire( {
+      title: 'Publicación editada',
+      text: 'La publicación ha sido editada exitosamente',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+    } )
+    window.location.reload()
+  } )
+} )
+
+</script>
+

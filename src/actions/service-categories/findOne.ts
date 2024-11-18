@@ -9,7 +9,6 @@ export const findOneServiceCategory = defineAction({
       .from( ServiceCategory )
       .where( eq( ServiceCategory.id, id ) )
 
-    console.log({ data })
 
     if ( !data )
       throw new Error( 'No se encontró el usuario. 💁‍♂️' )

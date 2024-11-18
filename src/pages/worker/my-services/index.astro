@@ -2,83 +2,22 @@
 import { Icon } from 'astro-icon/components'
 import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
 import { getSession } from 'auth-astro/server'
+import CreatePublicationForm from '@/modules/workers/components/publications/CreatePublicationForm.astro'
+import EditPublicationForm from '@/modules/workers/components/publications/EditPublicationForm.astro'
+import { actions } from 'astro:actions'
 
 const session = await getSession( Astro.request )
 
 const { user } = session ?? {}
 if ( !user ) return Astro.redirect( '/auth/signin' )
 
-const categories = ['Limpieza', 'Reparación', 'Enseñanza', 'Diseño', 'Programación']
+const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: user.id })
+if ( workerProfileError ) return Astro.redirect( '/404' )
+const { workerProfile } = workerProfileData
 
-const services = [
-  {
-    id: '1',
-    workerId: 'worker1',
-    categoryId: 'category1',
-    title: 'Limpieza de hogar',
-    description: 'Servicio de limpieza profunda para hogares',
-    imageUrl: 'https://example.com/cleaning.jpg',
-    starCost: 2,
-    createdAt: new Date('2023-06-01'),
-    updatedAt: new Date('2023-06-01'),
-    status: true
-  },
-  {
-    id: '2',
-    workerId: 'worker1',
-    categoryId: 'category2',
-    title: 'Reparación de computadoras',
-    description: 'Arreglo todo tipo de problemas en computadoras',
-    imageUrl: 'https://example.com/repair.jpg',
-    starCost: 2,
-    createdAt: new Date('2023-06-15'),
-    updatedAt: new Date('2023-06-15'),
-    status: true
-  },
-]
-
-const comments = {
-  '1': [
-    {
-      id: 'comment1',
-      userId: 'user1',
-      serviceId: '1',
-      comment: 'Excelente servicio',
-      rating: 5,
-      createdAt: new Date('2023-06-05'),
-      updatedAt: new Date('2023-06-05'),
-      status: true,
-      user: { id: 'user1', name: 'María', lastName: 'González', avatar: 'https://example.com/maria.jpg' }
-    },
-    {
-      id: 'comment2',
-      userId: 'user2',
-      serviceId: '1',
-      comment: 'Muy buen trabajo',
-      rating: 4,
-      createdAt: new Date('2023-06-10'),
-      updatedAt: new Date('2023-06-10'),
-      status: true,
-      user: { id: 'user2', name: 'Pedro', lastName: 'Sánchez', avatar: 'https://example.com/pedro.jpg' }
-    },
-  ],
-  '2': [
-    {
-      id: 'comment3',
-      userId: 'user3',
-      serviceId: '2',
-      comment: 'Rápido y eficiente',
-      rating: 5,
-      createdAt: new Date('2023-06-20'),
-      updatedAt: new Date('2023-06-20'),
-      status: true,
-      user: { id: 'user3', name: 'Ana', lastName: 'Martínez', avatar: 'https://example.com/ana.jpg' }
-    },
-  ],
-}
-
-
-
+const { data: servicesData, error: servicesError } = await actions.findAllServicesByWorkerId({ workerId: workerProfile.id })
+if ( servicesError ) return Astro.redirect( '/worker' )
+const { services } = servicesData
 ---
 
 <WorkersLayout>
@@ -89,38 +28,84 @@ const comments = {
 
         <div class="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
           <div class="max-w-4xl mx-auto">
-            <h1 class="text-3xl font-bold mb-6 text-gray-800">
-              <i class="mdi mdi-account-hard-hat text-blue-500 mr-2"></i>Panel de Trabajador
+            <h1 class="text-3xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+              <Icon name="mdi:account-hard-hat" class="ml-2" size={ 30 } />Panel de Trabajador
             </h1>
 
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
               <button
-                class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center"
+                class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                id="create-publication-button"
               >
-                <i class="mdi mdi-plus-circle-outline mr-2"></i>Crear Nuevo Servicio
+                <Icon name="mdi:plus-circle-outline" class="ml-2" size={ 24 } />Crear Nueva Publicación
               </button>
             </div>
+            <div
+              id="create-publication-modal"
+              class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50"
+            >
+              <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                <div class="w-full flex justify-end items-center">
+                  <button
+                    class="text-gray-500 hover:text-gray-700 transition-colors"
+                    id="close-create-publication-modal"
+                  >
+                    <Icon name="mdi:close" size={ 24 } />
+                  </button>
+                </div>
+                <CreatePublicationForm />
+              </div>
+            </div>
+
 
             <div class="space-y-6">
-              {services.map(service => (
-              <div id={`service-${service.id}`} class="bg-white rounded-lg shadow-md overflow-hidden">
-                <img src={service.imageUrl} alt={service.title} class="w-full h-48 object-cover" />
+              { services.map(service => (
+              <>
+              <div
+                id={`edit-publication-modal-${service.id}`}
+                class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50 edit-publication-modal"
+              >
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                  <div class="w-full flex justify-end items-center">
+                    <button
+                      class="text-gray-500 hover:text-gray-700 transition-colors close-edit-publication-modal"
+                      id={`close-edit-publication-modal-${service.id}`}
+                    >
+                      <Icon name="mdi:close" size={ 24 } />
+                    </button>
+                  </div>
+                  <EditPublicationForm
+                    publicationId={ service.id }
+                  />
+                </div>
+              </div>
+              <div id={`service-${service.id}`} class="bg-white rounded-lg shadow-md overflow-hidden p-12">
+                <img src={service.imageUrl} alt={service.title} class="w-full h-80 object-cover" />
+
                 <div class="p-6 relative">
                   <div class="absolute top-2 right-2">
                     <button
-                      class="text-gray-500 hover:text-gray-700"
+                      class="text-gray-500 hover:text-gray-700 dots-vertical"
+                      id={ `dots-vertical-${ service.id }` }
                     >
-                      <i class="mdi mdi-dots-vertical text-xl"></i>
+                      <Icon name="mdi:dots-vertical" size={ 24 } />
                     </button>
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden">
+                    <div
+                      class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden p-4"
+                      id={ `service-menu-${ service.id }` }
+                    >
                       <div class="py-1">
                         <button
-                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left edit-service-button"
+                          id={ `edit-service-${ service.id }` }
+                          data-id={ service.id }
                         >
                           Editar
                         </button>
                         <button
-                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left delete-service-button"
+                          id={ `delete-service-${ service.id }` }
+                          data-id={ service.id }
                         >
                           Eliminar
                         </button>
@@ -131,17 +116,19 @@ const comments = {
                   <p class="text-gray-600 mb-4">{service.description}</p>
                   <div class="flex justify-between items-center mb-4">
                     <span class="text-sm text-gray-500">
-                      <i class="mdi mdi-calendar mr-1"></i>
+                      <Icon name="mdi:calendar" size={ 24 } />
                       {service.createdAt.toLocaleDateString()}
                     </span>
                     <span class="text-sm font-semibold text-yellow-500">
-                      <i class="mdi mdi-star mr-1"></i>
+                      <Icon name="mdi:star" size={ 24 } />
                       {service.starCost} estrellas
                     </span>
                   </div>
                   <div class="flex items-center mb-4">
                     <span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                      { categories.find( ( _, index ) => index.toString() === service.categoryId ) || 'Sin categoría' }
+                      {
+                      service.category.name
+                      }
                     </span>
                   </div>
                   <h4 class="text-lg font-semibold mb-2 text-gray-700">Comentario Reciente</h4>
@@ -153,132 +140,8 @@ const comments = {
                   </button>
                 </div>
               </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Modal para editar servicio */}
-          <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg p-6 w-full max-w-md">
-              <h2 class="text-2xl font-semibold mb-4 text-gray-700">
-                <i class="mdi mdi-pencil text-blue-500 mr-2"></i>Editar Servicio
-              </h2>
-              <form class="space-y-4">
-                <div>
-                  <label for="editTitle" class="block text-sm font-medium text-gray-700">Título</label>
-                  <input
-                    type="text"
-                    id="editTitle"
-                    name="title"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    required
-                  />
-                </div>
-                <div>
-                  <label for="editDescription" class="block text-sm font-medium text-gray-700">Descripción</label>
-                  <textarea
-                    id="editDescription"
-                    name="description"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    rows={3}
-                    required
-                  ></textarea>
-                </div>
-                <div>
-                  <label for="editImageUrl" class="block text-sm font-medium text-gray-700">URL de la imagen</label>
-                  <input
-                    type="url"
-                    id="editImageUrl"
-                    name="imageUrl"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    required
-                  />
-                </div>
-                <div>
-                  <label for="editStarCost" class="block text-sm font-medium text-gray-700">Costo en estrellas</label>
-                  <input
-                    type="number"
-                    id="editStarCost"
-                    name="starCost"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    min="0"
-                    required
-                  />
-                </div>
-                <div>
-                  <label for="editCategoryId" class="block text-sm font-medium text-gray-700">Categoría</label>
-                  <select
-                    id="editCategoryId"
-                    name="categoryId"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    required
-                  >
-                    <option value="">Selecciona una categoría</option>
-                    {categories.map((category, index) => (
-                    <option value={index.toString()}>{category}</option>
-                    ))}
-                  </select>
-                </div>
-                <div class="flex justify-end space-x-2">
-                  <button
-                    type="button"
-                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                  <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
-                    Guardar Cambios
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          {/* Modal para comentarios */}
-          <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
-              <h2 class="text-2xl font-semibold mb-4 text-gray-700">
-                <i class="mdi mdi-comment-multiple-outline text-green-500 mr-2"></i>Comentarios
-              </h2>
-              <div class="space-y-4 mb-6">
-
-              </div>
-              <form  class="space-y-4">
-                <div>
-                  <label for="rating" class="block text-sm font-medium text-gray-700">Calificación</label>
-                  <select
-                    id="rating"
-                    name="rating"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    required
-                  >
-                    {[1, 2, 3, 4, 5].map(num => (
-                    <option value={num}>{num} estrellas</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label for="comment" class="block text-sm font-medium text-gray-700">Comentario</label>
-                  <textarea
-                    id="comment"
-                    name="comment"
-                    rows={3}
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    required
-                  ></textarea>
-                </div>
-                <div class="flex justify-end space-x-2">
-                  <button
-                    type="button"
-                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-                  >
-                    Cerrar
-                  </button>
-                  <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
-                    Agregar Comentario
-                  </button>
-                </div>
-              </form>
+            </>
+              )) }
             </div>
           </div>
         </div>
@@ -286,3 +149,89 @@ const comments = {
     </main>
   </div>
 </WorkersLayout>
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+const createPublicationButton = document.getElementById( 'create-publication-button' ) as HTMLButtonElement
+const createPublicationModal = document.getElementById( 'create-publication-modal' ) as HTMLDivElement
+const closeCreatePublicationModal = document.getElementById( 'close-create-publication-modal' ) as HTMLButtonElement
+
+createPublicationButton.addEventListener( 'click', () => {
+  createPublicationModal.classList.remove( 'hidden' )
+  createPublicationModal.classList.add( 'flex' )
+} )
+
+closeCreatePublicationModal.addEventListener( 'click', () => {
+  createPublicationModal.classList.add( 'hidden' )
+  createPublicationModal.classList.remove( 'flex' )
+} )
+
+const dotsVerticalButtons = document.querySelectorAll( '.dots-vertical' ) as NodeListOf<HTMLButtonElement>
+
+dotsVerticalButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.id.replace( 'dots-vertical-', '' )
+    const serviceIdentifier = `service-menu-${id}`
+    console.log({ serviceIdentifier })
+    const serviceMenu = document.getElementById( `service-menu-${id}` ) as HTMLDivElement
+    console.log({ serviceMenu })
+    serviceMenu.classList.toggle( 'hidden' )
+  } )
+} )
+
+const deleteServiceButtons = document.querySelectorAll( '.delete-service-button' ) as NodeListOf<HTMLButtonElement>
+
+deleteServiceButtons.forEach( button => {
+  button.addEventListener( 'click', async () => {
+    const id = button.dataset.id
+    const { error } = await actions.deleteService({ id: String( id ) })
+    if ( error ) {
+      Swal.fire( {
+        icon: 'error',
+        title: '¡Error al Eliminar el Servicio!',
+        text: 'Ocurrió un error al intentar eliminar el servicio. Por favor, inténtalo de nuevo.',
+
+      } )
+      return
+    }
+    Swal.fire( {
+      icon: 'success',
+      title: '¡Servicio Eliminado!',
+      text: 'El servicio ha sido eliminado exitosamente.',
+    } )
+
+    const serviceElement = document.getElementById( `service-${id}` ) as HTMLDivElement
+    serviceElement.remove()
+  } )
+} )
+
+
+const editServiceButtons = document.querySelectorAll( '.edit-service-button' ) as NodeListOf<HTMLButtonElement>
+
+editServiceButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.dataset.id
+    const serviceIdentifier = `edit-publication-modal-${id}`
+    console.log({ serviceIdentifier })
+    const serviceModal = document.getElementById( serviceIdentifier ) as HTMLDivElement
+    console.log({ serviceModal })
+    serviceModal.classList.remove( 'hidden' )
+    serviceModal.classList.add( 'flex' )
+  } )
+} )
+
+const closeEditServiceModals = document.querySelectorAll( '.close-edit-publication-modal' ) as NodeListOf<HTMLButtonElement>
+
+closeEditServiceModals.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.id.replace( 'close-edit-publication-modal-', '' )
+    const serviceIdentifier = `edit-publication-modal-${id}`
+    console.log({ serviceIdentifier })
+    const serviceModal = document.getElementById( serviceIdentifier ) as HTMLDivElement
+    console.log({ serviceModal })
+    serviceModal.classList.add( 'hidden' )
+    serviceModal.classList.remove( 'flex' )
+  } )
+} )
+</script>
