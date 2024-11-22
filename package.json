@@ -7,6 +7,7 @@
     "dev:remote": "astro dev --remote",
     "start": "astro dev",
     "build": "astro check && astro build",
+    "build:remote": "astro build --remote",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -21,7 +22,7 @@
     "@paypal/react-paypal-js": "^8.7.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "astro": "5.0.0-beta.2",
+    "astro": "^4.16.14",
     "astro-icon": "^1.1.1",
     "auth-astro": "^4.1.2",
     "bcryptjs": "^2.4.3",

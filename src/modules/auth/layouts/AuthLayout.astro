@@ -1,5 +1,5 @@
 ---
-import { ClientRouter } from 'astro:transitions'
+import { ViewTransitions } from 'astro:transitions'
 import { SITE_INFO } from '@/constants/site-info'
 
 interface Props {
@@ -34,7 +34,7 @@ const {
     <meta property="og:image" content={ image } />
 
     <title>{ title }</title>
-    <ClientRouter />
+    <ViewTransitions />
   </head>
   <body>
     <main class:list={[
