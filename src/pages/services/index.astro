@@ -1,14 +1,11 @@
 ---
-import { Icon } from 'astro-icon/components'
 import { getSession } from 'auth-astro/server'
 import Layout from '@/modules/shared/layouts/Layout.astro'
 import PublicNavbar from '@/modules/public/components/ui/PublicNavbar.astro'
 
 const session = await getSession( Astro.request )
-const { isLoggedIn } = Astro.locals
 
 const { user } = session ?? {}
-console.log({ user })
 ---
 
 <Layout>

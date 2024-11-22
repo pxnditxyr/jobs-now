@@ -21,9 +21,9 @@ const { data: workerData, error: workerError } = await actions.findOneUser({ id:
 if ( workerError ) return Astro.redirect( '/client' )
 const { user: worker } = workerData
 
-const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
-if ( workerProfileError ) return Astro.redirect( '/client' )
-const { workerProfile } = workerProfileData
+//const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
+//if ( workerProfileError ) return Astro.redirect( '/client' )
+//const { workerProfile } = workerProfileData
 ---
 
 <ClientLayout>

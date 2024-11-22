@@ -167,7 +167,7 @@ const handlerPageLoadSignin = () => {
         UserNotFound: 'Parece que el correo electrónico o la contraseña son incorrectos',
       }
 
-      const errorMessage = errorMessages[ response.error ] || 'Ha ocurrido un error al iniciar sesion, por favor contacta con soporte si tus credenciales son correctas'
+      const errorMessage = errorMessages[ data?.error ] || 'Ha ocurrido un error al iniciar sesion, por favor contacta con soporte si tus credenciales son correctas'
 
       Swal.fire( {
         icon: 'error',

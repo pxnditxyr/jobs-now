@@ -18,8 +18,17 @@ const { data: workerProfileData, error: workerProfileError } = await actions.fin
 if ( workerProfileError ) return Astro.redirect( '/auth/signin' )
 const { workerProfile } = workerProfileData
 
+interface IInput {
+  id: string
+  label: string
+  icon: string
+  value: string | null
+  type: string
+  noData: string
+  options?: { value: string, label: string }[]
+}
 
-const inputs = [
+const inputs : IInput[] = [
   {
     id: 'description',
     label: 'Descripción',

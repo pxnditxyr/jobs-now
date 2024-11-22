@@ -6,9 +6,8 @@ import { getSession } from 'auth-astro/server'
 const session = await getSession( Astro.request )
 const { user } = session ?? {}
 if ( !user ) return Astro.redirect( '/auth/signin' )
-const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: user.id })
-if ( workerProfileError ) return Astro.redirect( '/404' )
-const { workerProfile } = workerProfileData
+//const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: user.id })
+//if ( workerProfileError ) return Astro.redirect( '/404' )
 
 interface Props {
   publicationId: string

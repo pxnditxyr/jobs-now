@@ -1,7 +1,6 @@
 import { defineAction } from 'astro:actions'
 import { db, eq, User } from 'astro:db'
 import { z } from 'astro:schema'
-import { v4 as UUID } from 'uuid'
 
 
 export const updateUser = defineAction({

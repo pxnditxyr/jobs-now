@@ -1,7 +1,5 @@
 ---
-import { actions } from 'astro:actions'
 import { getSession } from 'auth-astro/server'
-import { Icon } from 'astro-icon/components'
 import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
 
 const session = await getSession( Astro.request )
