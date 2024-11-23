@@ -9,7 +9,8 @@ import EditButton from '@/modules/shared/components/tables/EditButton.astro'
 
 import 'sweetalert2/dist/sweetalert2.min.css'
 
-const { data: usersData, error: usersError } = await actions.findAllUsers()
+//const { data: usersData, error: usersError } = await actions.findAllUsers()
+const { data: usersData, error: usersError } = await Astro.callAction( actions.findAllUsers, {} )
 
 if ( usersError ) return Astro.redirect( '/admin/dashboard' )
 
@@ -79,10 +80,10 @@ const roleColors : Record<string, string> = {
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
-                  class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
-                  id={`span-status-${user.id}`}
+                  class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }`}
+                  id={ `span-status-${ user.id }` }
                 >
-                  {user.status ? 'Activo' : 'Inactivo'}
+                  { user.status ? 'Activo' : 'Inactivo' }
                 </span>
               </td>
               <td class="px-6 py-8 whitespace-nowrap text-sm font-medium flex items-center">
@@ -91,7 +92,7 @@ const roleColors : Record<string, string> = {
                 <button
                   class="toggle-button"
                   data-id={ user.id }
-                  data-current-status={ user.status }
+                  data-current-status={ String( user.status ) }
                 >
                   <Icon
                     name="mdi:delete"
@@ -120,59 +121,55 @@ import Swal from 'sweetalert2'
 
 const deleteButtons = document.querySelectorAll( '.toggle-button' )
 
-deleteButtons.forEach( ( button ) => {
-  button.addEventListener( 'click', async ( _e ) => {
-    const id = button.getAttribute( 'data-id' )
+deleteButtons.forEach((button) => {
+  button.addEventListener('click', async (_e) => {
+    const id = button.getAttribute('data-id')
+    const currentStatus = button.getAttribute('data-current-status') === 'true'
 
-    const currentStatus = button.getAttribute( 'data-current-status' ) === 'true'
+    if (!id) return
 
-    if ( !id ) return
+    const { error } = await actions.toggleStatusUser({ id })
 
-    const { error } = await actions.toggleStatusUser( { id, currentStatus } )
-
-    if ( error ) {
-      Swal.fire( {
+    if (error) {
+      Swal.fire({
         icon: 'error',
-        title: 'Error al eliminar el usuario',
-        text: 'No se pudo eliminar el usuario. Por favor, inténtelo de nuevo.',
-      } )
+        title: 'Error al cambiar el estado del usuario',
+        text: 'No se pudo cambiar el estado del usuario. Por favor, inténtelo de nuevo.',
+      })
       return
     }
 
     Swal.fire({
       icon: 'success',
-      title: 'Perfecto!',
-      text: `Se realizo la accion`,
+      title: '¡Perfecto!',
+      text: 'El estado del usuario ha sido actualizado.',
     })
 
-    button.setAttribute('data-current-status', (!currentStatus).toString())
+    // Actualiza el estado actual
+    const newStatus = !currentStatus
+    button.setAttribute('data-current-status', String(newStatus))
 
-    const statusSpan = document.querySelector( `#span-status-${ id }` ) as HTMLElement
+    // Obtiene los elementos necesarios
+    const statusSpan = document.querySelector(`#span-status-${id}`) as HTMLSpanElement
+    const deleteIcon = button.querySelector('.delete-icon') as HTMLElement
+    const restoreIcon = button.querySelector('.restore-icon') as HTMLElement
 
-    if ( !currentStatus ) {
-      statusSpan.classList.add( 'bg-green-100' )
-      statusSpan.classList.add( 'text-green-800' )
-      statusSpan.classList.remove( 'bg-red-100' )
-      statusSpan.classList.remove( 'text-red-800' )
-      statusSpan.textContent = 'Activo'
+    statusSpan.textContent = newStatus ? 'Activo' : 'Inactivo'
+    if (newStatus) {
+      statusSpan.classList.remove('bg-red-100', 'text-red-800')
+      statusSpan.classList.add('bg-green-100', 'text-green-800')
     } else {
-      statusSpan.classList.add( 'bg-red-100' )
-      statusSpan.classList.add( 'text-red-800' )
-      statusSpan.classList.remove( 'bg-green-100' )
-      statusSpan.classList.remove( 'text-green-800' )
-      statusSpan.textContent = 'Inactivo'
+      statusSpan.classList.remove('bg-green-100', 'text-green-800')
+      statusSpan.classList.add('bg-red-100', 'text-red-800')
     }
 
-    const deleteIcon = button.querySelector( '.delete-icon' ) as HTMLElement
-    const restoreIcon = button.querySelector( '.restore-icon' ) as HTMLElement
-
-    if ( !currentStatus ) {
+    if (newStatus) {
       deleteIcon.classList.remove('hidden')
       restoreIcon.classList.add('hidden')
     } else {
       deleteIcon.classList.add('hidden')
       restoreIcon.classList.remove('hidden')
     }
-  } )
-} )
+  })
+})
 </script>

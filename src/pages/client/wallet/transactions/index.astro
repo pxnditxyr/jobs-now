@@ -12,12 +12,15 @@ const { user } = session ?? {}
 
 if ( !user ) return Astro.redirect( '/auth/signin' )
 
-const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+//const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+const { data: walletData, error: walletError } = await Astro.callAction( actions.findOneWalletByUserId, { userId: user.id } )
 if ( walletError ) return Astro.redirect( '/' )
 
 const { wallet } = walletData
 
-const { data: transactionsData, error: transactionsError } = await actions.findAllTransactionsByWalletId({ walletId: wallet.id })
+//const { data: transactionsData, error: transactionsError } = await actions.findAllTransactionsByWalletId({ walletId: wallet.id })
+const { data: transactionsData, error: transactionsError } = await Astro.callAction( actions.findAllTransactionsByWalletId, { walletId: wallet.id } )
+
 if ( transactionsError ) return Astro.redirect( '/' )
 
 const { transactions } = transactionsData

@@ -9,7 +9,8 @@ const session = await getSession( Astro.request )
 const { user: sessionUser } = session ?? {}
 
 if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
-const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+//const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: sessionUser.id } )
 
 if ( userError ) return Astro.redirect( '/auth/signin' )
 const { user } = userData
@@ -302,11 +303,9 @@ closeButtons.forEach( button => {
     const input = fieldElement.querySelector( 'input' ) as HTMLInputElement
     const select = fieldElement.querySelector( 'select' ) as HTMLSelectElement
     if ( input ) {
-      console.log({ originalValue, type: 'input', value: input.value })
       input.value = originalValue ?? ''
     }
     if ( select ) {
-      console.log({ originalValue, type: 'select', value: select.value })
       select.value = originalValue ?? ''
     }
   } )
@@ -320,7 +319,6 @@ profileEditForm.addEventListener( 'submit', async event => {
   const { error } = await actions.updateProfile( formData )
 
   if ( error ) {
-    console.log({ error })
     Swal.fire( {
       title: '¡Error al Actualizar!',
       text: 'Ocurrió un error al intentar actualizar tu información de perfil. Por favor, intenta de nuevo.',

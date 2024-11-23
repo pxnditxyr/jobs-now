@@ -6,18 +6,19 @@ import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
 
 const session = await getSession( Astro.request )
 const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
-console.log({ workerId })
 
 const { user } = session ?? {}
 
 if ( !user ) return Astro.redirect( '/auth/signin' )
 
-const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+//const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+const { data: walletData, error: walletError } = await Astro.callAction( actions.findOneWalletByUserId, { userId: user.id } )
 if ( walletError ) return Astro.redirect( '/' )
 
 const { wallet } = walletData
 
-const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+//const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+const { data: workerData, error: workerError } = await Astro.callAction( actions.findOneUser, { id: workerId } )
 if ( workerError ) return Astro.redirect( '/client' )
 const { user: worker } = workerData
 

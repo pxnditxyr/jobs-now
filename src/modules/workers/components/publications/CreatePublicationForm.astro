@@ -6,11 +6,13 @@ import { getSession } from 'auth-astro/server'
 const session = await getSession( Astro.request )
 const { user } = session ?? {}
 if ( !user ) return Astro.redirect( '/auth/signin' )
-const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: user.id })
+//const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: user.id })
+const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: user.id } )
 if ( workerProfileError ) return Astro.redirect( '/404' )
 const { workerProfile } = workerProfileData
 
-const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
+//const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
+const { data: serviceCategoriesData, error: serviceCategoriesError } = await Astro.callAction( actions.findAllServiceCategories, {} )
 if ( serviceCategoriesError ) return Astro.redirect( '/404' )
 const { serviceCategories } = serviceCategoriesData
 

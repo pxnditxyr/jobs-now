@@ -28,7 +28,6 @@ export const updateWorkerProfile = defineAction({
     interests,
     about,
   } ) => {
-    console.log( 'entra' )
     try {
       await db.update( WorkerProfile ).set({
         description,

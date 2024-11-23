@@ -9,7 +9,8 @@ const session = await getSession( Astro.request )
 const { user: sessionUser } = session ?? {}
 
 if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
-const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+//const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: sessionUser.id } )
 
 if ( userError ) return Astro.redirect( '/auth/signin' )
 const { user } = userData

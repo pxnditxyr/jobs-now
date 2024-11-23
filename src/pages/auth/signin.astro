@@ -3,13 +3,6 @@ import AuthLayout from '@/modules/auth/layouts/AuthLayout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRandomCaptcha } from '@/utils'
 import 'sweetalert2/dist/sweetalert2.min.css'
-import { actions } from 'astro:actions'
-
-const { data, error } = await actions.findAllUsers()
-if ( !error ) {
-  const { users } = data
-  console.log( users )
-}
 
 const { audio: audioUrl, code: unhashedCode } = getRandomCaptcha()
 const code = btoa( unhashedCode )
@@ -110,6 +103,8 @@ import Swal from 'sweetalert2'
 
 const { signIn } = await import( 'auth-astro/client' )
 
+console.log( 'hola' )
+
 const handlerPageLoadSignin = () => {
   console.log( 'Page loaded' )
   const form = document.querySelector( '#form-signin' ) as HTMLFormElement
@@ -157,7 +152,9 @@ const handlerPageLoadSignin = () => {
     } )
 
     if ( response ) {
+      console.log({ response })
       const data = await response.json()
+      console.log({ data })
       const urlParams = new URLSearchParams(response.url.split('?')[1]);
       const errorCode = urlParams.get('error');
       console.log({ errorCode, data })

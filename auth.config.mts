@@ -18,9 +18,7 @@ export default defineConfig({
           .where( eq( User.email, `${ email }` ) )
 
         if ( !user ) {
-          const error = new Error( 'UserNotFound' )
-          error.name = 'UserNotFound'
-          throw error
+          throw new Error( 'UserNotFound' )
           //throw new Error( 'Parece que el correo electrónico o la contraseña son incorrectos' )
         }
 

@@ -5,6 +5,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "crypto": [
+        "node_modules/crypto-js"
       ]
     },
     "jsx": "react-jsx",

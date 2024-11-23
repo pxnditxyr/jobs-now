@@ -2,7 +2,7 @@
 import WorkerProfileCard from './WorkerProfileCard.astro'
 import { actions } from 'astro:actions'
 
-const { data: workerProfilesData, error: workerProfilesError } = await actions.findAllWorkerProfiles()
+const { data: workerProfilesData, error: workerProfilesError } = await Astro.callAction( actions.findAllWorkerProfiles, {} )
 if ( workerProfilesError ) return Astro.redirect( '/client' )
 const { workerProfiles } = workerProfilesData
 

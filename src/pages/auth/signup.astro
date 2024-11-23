@@ -16,7 +16,7 @@ const code = btoa( unhashedCode )
   >
     <Icon name="mdi:home" size={ 24 } />Volver a Inicio
   </a>
-  <div class="w-full flex flex-col-reverse gap-4 px-8 lg:flex-row lg:items-center lg:justify-center lg:py-8">
+  <div class="w-full flex flex-col-reverse gap-4 px-8 lg:flex-row lg:items-center lg:justify-center lg:py-8 mb-16">
     <div class="w-full flex flex-col items-center justify-center gap-12 lg:p-8 border-r-2 border-r-white lg:w-1/2 lg:max-w-[700px]">
       <div class="bg-white bg-opacity-80 backdrop-blur-lg p-8 rounded-lg shadow-[0_0_25px_12px_rgba(0,0,0,0.6)] w-full flex flex-col gap-8">
         <div class="bg-red-600 w-16 h-16 rounded-full flex justify-center items-center mx-auto -mt-20 mb-5 shadow-md">
@@ -224,7 +224,7 @@ const handlerPageLoad = () => {
     if ( error ) {
 
       const errorMessages = getErrorMessage( error )
-      console.log({ errorMessages })
+      //console.log({ errorMessages })
 
       Swal.fire({
         icon: 'error',

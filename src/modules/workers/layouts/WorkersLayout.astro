@@ -10,7 +10,8 @@ const session = await getSession( Astro.request )
 
 const { user: sessionUser } = session ?? {}
 if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
-const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+//const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: sessionUser.id } )
 
 if ( userError ) return Astro.redirect( '/auth/signin' )
 const { user } = userData
@@ -105,18 +106,18 @@ const {
 </html>
 
 <script>
-const sidebar = document.getElementById( 'sidebar' ) as HTMLDivElement;
+const sidebar = document.getElementById( 'sidebar' ) as HTMLDivElement
 
-const openSidebarBtn = document.getElementById('openSidebar') as HTMLButtonElement;
-const closeSidebarBtn = document.getElementById('closeSidebar') as HTMLButtonElement;
+const openSidebarBtn = document.getElementById('openSidebar') as HTMLButtonElement
+const closeSidebarBtn = document.getElementById('closeSidebar') as HTMLButtonElement
 
 openSidebarBtn.addEventListener('click', () => {
-  sidebar.classList.remove( '-translate-x-full' );
-  sidebar.classList.add( 'translate-x-0' );
-});
+  sidebar.classList.remove( '-translate-x-full' )
+  sidebar.classList.add( 'translate-x-0' )
+})
 
 closeSidebarBtn.addEventListener('click', () => {
-  sidebar.classList.remove('translate-x-0');
-  sidebar.classList.add('-translate-x-full');
-});
+  sidebar.classList.remove('translate-x-0')
+  sidebar.classList.add('-translate-x-full')
+})
 </script>

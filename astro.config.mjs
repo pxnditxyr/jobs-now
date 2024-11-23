@@ -17,8 +17,5 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   integrations: [tailwind(), db(), auth(), icon(), react()],
   output: 'server',
-  experimental: {
-    actions: true,
-  },
   adapter: cloudflare(),
 });

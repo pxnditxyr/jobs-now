@@ -15,7 +15,8 @@ const { user } = session ?? {}
 
 if ( !user ) return Astro.redirect( '/auth/signin' )
 
-const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+//const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+const { data: walletData, error: walletError } = await Astro.callAction( actions.findOneWalletByUserId, { userId: user.id } )
 if ( walletError ) return Astro.redirect( '/' )
 
 const { wallet } = walletData

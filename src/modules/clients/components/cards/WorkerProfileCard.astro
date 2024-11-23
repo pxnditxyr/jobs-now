@@ -8,11 +8,13 @@ interface Props {
 
 const { workerId } = Astro.props
 
-const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+//const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+const { data: workerData, error: workerError } = await Astro.callAction( actions.findOneUser, { id: workerId } )
 if ( workerError ) return Astro.redirect( '/client' )
 const { user: worker } = workerData
 
-const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
+//const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
+const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
 if ( workerProfileError ) return Astro.redirect( '/client' )
 const { workerProfile } = workerProfileData
 ---

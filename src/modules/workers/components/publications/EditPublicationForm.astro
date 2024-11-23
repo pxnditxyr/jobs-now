@@ -15,11 +15,13 @@ interface Props {
 
 const { publicationId } = Astro.props
 
-const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
+//const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
+const { data: serviceCategoriesData, error: serviceCategoriesError } = await Astro.callAction( actions.findAllServiceCategories, {} )
 if ( serviceCategoriesError ) return Astro.redirect( '/404' )
 const { serviceCategories } = serviceCategoriesData
 
-const { data: publicationData, error: publicationError } = await actions.findOneService({ id: publicationId })
+//const { data: publicationData, error: publicationError } = await actions.findOneService({ id: publicationId })
+const { data: publicationData, error: publicationError } = await Astro.callAction( actions.findOneService, { id: publicationId } )
 if ( publicationError ) return Astro.redirect( '/404' )
 const { service: publication } = publicationData
 ---

@@ -9,15 +9,18 @@ interface Props {
 
 const { workerId } = Astro.props
 
-const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+//const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
+const { data: workerData, error: workerError } = await Astro.callAction( actions.findOneUser, { id: workerId } )
 if ( workerError ) return Astro.redirect( '/' )
 const { user: worker } = workerData
 
-const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
+//const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
+const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
 if ( workerProfileError ) return Astro.redirect( '/' )
 const { workerProfile } = workerProfileData
 
-const { data: servicesData, error: servicesError } = await actions.findAllServicesByWorkerId({ workerId: workerProfile.id })
+//const { data: servicesData, error: servicesError } = await actions.findAllServicesByWorkerId({ workerId: workerProfile.id })
+const { data: servicesData, error: servicesError } = await Astro.callAction( actions.findAllServicesByWorkerId, { workerId: workerProfile.id } )
 if ( servicesError ) return Astro.redirect( '/worker' )
 const { services } = servicesData
 ---
@@ -46,8 +49,8 @@ const { services } = servicesData
           </div>
         </div>
         <div class="sm:ml-auto flex flex-col items-center sm:items-end gap-2">
-          <div class="flex items-center">
-            <i class="mdi mdi-star text-yellow-400 mr-1"></i>
+          <div class="flex items-center gap-1">
+            <Icon name="mdi:star" class="text-yellow-400 mr-1" />
             <span class="font-bold"> ⭐{ 4 } </span>
             <span class="text-gray-500 ml-1">({ 0 } trabajos)</span>
           </div>
@@ -210,9 +213,9 @@ const { services } = servicesData
         <h4 class="text-lg font-semibold mb-2 text-gray-700">Comentario Reciente</h4>
 
         <button
-          class="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+          class="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors flex items-center gap-2 justify-center"
         >
-          <i class="mdi mdi-comment-multiple-outline mr-2"></i>Ver todos los comentarios
+          <Icon name="mdi:comment-multiple-outline" size={ 24 } />Ver todos los comentarios
         </button>
       </div>
     </div>

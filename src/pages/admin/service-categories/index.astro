@@ -9,7 +9,8 @@ import EditButton from '@/modules/shared/components/tables/EditButton.astro'
 
 import 'sweetalert2/dist/sweetalert2.min.css'
 
-const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
+//const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
+const { data: serviceCategoriesData, error: serviceCategoriesError } = await Astro.callAction( actions.findAllServiceCategories, {} )
 
 if ( serviceCategoriesError ) return Astro.redirect( '/admin' )
 
@@ -82,7 +83,7 @@ const { serviceCategories } = serviceCategoriesData
                 <button
                   class="toggle-button"
                   data-id={ serviceCategory.id }
-                  data-current-status={ serviceCategory.status }
+                  data-current-status={ String( serviceCategory.status ) }
                 >
                   <Icon
                     name="mdi:delete"

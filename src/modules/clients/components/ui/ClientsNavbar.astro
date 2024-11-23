@@ -8,11 +8,13 @@ const session = await getSession( Astro.request )
 const { user: sessionUser } = session ?? {}
 
 if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
-const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+//const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: sessionUser.id } )
 if ( userError ) return Astro.redirect( '/auth/signin' )
 const { user } = userData
 
-const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+//const { data: walletData, error: walletError } = await actions.findOneWalletByUserId({ userId: user.id })
+const { data: walletData, error: walletError } = await Astro.callAction( actions.findOneWalletByUserId, { userId: user.id } )
 
 if ( walletError ) return Astro.redirect( '/404' )
 const { wallet } = walletData

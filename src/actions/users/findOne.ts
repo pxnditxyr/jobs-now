@@ -10,8 +10,6 @@ export const findOneUser = defineAction({
       .innerJoin( Role, eq( User.roleId, Role.id ) )
       .where( eq( User.id, id ) )
 
-    console.log({ data })
-
     if ( !data )
       throw new Error( 'No se encontró el usuario. 💁‍♂️' )
 
