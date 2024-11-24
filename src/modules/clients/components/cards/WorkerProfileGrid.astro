@@ -17,7 +17,7 @@ const { serviceCategories } = serviceCategoriesData
 
 ---
 
-<form class="w-full max-w-7xl px-8" method="GET">
+<form class="w-full max-w-7xl px-8">
   <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">🔍 Búsqueda Avanzada</h2>
   <div class="flex flex-wrap -mx-4">
     <div class="w-full px-4 mb-6 md:w-1/2">
@@ -35,6 +35,7 @@ const { serviceCategories } = serviceCategoriesData
         />
         <button
           class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-200"
+          type="submit"
         >
           <Icon name="mdi:magnify" size={ 20 } />
         </button>
@@ -130,5 +131,16 @@ starButtons.forEach( ( star ) => {
     const ratingInput = document.getElementById( 'rating' ) as HTMLInputElement
     ratingInput.value = String( id )
   } )
+} )
+
+const searchForm = document.querySelector( 'form' ) as HTMLFormElement
+
+searchForm.addEventListener( 'submit', async ( event ) => {
+  event.preventDefault()
+  const formData = new FormData( searchForm )
+  const data = Object.fromEntries( formData.entries() )
+  const { rating, serviceCategoryId, search } = data
+  console.log({ rating, serviceCategoryId, search })
+  window.location.href = `/?rating=${ rating }&serviceCategoryId=${ serviceCategoryId }&search=${ search }`
 } )
 </script>

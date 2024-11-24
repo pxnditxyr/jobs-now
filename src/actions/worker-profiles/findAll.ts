@@ -28,10 +28,27 @@ export const findAllWorkerProfiles = defineAction({
           WorkerProfile.createdAt
         )
        )
+    console.log({ workerProfilesXD: workerProfiles.map( wp => wp.WorkerProfile ) })
 
     let workerProfilesFiltered = await Promise.all(workerProfiles.map(async ({ WorkerProfile, User }) => {
 
-      const publications = await db
+      const dataForServices = await db
+        .select()
+        .from(Service)
+        .innerJoin(ServiceCategory, eq(Service.categoryId, ServiceCategory.id))
+        .where(
+          and(
+            eq(Service.workerId, WorkerProfile.id),
+            eq(Service.status, true),
+          )
+        )
+        .orderBy(
+          desc(
+            Service.createdAt
+          )
+        )
+
+      const dataForRating = await db
         .select()
         .from(Service)
         .innerJoin(CommentService, eq(Service.id, CommentService.serviceId))
@@ -49,19 +66,22 @@ export const findAllWorkerProfiles = defineAction({
           )
         )
 
+      console.log({ dataForRating: dataForRating.map( p => p.Service ) })
+      console.log({ dataForServices: dataForServices.map( p => p.Service ) })
+
       let ratingAverage = 0
       let noRepeatedServiceCategoryIds : any = []
 
-      if (publications.length > 0) {
-        const ratingSum = publications.reduce((total, publication) => {
+      if ( dataForRating.length > 0 ) {
+        const ratingSum = dataForRating.reduce((total, publication) => {
           return total + publication.CommentService.rating
         }, 0)
 
-        ratingAverage = ratingSum / publications.length
+        ratingAverage = ratingSum / dataForRating.length
 
-        const serviceCategoryIds = publications.map(ps => ps.ServiceCategory.id)
-        noRepeatedServiceCategoryIds = Array.from(new Set(serviceCategoryIds))
       }
+      const serviceCategoryIds = dataForServices.map(ps => ps.ServiceCategory.id)
+      noRepeatedServiceCategoryIds = Array.from(new Set(serviceCategoryIds))
 
       return {
         ...WorkerProfile,
@@ -70,14 +90,18 @@ export const findAllWorkerProfiles = defineAction({
         serviceCategories: noRepeatedServiceCategoryIds
       }
     }))
+    console.log({ workerProfilesFiltered })
 
     if ( rating !== undefined && rating !== 0 ) {
       workerProfilesFiltered = workerProfilesFiltered.filter(wp => wp.rating >= rating)
     }
+    console.log({ workerProfilesFilteredWithRating: workerProfilesFiltered })
 
     if ( serviceCategoryId !== undefined && serviceCategoryId !== '' ) {
-      workerProfilesFiltered = workerProfilesFiltered.filter(wp => wp.serviceCategories.includes(serviceCategoryId))
+      console.log({ serviceCategoryId })
+      workerProfilesFiltered = workerProfilesFiltered.filter( wp => wp.serviceCategories.includes( serviceCategoryId ) )
     }
+    console.log({ workerProfilesFilteredWithServiceCategoryId: workerProfilesFiltered })
 
     return {
       workerProfiles: workerProfilesFiltered
