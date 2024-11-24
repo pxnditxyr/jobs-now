@@ -26,7 +26,6 @@ export const updateService = defineAction({
 
     try {
       await db.update( Service ).set({
-        id: UUID(),
         description,
         title,
         imageUrl: imageUrl ? imageUrl : 'https://st5.depositphotos.com/4509995/64457/i/450/depositphotos_644577382-stock-photo-african-american-girl-vlogger-influencer.jpg',
