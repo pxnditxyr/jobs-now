@@ -1,17 +1,134 @@
 ---
 import WorkerProfileCard from './WorkerProfileCard.astro'
+import { Icon } from 'astro-icon/components'
 import { actions } from 'astro:actions'
 
-const { data: workerProfilesData, error: workerProfilesError } = await Astro.callAction( actions.findAllWorkerProfiles, {} )
+const rating = Number( Astro.url.searchParams.get( 'rating' ) ?? 0 )
+const serviceCategoryId = Astro.url.searchParams.get( 'serviceCategoryId' )
+const search = Astro.url.searchParams.get( 'search' )
+
+const { data: workerProfilesData, error: workerProfilesError } = await Astro.callAction( actions.findAllWorkerProfiles, { search: search ?? undefined, rating: rating ?? undefined, serviceCategoryId: serviceCategoryId ?? undefined } )
 if ( workerProfilesError ) return Astro.redirect( '/client' )
 const { workerProfiles } = workerProfilesData
 
+const { data: serviceCategoriesData, error: serviceCategoriesError } = await Astro.callAction( actions.findAllServiceCategories, {} )
+if ( serviceCategoriesError ) return Astro.redirect( '/404' )
+const { serviceCategories } = serviceCategoriesData
+
 ---
 
+<form class="w-full max-w-7xl px-8" method="GET">
+  <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">🔍 Búsqueda Avanzada</h2>
+  <div class="flex flex-wrap -mx-4">
+    <div class="w-full px-4 mb-6 md:w-1/2">
+      <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
+        Buscar
+      </label>
+      <div class="relative">
+        <input
+          type="text"
+          id="search"
+          name="search"
+          class="w-full pl-4 pr-12 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          value={ search }
+          placeholder="¿Qué estás buscando?"
+        />
+        <button
+          class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-200"
+        >
+          <Icon name="mdi:magnify" size={ 20 } />
+        </button>
+      </div>
+    </div>
+    <div class="w-full md:w-1/2 px-4 flex flex-col md:flex-row gap-4">
+      <div class="w-full md:w-1/2 px-4">
+        <label for="serivceCategoryId" class="block text-sm font-medium text-gray-700 mb-2">
+          Categoría
+        </label>
+        <select
+          id="serviceCategoryId"
+          name="serviceCategoryId"
+          class="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value=""> Todas las categorías </option>
+          {
+          serviceCategories.filter( sc => sc.status ).map( ( serviceCategory ) => (
+          <option
+            value={ serviceCategory.id }
+            selected={ serviceCategoryId === serviceCategory.id }
+          >
+            { serviceCategory.name }
+          </option>
+          ) )
+          }
+        </select>
+      </div>
+      <div class="w-full md:w-1/2 px-4 mb-6">
+        <label for="rating" class="block text-sm font-medium text-gray-700 mb-2">
+          Calificación mínima
+        </label>
+        <select
+          id="rating"
+          name="rating"
+          class="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value=""> Todos los niveles </option>
+          { [ 5, 4, 3, 2, 1 ].map( ( star ) => (
+          <option
+            value={ star }
+            selected={ rating === star }
+          >
+            {
+            [ 5, 4, 3, 2, 1 ].map( ( subStar ) => (
+              <span>
+              { ( subStar < star + 1 ) && ( <span> ⭐ </span> ) }
+              </span>
+            ) )
+            }
+          </option>
+          ) )
+          }
+        </select>
+      </div>
+    </div>
+
+  </div>
+</form>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl px-8">
+
   {
     workerProfiles.map( ( workerProfile ) => (
       <WorkerProfileCard workerId={ workerProfile.userId } />
     ) )
   }
 </div>
+
+<script>
+const starButtons = document.querySelectorAll( '.star-buttons' ) as NodeListOf<HTMLButtonElement>
+console.log( starButtons )
+
+starButtons.forEach( ( star ) => {
+  star.addEventListener( 'click', async () => {
+    const id = star.id.replace( 'button-star-', '' )
+    console.log({ id })
+
+    for ( const star of starButtons ) {
+      const beforeStar = star.id.replace( 'button-star-', '' )
+      if ( Number( beforeStar ) <= Number( id ) ) {
+        const iconStarOutline = document.getElementById( `icon-star-outline-${ beforeStar }` ) as HTMLElement
+        const iconStar = document.getElementById( `icon-star-${ beforeStar }` ) as HTMLElement
+        iconStarOutline.classList.add( 'hidden' )
+        iconStar.classList.remove( 'hidden' )
+      } else {
+        const iconStarOutline = document.getElementById( `icon-star-outline-${ beforeStar }` ) as HTMLElement
+        const iconStar = document.getElementById( `icon-star-${ beforeStar }` ) as HTMLElement
+        iconStarOutline.classList.remove( 'hidden' )
+        iconStar.classList.add( 'hidden' )
+      }
+    }
+
+    const ratingInput = document.getElementById( 'rating' ) as HTMLInputElement
+    ratingInput.value = String( id )
+  } )
+} )
+</script>

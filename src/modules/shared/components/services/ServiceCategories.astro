@@ -4,9 +4,7 @@ import ServiceCategoryCard from './ServiceCategoryCard.astro'
 import Title from '@/modules/shared/components/ui/Title.astro'
 
 const { data: serviceCategoriesData, error: serviceCategoriesError } = await actions.findAllServiceCategories()
-
 if ( serviceCategoriesError ) return Astro.redirect( '/404' )
-
 const { serviceCategories } = serviceCategoriesData
 ---
 
