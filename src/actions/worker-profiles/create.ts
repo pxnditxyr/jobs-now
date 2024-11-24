@@ -15,7 +15,8 @@ export const createWorkerProfile = defineAction({
     try {
       await db.insert( WorkerProfile ).values({
         id: UUID(),
-        userId
+        userId,
+        createdAt: new Date(),
       })
 
       return {

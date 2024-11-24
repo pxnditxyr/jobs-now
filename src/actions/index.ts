@@ -1,11 +1,12 @@
 import { signupUser } from './auth'
+import { createCommentPublication, findAllCommentsByPublicationId } from './comment-publications'
 import { updateProfile } from './profile'
 import { createServiceCategory, findAllServiceCategories, findOneServiceCategory, toggleStatusServiceCategory, updateServiceCategory } from './service-categories'
 import { createService, deleteService, findAllServices, findAllServicesByWorkerId, findOneService, updateService } from './services'
 import { findAllTransactionsByWalletId } from './transactions'
 import { createUser, findAllUsers, findOneUser, toggleStatusUser, updateUser } from './users'
 import { findOneWalletByUserId, paymentAmountWallet, rechargeAmountWallet } from './wallets'
-import { approveDisapproveWorkerProfile, createWorkerProfile, findAllWorkerProfiles, findOneWorkerProfile, findOneWorkerProfileByUserId, updateWorkerProfile } from './worker-profiles'
+import { approveDisapproveWorkerProfile, createWorkerProfile, findAllWorkerProfiles, findOneWorkerProfile, findOneWorkerProfileByUserId, getRatingByWorkerProfileId, updateWorkerProfile } from './worker-profiles'
 
 export const server = {
   signupUser,
@@ -36,6 +37,7 @@ export const server = {
   updateWorkerProfile,
   approveDisapproveWorkerProfile,
   findOneWorkerProfileByUserId,
+  getRatingByWorkerProfileId,
 
   findAllServices,
   findAllServicesByWorkerId,
@@ -43,4 +45,7 @@ export const server = {
   createService,
   updateService,
   deleteService,
+
+  createCommentPublication,
+  findAllCommentsByPublicationId,
 }

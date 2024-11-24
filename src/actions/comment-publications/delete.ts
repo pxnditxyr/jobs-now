@@ -9,23 +9,9 @@ export const deleteService = defineAction({
   }),
 
   handler: async ({ id }) => {
-    const [ currentData ] = await db
-      .select()
-      .from( Service )
-      .where(
-        eq( Service.id, id )
-      )
-
-    if ( !currentData )
-      throw new Error( 'No se encontró el servicio. 💁‍♂️' )
-
-    await db.update( Service ).set({
-      status: false,
-      updatedAt: new Date()
-    }).where(
+    await db.delete( Service ).where(
       eq( Service.id, id )
     )
-
     return {
       success: true,
     }

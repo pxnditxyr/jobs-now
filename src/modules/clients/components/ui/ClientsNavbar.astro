@@ -26,11 +26,6 @@ const navItems = [
     icon: 'mdi:home'
   },
   {
-    name: 'Servicios',
-    href: '/services',
-    icon: 'mdi:bank-transfer'
-  },
-  {
     name: 'Billetera',
     href: '/client/wallet',
     icon: 'mdi:wallet'
@@ -51,7 +46,11 @@ const currentPath = Astro.url.pathname
       <div class="flex items-center">
         <a href="/" class="flex-shrink-0">
           <span class="font-bold text-xl flex items-center gap-2">
-            <Icon name="mdi:briefcase-outline" size={ 30 } class="mr-2" />
+            <img
+              src="/logo.jpg"
+              alt="logo"
+              class="h-16"
+            />
             Jobs Now 🚀
           </span>
         </a>
@@ -70,7 +69,8 @@ const currentPath = Astro.url.pathname
         </div>
       </div>
       <div class="hidden lg:block">
-        <div class="ml-4 flex items-center lg:ml-6">
+        <div class="ml-4 flex items-center lg:ml-6 gap-2">
+          <span class="text-teal-100 font-bold"> Saldo: </span>
           <span>
             { wallet.stars } ⭐
           </span>

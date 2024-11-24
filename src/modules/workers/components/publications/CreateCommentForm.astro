@@ -1,0 +1,158 @@
+---
+import { Icon } from 'astro-icon/components'
+import { getSession } from 'auth-astro/server'
+
+const session = await getSession( Astro.request )
+const { user } = session ?? {}
+if ( !user ) return Astro.redirect( '/auth/signin' )
+
+interface Props {
+  publicationId: string
+}
+
+const { publicationId } = Astro.props
+---
+
+<div class="w-full">
+  <h2 class="text-2xl font-semibold mb-4 text-gray-700 flex items-center gap-2">
+    <Icon name="mdi:account-plus" size={ 24 } class="mr-2" />Agregar Comentario
+  </h2>
+  <form
+    class="space-y-4"
+    id="create-comment-form"
+  >
+    <input type="hidden" name="userId" value={ user.id } />
+    <input type="hidden" name="serviceId" value={ publicationId } />
+    <div class="mb-6">
+      <p class="text-lg font-semibold mb-2">¿Qué te pareció el servicio?</p>
+      <div class="flex justify-center items-center space-x-2">
+        { [ 1, 2, 3, 4, 5 ].map( ( star ) => (
+        <button
+          type="button"
+          class="text-3xl focus:outline-none transition-colors duration-200 star-buttons"
+          id={`button-star-${ star }`}
+        >
+          <Icon
+            name="mdi:star-outline"
+            size={ 24 }
+            class="text-gray-400"
+            id={`icon-star-outline-${ star }`}
+          />
+          <Icon
+            name="mdi:star"
+            size={ 24 }
+            class="text-yellow-400 hidden"
+            id={`icon-star-${ star }`}
+          />
+        </button>
+        ) ) }
+      </div>
+      <p class="text-center mt-2">
+        {
+        [ '😞', '😕', '😐', '🙂', '😄' ].map( ( emoji, index ) => (
+            <span
+              class="text-7xl focus:outline-none transition-colors duration-200 hidden button-emoji"
+              id={`button-emoji-${ index + 1 }`}
+            >
+              { emoji }
+            </span>
+          ) )
+        }
+      </p>
+    </div>
+
+    <input type="hidden" name="rating" id="rating" />
+
+    <div class="mb-6">
+      <label for="comment" class="block text-lg font-semibold mb-2">
+        Cuéntanos más sobre tu experiencia 📝
+      </label>
+      <textarea
+        id="comment"
+        class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+        rows={4}
+        name="comment"
+        placeholder="Tu opinión es muy importante para nosotros..."
+      ></textarea>
+    </div>
+    <button
+      type="submit"
+      class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300"
+    >
+      Enviar Reseña 📤
+    </button>
+  </form>
+</div>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+import { getErrorList } from '@/utils'
+
+const starButtons = document.querySelectorAll( '.star-buttons' ) as NodeListOf<HTMLButtonElement>
+
+starButtons.forEach( ( star ) => {
+  star.addEventListener( 'click', async () => {
+    const id = star.id.replace( 'button-star-', '' )
+
+    for ( const star of starButtons ) {
+      const beforeStar = star.id.replace( 'button-star-', '' )
+      if ( Number( beforeStar ) <= Number( id ) ) {
+        const iconStarOutline = document.getElementById( `icon-star-outline-${ beforeStar }` ) as HTMLElement
+        const iconStar = document.getElementById( `icon-star-${ beforeStar }` ) as HTMLElement
+        iconStarOutline.classList.add( 'hidden' )
+        iconStar.classList.remove( 'hidden' )
+      } else {
+        const iconStarOutline = document.getElementById( `icon-star-outline-${ beforeStar }` ) as HTMLElement
+        const iconStar = document.getElementById( `icon-star-${ beforeStar }` ) as HTMLElement
+        iconStarOutline.classList.remove( 'hidden' )
+        iconStar.classList.add( 'hidden' )
+      }
+    }
+
+    const buttonEmojis = document.querySelectorAll( '.button-emoji' ) as NodeListOf<HTMLButtonElement>
+    buttonEmojis.forEach( ( emoji ) => {
+      emoji.classList.add( 'hidden' )
+    } )
+
+    const buttonEmoji = document.getElementById( `button-emoji-${ id }` ) as HTMLButtonElement
+    buttonEmoji.classList.remove( 'hidden' )
+
+    const ratingInput = document.getElementById( 'rating' ) as HTMLInputElement
+    ratingInput.value = String( id )
+
+  } )
+} )
+
+const form = document.getElementById( 'create-comment-form' ) as HTMLFormElement
+
+form.addEventListener( 'submit', async ( event ) => {
+  event.preventDefault()
+
+  const formData = new FormData( form )
+  const data = Object.fromEntries( formData )
+  console.log({ dataForm: data   })
+
+  const { error } = await actions.createCommentPublication( formData )
+
+  if ( error ) {
+    const errorMessages = getErrorList( error )
+    const errorMessage = errorMessages.map( error => error.message ).join( '\n' )
+    Swal.fire( {
+      title: 'Error al crear el comentario',
+      text: errorMessage,
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    } )
+    return
+  }
+
+  await Swal.fire( {
+    title: 'Comentario creado',
+    text: 'El comentario ha sido creado exitosamente',
+    icon: 'success',
+    confirmButtonText: 'Aceptar',
+  } )
+} )
+</script>
+

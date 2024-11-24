@@ -32,17 +32,20 @@ export const signupUser = defineAction({
         password: bcryptjs.hashSync( password, 10 ),
 
         roleId,
+        createdAt: new Date(),
       })
 
       await db.insert( Wallet ).values({
         id: UUID(),
         userId: id,
+        createdAt: new Date(),
       })
 
       if ( roleId === 'worker' ) {
         await db.insert( WorkerProfile ).values({
           id: UUID(),
           userId: id,
+          createdAt: new Date(),
         })
       }
     } catch ( error : any ) {

@@ -1,0 +1,57 @@
+---
+import { Icon } from 'astro-icon/components'
+import { formatDate } from '@/utils'
+import { actions } from 'astro:actions'
+
+interface Props {
+  publicationId: string
+}
+
+const { publicationId } = Astro.props
+
+const { data: publicationCommentsData, error: publicationCommentsError } = await Astro.callAction( actions.findAllCommentsByPublicationId, { publicationId } )
+if ( publicationCommentsError ) return Astro.redirect( '/worker/my-publications' )
+const { publicationComments } = publicationCommentsData
+
+---
+<div class="flex flex-col gap-4 p-8 bg-white mt-8 shadow-md">
+  {
+  publicationComments.map( comment => (
+  <div class="flex flex-col gap-2 w-full shadow-2xl p-6 bg-white">
+    <div class="flex flex-col items-center gap-2 md:flex-row justify-between">
+      <div class="flex items-center gap-2">
+        <img
+          class="w-10 h-10 rounded-full"
+          src={ comment.user.avatar ?? '/avatar.svg' }
+          alt={ comment.user.name }
+        />
+        <p class="text-sm font-medium text-gray-900">{ comment.user.name } { comment.user.lastName }</p>
+      </div>
+
+      <div class="flex gap-2">
+        {
+        [ 1, 2, 3, 4, 5 ].map( rating => (
+        <div>
+          {
+            ( rating < comment.rating + 1 )
+              ? <Icon name="mdi:star" class="text-yellow-500" size={ 24 } />
+              : <Icon name="mdi:star-outline" class="text-gray-500" size={ 24 } />
+          }
+        </div>
+        ) )
+        }
+      </div>
+    </div>
+    <div class="flex gap-2 items-center p-2">
+      <Icon name="mdi:calendar-clock" class="text-gray-500" size={ 24 } />
+      <p class="text-sm text-gray-500">{ formatDate( comment.createdAt ) }</p>
+    </div>
+
+    <div class="flex gap-2 items-center p-2">
+      <Icon name="mdi:comment-text-multiple-outline" class="text-gray-500" size={ 24 } />
+      <p class="text-sm text-gray-500">{ comment.comment }</p>
+    </div>
+  </div>
+  ) )
+  }
+</div>

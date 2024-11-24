@@ -37,6 +37,7 @@ export const rechargeAmountWallet = defineAction({
       amount,
       stars,
       description: `Recarga de $${ amount }`,
+      createdAt: new Date(),
     })
 
     return {

@@ -20,7 +20,7 @@ const { id } = Astro.params
       <ClientNavbar user={ user } />
     )
   }
-  <div class="py-8 md:py-20">
+  <div class="py-8 md:py-20 w-full flex flex-col items-center justify-center">
     <WorkerProfile workerId={ String( id ) } />
   </div>
 </Layout>

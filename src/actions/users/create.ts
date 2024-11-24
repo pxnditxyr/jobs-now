@@ -55,17 +55,20 @@ export const createUser = defineAction({
         address,
 
         roleId,
+        createdAt: new Date(),
       })
 
       await db.insert( Wallet ).values({
         id: UUID(),
         userId: id,
+        createdAt: new Date(),
       })
 
       if ( roleId === 'worker' ) {
         await db.insert( WorkerProfile ).values({
           id: UUID(),
           userId: id,
+          createdAt: new Date(),
         })
       }
 

@@ -21,7 +21,6 @@ export const createService = defineAction({
     imageUrl,
   } ) => {
     try {
-      console.log( 'entra' )
       await db.insert( Service ).values({
         id: UUID(),
         workerId,
@@ -29,7 +28,8 @@ export const createService = defineAction({
         title,
         description,
         imageUrl: imageUrl ?? 'https://st5.depositphotos.com/4509995/64457/i/450/depositphotos_644577382-stock-photo-african-american-girl-vlogger-influencer.jpg',
-        starCost: 2,
+        starCost: 1,
+        createdAt: new Date(),
       })
 
       return {

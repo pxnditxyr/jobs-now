@@ -58,7 +58,7 @@ const { service: publication } = publicationData
     <div>
       <label for="editImageUrl" class="block text-sm font-medium text-gray-700">URL de la imagen</label>
       <input
-        type="url"
+        type="text"
         id="editImageUrl"
         name="imageUrl"
         value={ publication.imageUrl }
@@ -75,7 +75,7 @@ const { service: publication } = publicationData
       >
         <option value="">Selecciona una categoría</option>
         {
-          serviceCategories.map( ( serviceCategory ) => (
+          serviceCategories.filter( sc => sc.status ).map( ( serviceCategory ) => (
         <option
           value={ serviceCategory.id }
           selected={ publication.categoryId === serviceCategory.id }
@@ -117,7 +117,7 @@ editPublicationForms.forEach( form => {
       } )
       return
     }
-    Swal.fire( {
+    await Swal.fire( {
       title: 'Publicación editada',
       text: 'La publicación ha sido editada exitosamente',
       icon: 'success',

@@ -168,9 +168,8 @@ const Analytic = defineTable({
 const ReviewWorker = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
-    userId: column.text({ references: () => User.columns.id }),
+    workerId: column.text({ references: () => WorkerProfile.columns.id }),
     rating: column.number(),
-    comment: column.text(),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),

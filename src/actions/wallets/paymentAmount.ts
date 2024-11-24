@@ -42,6 +42,7 @@ export const paymentAmountWallet = defineAction({
       amount,
       stars,
       description: `Cobro por contratación de trabajador ${ stars } estrellas`,
+      createdAt: new Date(),
     })
 
     return {

@@ -1,0 +1,40 @@
+---
+import { Icon } from 'astro-icon/components'
+import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
+import { getSession } from 'auth-astro/server'
+import CreatePublicationForm from '@/modules/workers/components/publications/CreatePublicationForm.astro'
+import { actions } from 'astro:actions'
+import PublicationScreen from '@/modules/workers/components/publications/PublicationScreen.astro'
+import Comments from '@/modules/workers/components/publications/Comments.astro'
+
+const session = await getSession( Astro.request )
+
+const { user } = session ?? {}
+if ( !user ) return Astro.redirect( '/auth/signin' )
+
+const { id } = Astro.params
+
+const { data: serviceData, error: serviceError } = await Astro.callAction( actions.findOneService, { id: id } )
+if ( serviceError ) return Astro.redirect( '/worker/my-publications' )
+const { service } = serviceData
+if ( !service.status ) return Astro.redirect( '/worker/my-publications' )
+---
+
+<WorkersLayout>
+  <div class="bg-gray-100">
+    <main class="w-full mx-auto py-6 sm:px-6 lg:px-8">
+      <div class="px-4 py-6 sm:px-0">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-6">Bienvenido, { user.name } 👋</h2>
+        <div class="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
+          <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+              <Icon name="mdi:account-hard-hat" class="ml-2" size={ 30 } />Ver Publicación
+            </h1>
+            <PublicationScreen service={ service } />
+            <Comments publicationId={ service.id } />
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</WorkersLayout>

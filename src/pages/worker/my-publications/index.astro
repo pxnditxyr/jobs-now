@@ -1,0 +1,89 @@
+---
+import { Icon } from 'astro-icon/components'
+import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
+import { getSession } from 'auth-astro/server'
+import CreatePublicationForm from '@/modules/workers/components/publications/CreatePublicationForm.astro'
+//import EditPublicationForm from '@/modules/workers/components/publications/EditPublicationForm.astro'
+import { actions } from 'astro:actions'
+import PublicationCard from '@/modules/workers/components/publications/PublicationCard.astro'
+
+const session = await getSession( Astro.request )
+
+const { user } = session ?? {}
+if ( !user ) return Astro.redirect( '/auth/signin' )
+
+//const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: user.id })
+const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: user.id } )
+if ( workerProfileError ) return Astro.redirect( '/404' )
+const { workerProfile } = workerProfileData
+
+//const { data: servicesData, error: servicesError } = await actions.findAllServicesByWorkerId({ workerId: workerProfile.id })
+const { data: servicesData, error: servicesError } = await Astro.callAction( actions.findAllServicesByWorkerId, { workerId: workerProfile.id } )
+if ( servicesError ) return Astro.redirect( '/worker' )
+const { services } = servicesData
+---
+
+<WorkersLayout>
+  <div class="bg-gray-100">
+    <main class="w-full mx-auto py-6 sm:px-6 lg:px-8">
+      <div class="px-4 py-6 sm:px-0">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-6">Bienvenido, { user.name } 👋</h2>
+        <div class="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
+          <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+              <Icon name="mdi:account-hard-hat" class="ml-2" size={ 30 } />Panel de Trabajador
+            </h1>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6 w-full flex justify-center items-center">
+              <button
+                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                id="create-publication-button"
+              >
+                <Icon name="mdi:plus-circle-outline" class="ml-2" size={ 24 } />Crear Nueva Publicación
+              </button>
+            </div>
+            <div
+              id="create-publication-modal"
+              class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50"
+            >
+              <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                <div class="w-full flex justify-end items-center">
+                  <button
+                    class="text-gray-500 hover:text-gray-700 transition-colors"
+                    id="close-create-publication-modal"
+                  >
+                    <Icon name="mdi:close" size={ 24 } />
+                  </button>
+                </div>
+                <CreatePublicationForm />
+              </div>
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              { services.filter( s => s.status ).map( service => (
+                <PublicationCard service={ service } />
+              ) ) }
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</WorkersLayout>
+<script>
+
+const createPublicationButton = document.getElementById( 'create-publication-button' ) as HTMLButtonElement
+const createPublicationModal = document.getElementById( 'create-publication-modal' ) as HTMLDivElement
+const closeCreatePublicationModal = document.getElementById( 'close-create-publication-modal' ) as HTMLButtonElement
+
+createPublicationButton.addEventListener( 'click', () => {
+  createPublicationModal.classList.remove( 'hidden' )
+  createPublicationModal.classList.add( 'flex' )
+} )
+
+closeCreatePublicationModal.addEventListener( 'click', () => {
+  createPublicationModal.classList.add( 'hidden' )
+  createPublicationModal.classList.remove( 'flex' )
+} )
+</script>

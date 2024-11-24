@@ -1,0 +1,176 @@
+---
+import { Icon } from 'astro-icon/components'
+import EditPublicationForm from '@/modules/workers/components/publications/EditPublicationForm.astro'
+import CreateCommentForm from '@/modules/workers/components/publications/CreateCommentForm.astro'
+import { formatDate } from '@/utils'
+
+interface Props {
+  service: {
+    id: string
+    title: string
+    description: string
+    imageUrl: string
+    createdAt: Date
+    starCost: number
+    category: {
+      id: string
+      name: string
+    }
+  }
+}
+
+const { service } = Astro.props
+---
+<div
+  id={`edit-publication-modal-${service.id}`}
+  class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50 edit-publication-modal"
+>
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+    <div class="w-full flex justify-end items-center">
+      <button
+        class="text-gray-500 hover:text-gray-700 transition-colors close-edit-publication-modal"
+        id={`close-edit-publication-modal-${service.id}`}
+      >
+        <Icon name="mdi:close" size={ 24 } />
+      </button>
+    </div>
+    <EditPublicationForm
+      publicationId={ service.id }
+    />
+  </div>
+</div>
+<div id={`service-${service.id}`} class="bg-white rounded-lg shadow-md overflow-hidden p-12">
+  <img src={ service.imageUrl } alt={service.title} class="w-full h-80 object-cover" />
+
+  <div class="p-6 relative">
+    <div class="absolute top-2 right-2">
+      <button
+        class="text-gray-500 hover:text-gray-700 dots-vertical"
+        id={ `dots-vertical-${ service.id }` }
+      >
+        <Icon name="mdi:dots-vertical" size={ 24 } />
+      </button>
+      <div
+        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden p-4"
+        id={ `service-menu-${ service.id }` }
+      >
+        <div class="py-1">
+          <button
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left edit-service-button"
+            id={ `edit-service-${ service.id }` }
+            data-id={ service.id }
+          >
+            Editar
+          </button>
+          <button
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left delete-service-button"
+            id={ `delete-service-${ service.id }` }
+            data-id={ service.id }
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+    <h3 class="text-xl font-semibold mb-2 text-gray-800">{service.title}</h3>
+    <p class="text-gray-600 mb-4">{service.description}</p>
+    <div class="flex justify-between items-start md:items-center mb-4 flex-col gap-4 md:flex-row">
+      <span class="text-sm text-gray-500 flex items-center gap-2 w-full">
+        <Icon name="mdi:calendar" size={ 24 } />
+        { formatDate( service.createdAt ) }
+      </span>
+      <span class="text-sm font-semibold text-yellow-500 flex items-center gap-2 w-full">
+        <Icon name="mdi:star" size={ 24 } />
+        { service.starCost } estrellas
+      </span>
+    </div>
+    <div class="flex items-center mb-4">
+      <span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded capitalize">
+        { service.category.name }
+      </span>
+    </div>
+    <h4 class="text-lg font-semibold mb-2 text-gray-700">Comentario Reciente</h4>
+
+    <a
+      class="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors flex items-center justify-center gap-2 comment-publication-button"
+      id={`comment-publication-button-${ service.id }`}
+      href={ `/worker/my-publications/${ service.id }` }
+    >
+      <Icon name="mdi:comment-multiple-outline" size={ 24 } />Ver todos los comentarios
+    </a>
+  </div>
+</div>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+const dotsVerticalButtons = document.querySelectorAll( '.dots-vertical' ) as NodeListOf<HTMLButtonElement>
+
+dotsVerticalButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.id.replace( 'dots-vertical-', '' )
+    const serviceIdentifier = `service-menu-${id}`
+    console.log({ serviceIdentifier })
+    const serviceMenu = document.getElementById( `service-menu-${id}` ) as HTMLDivElement
+    console.log({ serviceMenu })
+    serviceMenu.classList.toggle( 'hidden' )
+  } )
+} )
+
+const deleteServiceButtons = document.querySelectorAll( '.delete-service-button' ) as NodeListOf<HTMLButtonElement>
+
+deleteServiceButtons.forEach( button => {
+  button.addEventListener( 'click', async () => {
+    const id = button.dataset.id
+    const { error } = await actions.deleteService({ id: String( id ) })
+    if ( error ) {
+      Swal.fire( {
+        icon: 'error',
+        title: '¡Error al Eliminar el Servicio!',
+        text: 'Ocurrió un error al intentar eliminar el servicio. Por favor, inténtalo de nuevo.',
+
+      } )
+      return
+    }
+    Swal.fire( {
+      icon: 'success',
+      title: '¡Servicio Eliminado!',
+      text: 'El servicio ha sido eliminado exitosamente.',
+    } )
+
+    const serviceElement = document.getElementById( `service-${id}` ) as HTMLDivElement
+    serviceElement.remove()
+  } )
+} )
+
+
+const editServiceButtons = document.querySelectorAll( '.edit-service-button' ) as NodeListOf<HTMLButtonElement>
+
+editServiceButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.dataset.id
+    const serviceIdentifier = `edit-publication-modal-${id}`
+    console.log({ serviceIdentifier })
+    const serviceModal = document.getElementById( serviceIdentifier ) as HTMLDivElement
+    console.log({ serviceModal })
+    serviceModal.classList.remove( 'hidden' )
+    serviceModal.classList.add( 'flex' )
+  } )
+} )
+
+const closeEditServiceModals = document.querySelectorAll( '.close-edit-publication-modal' ) as NodeListOf<HTMLButtonElement>
+
+closeEditServiceModals.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.id.replace( 'close-edit-publication-modal-', '' )
+    const serviceIdentifier = `edit-publication-modal-${id}`
+    console.log({ serviceIdentifier })
+    const serviceModal = document.getElementById( serviceIdentifier ) as HTMLDivElement
+    console.log({ serviceModal })
+    serviceModal.classList.add( 'hidden' )
+    serviceModal.classList.remove( 'flex' )
+  } )
+} )
+
+</script>

@@ -22,7 +22,8 @@ export const createServiceCategory = defineAction({
         id: UUID(),
         name,
         description,
-        icon: icon || 'mdi:toolbox-outline'
+        icon: icon || 'mdi:toolbox-outline',
+        createdAt: new Date(),
       })
 
       return {
