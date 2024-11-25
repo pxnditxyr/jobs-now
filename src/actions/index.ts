@@ -1,6 +1,9 @@
 import { signupUser } from './auth'
 import { createCommentPublication, findAllCommentsByPublicationId } from './comment-publications'
-import { createHiringWorker, getAllHiringsByUserId, getAllHiringsByWorkerId, getHiringByUserId } from './hirings'
+import { createHiringWorker, getAllHiringsByUserId, getAllHiringsByWorkerId, getAllPendingHiringsByWorkerId, getHiringByUserId } from './hirings'
+import { approveHiring } from './hirings/approve-hiring.action'
+import { completeHiring } from './hirings/complete-hiring.action'
+import { rejectHiring } from './hirings/reject-hiring.action'
 import { updateProfile } from './profile'
 import { createServiceCategory, findAllServiceCategories, findOneServiceCategory, toggleStatusServiceCategory, updateServiceCategory } from './service-categories'
 import { createService, deleteService, findAllServices, findAllServicesByWorkerId, findOneService, updateService } from './services'
@@ -54,4 +57,8 @@ export const server = {
   getHiringByUserId,
   getAllHiringsByWorkerId,
   getAllHiringsByUserId,
+  approveHiring,
+  rejectHiring,
+  completeHiring,
+  getAllPendingHiringsByWorkerId,
 }

@@ -10,11 +10,18 @@ const session = await getSession( Astro.request )
 
 const { user: sessionUser } = session ?? {}
 if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
-//const { data: userData, error: userError } = await actions.findOneUser({ id: sessionUser.id })
-const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: sessionUser.id } )
 
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: sessionUser.id } )
 if ( userError ) return Astro.redirect( '/auth/signin' )
 const { user } = userData
+
+const { data: workerData, error: workerError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: user.id } )
+if ( workerError ) return Astro.redirect( '/worker' )
+const { workerProfile } = workerData
+
+const { data: hiringsData, error: hiringsError } = await Astro.callAction( actions.getAllPendingHiringsByWorkerId, { workerId: workerProfile.id } )
+if ( hiringsError ) return Astro.redirect( '/worker' )
+const { hirings } = hiringsData
 
 interface Props {
   title?: string
@@ -59,8 +66,8 @@ const {
         class={ `-translate-x-full fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0` }
         id="sidebar"
       >
-        <div class="flex items-center justify-between p-4 border-b">
-          <span class="text-2xl font-bold text-primary"> 🛠️ Jobs Now 🚀 </span>
+        <div class="flex items-center justify-between p-4 border-b bg-primary">
+          <span class="text-2xl font-bold text-white"> Jobs Now 🚀 </span>
           <button
             class="lg:hidden"
             id="closeSidebar"
@@ -69,6 +76,21 @@ const {
           </button>
         </div>
         <WorkerNav />
+        <div>
+          <div class="flex items-center justify-between p-4 border-b">
+            <div class="flex items-center gap-1">
+              <Icon name="mdi:bell" size={ 24 } class="text-yellow-500" />
+              <a
+                class={ `text-sm font-semibold ${ ( hirings.length > 0 ) ? 'text-green-600' : 'text-gray-500' }` }
+                href="/worker/hirings"
+              >Nuevas Contrataciones</a>
+            </div>
+
+            <span class="text-sm bg-red-500 text-white px-2 py-1 rounded-full">
+              { hirings.length }
+            </span>
+          </div>
+        </div>
       </aside>
 
       <div class="flex-1 flex flex-col overflow-hidden">

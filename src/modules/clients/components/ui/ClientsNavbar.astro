@@ -168,8 +168,8 @@ const currentPath = Astro.url.pathname
             alt="Foto de perfil"
           />
           ) : (
-          <div class="h-10 w-10 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold">
-            { user.name?.charAt( 0 ) }{ user.lastName.charAt( 0 ) }
+          <div class="h-10 w-10 rounded-full bg-teal-300 flex items-center justify-center text-teal-600 font-bold capitalize">
+            { String( user.name.charAt( 0 ) ).toUpperCase() }{ ( user.lastName.charAt( 0 ) ).toUpperCase() }
           </div>
           )
           }

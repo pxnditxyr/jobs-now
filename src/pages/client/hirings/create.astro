@@ -123,14 +123,16 @@ const statesTransform: Record<string, { text: string, styles: string }> = {
             <p class="text-slate-500 text-sm font-bold flex items-center gap-2">
               <Icon name="mdi:cancel" size={ 24 } class="text-red-600" />
               Parece que usted tiene un contrato rechazado, usted puede volver a solicitar el servicio contratarlo. 📝
+            </p>
+            <div class="w-full flex items-center justify-center gap-4">
               <button
                 type="submit"
-                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
+                class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
               >
                 <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
-                Confirmar Contratación
+                Intentar Contratar Servicio Nuevamente
               </button>
-            </p>
+            </div>
             <a href="/client/chats/?" class="text-white bg-green-500 p-2 rounded-lg transition-colors duration-300">
               Ver el Chat
             </a>
@@ -138,16 +140,18 @@ const statesTransform: Record<string, { text: string, styles: string }> = {
           ) : (
           <div class="flex flex-col items-center justify-center gap-8">
             <p class="text-slate-500 text-sm font-bold flex items-center gap-2">
-              <Icon name="mdi:cancel" size={ 24 } class="text-red-600" />
+              <Icon name="mdi:check-circle" size={ 24 } class="text-green-600" />
               Parece que usted tiene un contrato completado, usted puede volver a solicitar el servicio contratarlo. 📝
+            </p>
+            <div class="w-full flex items-center justify-center gap-4">
               <button
                 type="submit"
-                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
+                class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
               >
                 <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
-                Confirmar Contratación
+                Recontratar Servicio
               </button>
-            </p>
+            </div>
             <a href="/client/chats/?" class="text-white bg-green-500 p-2 rounded-lg transition-colors duration-300">
               Ver el Chat
             </a>
@@ -156,13 +160,15 @@ const statesTransform: Record<string, { text: string, styles: string }> = {
           )
 
           ) : (
-          <button
-            type="submit"
-            class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
-          >
-            <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
-            Confirmar Contratación
-          </button>
+          <div class="w-full flex items-center justify-center gap-4">
+            <button
+              type="submit"
+              class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
+            >
+              <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
+              Confirmar Contratación
+            </button>
+          </div>
           )
           }
         </form>

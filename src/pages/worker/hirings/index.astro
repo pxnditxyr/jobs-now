@@ -1,0 +1,198 @@
+---
+import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
+import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
+import { Icon } from 'astro-icon/components'
+import { formatDate } from '@/utils'
+
+const session = await getSession( Astro.request )
+const { user } = session ?? {}
+
+if ( !user ) return Astro.redirect( '/auth/signin' )
+
+const { data: workerData, error: workerError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: user.id } )
+if ( workerError ) return Astro.redirect( '/worker' )
+const { workerProfile } = workerData
+
+const { data: hiringsData, error: hiringsError } = await Astro.callAction( actions.getAllHiringsByWorkerId, { workerId: workerProfile.id } )
+if ( hiringsError ) return Astro.redirect( '/worker' )
+const { hirings } = hiringsData
+
+const stateEmojis: { [key: string]: string } = {
+  pending: '⏳ Pendiente',
+  approved: '🟢 Aprobado',
+  completed: '✅ Completado',
+  rejected: '❌ Cancelado',
+}
+---
+
+<WorkersLayout>
+  <div class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">📋 Historial de Contrataciones</h1>
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Contrato</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Actualización</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            { hirings.map( ( hiring ) => (
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize">{hiring.user.name} {hiring.user.lastName}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(hiring.contractDate)}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+hiring.state === 'active' ? 'bg-green-100 text-green-800' :
+hiring.state === 'completed' ? 'bg-blue-100 text-blue-800' :
+hiring.state === 'cancelled' ? 'bg-red-100 text-red-800' :
+'bg-yellow-100 text-yellow-800'
+}`}>
+                  {stateEmojis[hiring.state]}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(hiring.updatedAt)}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                {hiring.state === 'pending' && (
+                <>
+                <button
+                  class="text-green-600 hover:text-green-900 mr-2 flex items-center gap-2 approve-button"
+                  data-id={ hiring.id }
+                >
+                  <Icon name="mdi:check" size={ 24 } />Aceptar
+                </button>
+                <button
+                  class="text-red-600 hover:text-red-900 flex items-center gap-2 reject-button"
+                  data-id={ hiring.id }
+                >
+                  <Icon name="mdi:close" size={ 24 } />Rechazar
+                </button>
+              </>
+                )}
+                { hiring.state === 'approved' && (
+                <button
+                  class="text-blue-600 hover:text-blue-900 flex items-center gap-2 complete-button"
+                  data-id={ hiring.id }
+                >
+                  <Icon name="mdi:check-all" size={ 24 } />Completar
+                </button>
+                ) }
+              </td>
+            </tr>
+            ) ) }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</WorkersLayout>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+const approveButtons = document.querySelectorAll( '.approve-button' ) as NodeListOf<HTMLButtonElement>
+const rejectButtons = document.querySelectorAll( '.reject-button' ) as NodeListOf<HTMLButtonElement>
+const completeButtons = document.querySelectorAll( '.complete-button' ) as NodeListOf<HTMLButtonElement>
+
+approveButtons.forEach( button => {
+  button.addEventListener( 'click', async () => {
+    const id = String( button.dataset.id )
+
+    const { isConfirmed } = await Swal.fire({
+      title: '¿Estás seguro de que quieres aprobar el contrato?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+    })
+    if ( isConfirmed ) {
+      const { error } = await actions.approveHiring({ id })
+      if ( error ) {
+        Swal.fire( {
+          title: '¡Ups! Algo salió mal 😢',
+          text: error.message,
+          icon: 'error',
+        } )
+        return
+      }
+      Swal.fire( {
+        title: 'Felicitaciones! 🎉',
+        text: 'La acción ha sido realizada con éxito.',
+        icon: 'success',
+      } )
+      window.location.reload()
+    }
+  } )
+} )
+
+rejectButtons.forEach( button => {
+  button.addEventListener( 'click', async () => {
+    const id = String( button.dataset.id )
+
+    const { isConfirmed } = await Swal.fire({
+      title: '¿Estás seguro de que quieres rechazar el contrato?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+    })
+    if ( isConfirmed ) {
+      const { error } = await actions.rejectHiring({ id })
+      if ( error ) {
+        Swal.fire( {
+          title: '¡Ups! Algo salió mal 😢',
+          text: error.message,
+          icon: 'error',
+        } )
+        return
+      }
+      Swal.fire( {
+        title: '¡Felicitaciones! 🎉',
+        text: 'La acción ha sido realizada con éxito.',
+        icon: 'success',
+      } )
+      window.location.reload()
+    }
+  } )
+} )
+
+completeButtons.forEach( button => {
+  button.addEventListener( 'click', async () => {
+    const id = String( button.dataset.id )
+
+    const { isConfirmed } = await Swal.fire({
+      title: '¿Estás seguro de que quieres completar el contrato?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+    })
+    if ( isConfirmed ) {
+      const { error } = await actions.completeHiring({ id })
+      if ( error ) {
+        Swal.fire( {
+          title: '¡Ups! Algo salió mal 😢',
+          text: error.message,
+          icon: 'error',
+        } )
+        return
+      }
+      Swal.fire( {
+        title: '¡Felicitaciones! 🎉',
+        text: 'La acción ha sido realizada con éxito.',
+        icon: 'success',
+      } )
+      window.location.reload()
+    }
+  } )
+} )
+</script>

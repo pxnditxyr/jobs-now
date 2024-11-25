@@ -1,6 +1,6 @@
 
 import { defineAction } from 'astro:actions'
-import { and, db, eq, HiringWorker } from 'astro:db'
+import { and, db, desc, eq, HiringWorker } from 'astro:db'
 
 export const getHiringByUserId = defineAction({
   accept: 'json',
@@ -14,6 +14,10 @@ export const getHiringByUserId = defineAction({
           eq( HiringWorker.workerProfileId, wokerProfileId ),
         )
       )
+      .orderBy(
+        desc( HiringWorker.createdAt )
+      )
+
     return {
       hiring: data
     }
