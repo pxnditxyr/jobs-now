@@ -22,9 +22,33 @@ const { data: workerData, error: workerError } = await Astro.callAction( actions
 if ( workerError ) return Astro.redirect( '/client' )
 const { user: worker } = workerData
 
-//const { data: workerProfileData, error: workerProfileError } = await actions.findOneWorkerProfileByUserId({ userId: workerId })
-//if ( workerProfileError ) return Astro.redirect( '/client' )
-//const { workerProfile } = workerProfileData
+const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
+if ( workerProfileError ) return Astro.redirect( '/client' )
+const { workerProfile } = workerProfileData
+
+const { data: currentHiringData, error: currentHiringError } = await Astro.callAction( actions.getHiringByUserId, { userId: user.id, wokerProfileId: workerProfile.id } )
+if ( currentHiringError ) return Astro.redirect( '/client' )
+const { hiring: currentHiring } = currentHiringData
+
+
+const statesTransform: Record<string, { text: string, styles: string }> = {
+  'pending': {
+    text: 'Pendiente',
+    styles: 'bg-blue-200 text-blue-600',
+  },
+  'approved': {
+    text: 'Aprobado',
+    styles: 'bg-yellow-200 text-yellow-600',
+  },
+  'rejected': {
+    text: 'Rechazado',
+    styles: 'bg-red-200 text-red-600',
+  },
+  'completed': {
+    text: 'Completado',
+    styles: 'bg-green-200 text-green-600',
+  },
+}
 ---
 
 <ClientLayout>
@@ -68,22 +92,79 @@ const { user: worker } = workerData
         </div>
 
         <form class="mb-6" id="create-hiring-form" data-wallet-id={ wallet.id }>
+          <input type="hidden" name="workerProfileId" value={ workerProfile.id } />
+          <input type="hidden" name="userId" value={ user.id } />
           <div class="mb-6">
             <h3 class="text-lg font-semibold mb-2"> Fecha de Inicio  del Servicio 📅</h3>
             <input
               type="date"
               class="w-full p-2 border border-gray-300 rounded-md"
+              name="contractDate"
               min={ new Date().toISOString().split( 'T' )[ 0 ] }
               value={ new Date().toISOString().split( 'T' )[ 0 ] }
             />
           </div>
+          {
+          ( currentHiring ) ? (
+            ( currentHiring.state === 'pending' || currentHiring.state === 'approved' ) ? (
+          <div class="flex flex-col items-center justify-center gap-8">
+            <p class="text-slate-500 text-sm font-bold flex items-center gap-2">
+              <Icon name="mdi:cancel" size={ 24 } class="text-red-600" />
+              Parece que usted tiene un contrato en proceso, por favor espere a que se complete. 📝 el estado de su contrato es:
+              <span class={ `${ statesTransform[ currentHiring.state ].styles } px-2 py-1 rounded-full` }>{ statesTransform[ currentHiring.state ].text }</span>
+            </p>
+            <a href="/client/chats/?" class="text-white bg-green-500 p-2 rounded-lg transition-colors duration-300">
+              Ver el Chat
+            </a>
+          </div>
+          ) : (
+            ( currentHiring.state === 'rejected' ) ? (
+          <div class="flex flex-col items-center justify-center gap-8">
+            <p class="text-slate-500 text-sm font-bold flex items-center gap-2">
+              <Icon name="mdi:cancel" size={ 24 } class="text-red-600" />
+              Parece que usted tiene un contrato rechazado, usted puede volver a solicitar el servicio contratarlo. 📝
+              <button
+                type="submit"
+                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
+              >
+                <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
+                Confirmar Contratación
+              </button>
+            </p>
+            <a href="/client/chats/?" class="text-white bg-green-500 p-2 rounded-lg transition-colors duration-300">
+              Ver el Chat
+            </a>
+          </div>
+          ) : (
+          <div class="flex flex-col items-center justify-center gap-8">
+            <p class="text-slate-500 text-sm font-bold flex items-center gap-2">
+              <Icon name="mdi:cancel" size={ 24 } class="text-red-600" />
+              Parece que usted tiene un contrato completado, usted puede volver a solicitar el servicio contratarlo. 📝
+              <button
+                type="submit"
+                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
+              >
+                <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
+                Confirmar Contratación
+              </button>
+            </p>
+            <a href="/client/chats/?" class="text-white bg-green-500 p-2 rounded-lg transition-colors duration-300">
+              Ver el Chat
+            </a>
+          </div>
+          )
+          )
 
+          ) : (
           <button
+            type="submit"
             class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300 flex justify-center items-center gap-2"
           >
             <Icon name="mdi:check-circle" size={ 24 } class="text-white" />
             Confirmar Contratación
           </button>
+          )
+          }
         </form>
       </div>
     </div>
@@ -96,32 +177,47 @@ import { getErrorList } from '@/utils'
 import Swal from 'sweetalert2'
 
 const createHiringForm = document.getElementById( 'create-hiring-form' ) as HTMLFormElement
-  createHiringForm.addEventListener( 'submit', async ( event ) => {
-    event.preventDefault()
-    const walletId = createHiringForm.dataset.walletId ?? ''
+createHiringForm.addEventListener( 'submit', async ( event ) => {
+  event.preventDefault()
+  const walletId = createHiringForm.dataset.walletId ?? ''
 
-    const { error } = await actions.paymentAmountWallet({
-      id: walletId,
-      amount: 0.5,
-      stars: 2,
-    })
+  const { error } = await actions.paymentAmountWallet({
+    id: walletId,
+    amount: 2,
+    stars: 1,
+  })
 
-    if ( error ) {
-      const errorMessages = getErrorList( error )
-      const errorMessage = errorMessages.map( ( { message } ) => message ).join( '\n' )
-      Swal.fire({
-        icon: 'error',
-        title: '¡Ups! Algo salió mal en la transferencia 😢',
-        text: errorMessage,
-      })
-      return
-    }
-    Swal.fire( {
-      icon: 'success',
-      title: '¡Transferencia realizada! 🎉',
-      text: 'La transferencia ha sido realizada con éxito.',
+  if ( error ) {
+    const errorMessages = getErrorList( error )
+    const errorMessage = errorMessages.map( ( { message } ) => message ).join( '\n' )
+    Swal.fire({
+      icon: 'error',
+      title: '¡Ups! Algo salió mal en la transferencia 😢',
+      text: errorMessage,
     })
-    window.location.reload()
     return
-  } )
+  }
+
+  const formData = new FormData( createHiringForm )
+  const { error: hiringError } = await actions.createHiringWorker( formData )
+
+  if ( hiringError ) {
+    const errorMessages = getErrorList( hiringError )
+    const errorMessage = errorMessages.map( ( { message } ) => message ).join( '\n' )
+    Swal.fire({
+      icon: 'error',
+      title: '¡Ups! Algo salió mal en la transferencia 😢',
+      text: errorMessage,
+    })
+    return
+  }
+
+  Swal.fire( {
+    icon: 'success',
+    title: '¡Transferencia realizada! 🎉',
+    text: 'La transferencia ha sido realizada con éxito.',
+  })
+  window.location.reload()
+  return
+} )
 </script>

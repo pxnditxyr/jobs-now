@@ -140,6 +140,20 @@ const Hiring = defineTable({
   }
 })
 
+const HiringWorker = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true, unique: true }),
+    userId: column.text({ references: () => User.columns.id }),
+    workerProfileId: column.text({ references: () => WorkerProfile.columns.id }),
+    contractDate: column.date(),
+    state: column.text({ default: 'pending' }),
+
+    createdAt: column.date({ default: new Date() }),
+    updatedAt: column.date({ default: new Date() }),
+    status: column.boolean({ default: true }),
+  }
+})
+
 const Review = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
@@ -168,8 +182,9 @@ const Analytic = defineTable({
 const ReviewWorker = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
-    workerId: column.text({ references: () => WorkerProfile.columns.id }),
+    userId: column.text({ references: () => User.columns.id }),
     rating: column.number(),
+    comment: column.text(),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
@@ -202,5 +217,6 @@ export default defineDb({
     Analytic,
     CommentService,
     Follower,
+    HiringWorker,
   }
 });

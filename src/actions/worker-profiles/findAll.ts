@@ -1,5 +1,5 @@
 import { defineAction } from 'astro:actions'
-import { and, CommentService, db, desc, eq, like, or, ReviewWorker, Service, ServiceCategory, User, WorkerProfile } from 'astro:db'
+import { and, CommentService, db, desc, eq, like, or, Service, ServiceCategory, User, WorkerProfile } from 'astro:db'
 import { z } from 'astro:schema'
 
 export const findAllWorkerProfiles = defineAction({

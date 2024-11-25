@@ -15,7 +15,7 @@ export default defineConfig({
         const [ user ] = await db
           .select()
           .from( User )
-          .where( eq( User.email, `${ email }` ) )
+          .where( eq( User.email, `${ String( email ).toLowerCase().trim() }` ) )
 
         if ( !user ) {
           throw new Error( 'UserNotFound' )

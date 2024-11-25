@@ -1,5 +1,6 @@
 import { signupUser } from './auth'
 import { createCommentPublication, findAllCommentsByPublicationId } from './comment-publications'
+import { createHiringWorker, getAllHiringsByUserId, getAllHiringsByWorkerId, getHiringByUserId } from './hirings'
 import { updateProfile } from './profile'
 import { createServiceCategory, findAllServiceCategories, findOneServiceCategory, toggleStatusServiceCategory, updateServiceCategory } from './service-categories'
 import { createService, deleteService, findAllServices, findAllServicesByWorkerId, findOneService, updateService } from './services'
@@ -48,4 +49,9 @@ export const server = {
 
   createCommentPublication,
   findAllCommentsByPublicationId,
+
+  createHiringWorker,
+  getHiringByUserId,
+  getAllHiringsByWorkerId,
+  getAllHiringsByUserId,
 }

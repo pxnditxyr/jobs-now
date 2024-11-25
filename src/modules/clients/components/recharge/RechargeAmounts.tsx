@@ -12,33 +12,18 @@ const initialOptions = {
 const rechargeOptions = [
   {
     amount: 2,
-    stars: 3,
+    stars: 1,
     emoji: '☕'
   },
   {
-    amount: 5,
-    stars: 8,
+    amount: 6,
+    stars: 3,
     emoji: '🍔'
   },
   {
     amount: 10,
-    stars: 13,
+    stars: 5,
     emoji: '🍕'
-  },
-  {
-    amount: 20,
-    stars: 17,
-    emoji: '🎬'
-  },
-  {
-    amount: 50,
-    stars: 25,
-    emoji: '🛍️'
-  },
-  {
-    amount: 100,
-    stars: 35,
-    emoji: '💎'
   },
 ]
 
