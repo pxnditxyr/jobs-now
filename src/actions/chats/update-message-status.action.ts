@@ -1,5 +1,5 @@
 import { defineAction } from 'astro:actions'
-import { db, MessageStatus } from 'astro:db'
+import { and, db, eq, MessageStatus } from 'astro:db'
 import { z } from 'astro:schema'
 import { v4 as UUID } from 'uuid'
 
@@ -12,19 +12,27 @@ export const updateMessageStatus = defineAction({
   }),
   handler: async ({ messageId, userId, isRead }) => {
     try {
-      // Verificar si ya existe un registro de estado para este mensaje y usuario
-      const existingStatus = await db.select().from(MessageStatus).where({ messageId, userId }).first()
+      const [ existingStatus ] = await db
+        .select()
+        .from( MessageStatus )
+        .where(
+          and(
+            eq( MessageStatus.messageId, messageId ),
+            eq( MessageStatus.userId, userId ),
+          )
+        )
 
-      if (existingStatus) {
-        // Actualizar el estado existente
-        await db.update(MessageStatus).set({
+      if ( existingStatus ) {
+        await db.update( MessageStatus ).set({
           isRead,
           readAt: isRead ? new Date() : null,
           updatedAt: new Date(),
-        }).where({ id: existingStatus.id })
+        })
+        .where(
+          eq( MessageStatus.messageId, existingStatus.id ),
+        )
       } else {
-        // Crear un nuevo registro de estado
-        await db.insert(MessageStatus).values({
+        await db.insert( MessageStatus ).values({
           id: UUID(),
           messageId,
           userId,
@@ -36,8 +44,8 @@ export const updateMessageStatus = defineAction({
       }
 
       return { success: true }
-    } catch (error: any) {
-      throw new Error(error.message || 'Error al actualizar el estado del mensaje.')
+    } catch ( error: any ) {
+      throw new Error( error )
     }
   }
 })

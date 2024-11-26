@@ -261,8 +261,7 @@ const MessageStatus = defineTable({
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
   },
-});
-
+})
 
 export default defineDb({
   tables: {

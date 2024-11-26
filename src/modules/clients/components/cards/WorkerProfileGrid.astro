@@ -102,6 +102,13 @@ const { serviceCategories } = serviceCategoriesData
       <WorkerProfileCard workerId={ workerProfile.userId } />
     ) )
   }
+  {
+    ( workerProfiles.length === 0 ) && (
+      <div class="font-semibold text-center text-gray-600 text-xl py-8">
+        No hay trabajadores disponibles 😢
+      </div>
+    )
+  }
 </div>
 
 <script>

@@ -1,5 +1,5 @@
 import { defineAction } from 'astro:actions'
-import { db, Message, MessageStatus } from 'astro:db'
+import { db, eq, Message, MessageStatus } from 'astro:db'
 import { z } from 'astro:schema'
 
 export const deleteMessage = defineAction({
@@ -9,21 +9,35 @@ export const deleteMessage = defineAction({
   }),
   handler: async ({ messageId }) => {
     try {
-      // Verificar si el mensaje existe
-      const message = await db.select().from(Message).where({ id: messageId }).first()
-      if (!message) {
-        throw new Error('Mensaje no encontrado.')
+      const [ message ] = await db
+        .select()
+        .from( Message )
+        .where(
+          eq( Message.id, messageId )
+        )
+      if ( !message ) {
+        throw new Error( 'El mensaje no se encontro 💁‍♂️' )
       }
 
-      // Soft delete: actualizar el estado a false
-      await db.update(Message).set({ status: false, updatedAt: new Date() }).where({ id: messageId })
+      await db.update( Message ).set({
+        status: false,
+        updatedAt: new Date()
+      })
+      .where(
+        eq( Message.id, messageId )
+      )
 
-      // Soft delete de estados de mensajes
-      await db.update(MessageStatus).set({ isRead: false, readAt: null, updatedAt: new Date() }).where({ messageId })
+      await db.update( MessageStatus ).set({
+        isRead: false,
+        readAt: null,
+        updatedAt: new Date()
+      }).where(
+        eq( MessageStatus.messageId, messageId )
+      )
 
       return { success: true }
-    } catch (error: any) {
-      throw new Error(error.message || 'Error al eliminar el mensaje.')
+    } catch ( error: any ) {
+      throw new Error( error )
     }
   }
 })

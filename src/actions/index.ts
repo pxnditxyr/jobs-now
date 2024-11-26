@@ -1,4 +1,5 @@
 import { signupUser } from './auth'
+import { addParticipants, createConversation, deleteConversation, deleteMessage, getConversationMessages, getUserConversations, sendMessage, updateMessageStatus } from './chats'
 import { createCommentPublication, findAllCommentsByPublicationId } from './comment-publications'
 import { createHiringWorker, getAllHiringsByUserId, getAllHiringsByWorkerId, getAllPendingHiringsByWorkerId, getHiringByUserId } from './hirings'
 import { approveHiring } from './hirings/approve-hiring.action'
@@ -61,4 +62,13 @@ export const server = {
   rejectHiring,
   completeHiring,
   getAllPendingHiringsByWorkerId,
+
+  addParticipants,
+  createConversation,
+  deleteConversation,
+  getUserConversations,
+  sendMessage,
+  updateMessageStatus,
+  deleteMessage,
+  getConversationMessages,
 }

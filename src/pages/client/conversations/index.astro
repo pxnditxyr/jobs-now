@@ -1,0 +1,112 @@
+---
+import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
+import { Icon } from 'astro-icon/components'
+import { actions } from 'astro:actions'
+import { getSession } from 'auth-astro/server'
+import { ChatInterface } from '@/modules/shared/components/chats/ChatInterface.tsx'
+
+const session = await getSession( Astro.request )
+
+const { user: sessionUser } = session ?? {}
+
+if ( !sessionUser ) return Astro.redirect( '/auth/signin' )
+
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: sessionUser.id } )
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
+
+
+
+---
+
+
+<ClientLayout>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
+    <ChatInterface
+      client:only="react"
+    />
+</ClientLayout>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+
+const editButtons = document.querySelectorAll( '.edit-button' ) as NodeListOf<HTMLButtonElement>
+const closeButtons = document.querySelectorAll( '.close-button' ) as NodeListOf<HTMLButtonElement>
+const saveField = document.getElementById( 'save-field' ) as HTMLElement
+const profileEditForm = document.getElementById( 'profile-edit-form' ) as HTMLFormElement
+
+editButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.dataset.id
+    const fieldElement = document.getElementById( `${ id }-field` ) as HTMLElement
+    const valueElement = document.getElementById( `${ id }-value` ) as HTMLElement
+
+    fieldElement.classList.toggle( 'hidden' )
+    fieldElement.classList.toggle( 'flex' )
+    valueElement.classList.toggle( 'hidden' )
+    saveField.classList.remove( 'hidden' )
+    saveField.classList.add( 'fixed' )
+    saveField.dataset.count = ( saveField.dataset.count ) ? `${ parseInt( saveField.dataset.count ) + 1 }` : '1'
+    button.disabled = true
+  } )
+} )
+
+closeButtons.forEach( button => {
+  button.addEventListener( 'click', () => {
+    const id = button.id.split( '-' )[ 1 ]
+    const fieldElement = document.getElementById( `${ id }-field` ) as HTMLElement
+    const valueElement = document.getElementById( `${ id }-value` ) as HTMLElement
+    const editButton = document.getElementById( `edit-${ id }-button` ) as HTMLButtonElement
+
+    fieldElement.classList.toggle( 'hidden' )
+    fieldElement.classList.toggle( 'flex' )
+    valueElement.classList.toggle( 'hidden' )
+    saveField.dataset.count = ( saveField.dataset.count ) ? `${ parseInt( saveField.dataset.count ) - 1 }` : '0'
+    if ( saveField.dataset.count === '0' ) {
+      saveField.classList.add( 'hidden' )
+      saveField.classList.remove( 'fixed' )
+    }
+    editButton.disabled = false
+
+
+
+    const originalValue = button.dataset.original
+
+    const input = fieldElement.querySelector( 'input' ) as HTMLInputElement
+    const select = fieldElement.querySelector( 'select' ) as HTMLSelectElement
+    if ( input ) {
+      input.value = originalValue ?? ''
+    }
+    if ( select ) {
+      select.value = originalValue ?? ''
+    }
+  } )
+} )
+
+profileEditForm.addEventListener( 'submit', async event => {
+  event.preventDefault()
+
+  const formData = new FormData( profileEditForm )
+
+  const { error } = await actions.updateProfile( formData )
+
+  if ( error ) {
+    Swal.fire( {
+      title: '¡Error al Actualizar!',
+      text: 'Ocurrió un error al intentar actualizar tu información de perfil. Por favor, intenta de nuevo.',
+      icon: 'error',
+      confirmButtonText: '¡Entendido!',
+    } )
+    return
+  }
+  Swal.fire( {
+    title: '¡Perfil Actualizado!',
+    text: 'Tu información de perfil ha sido actualizada correctamente.',
+    icon: 'success',
+    confirmButtonText: '¡Entendido!',
+  } )
+
+} )
+
+</script>

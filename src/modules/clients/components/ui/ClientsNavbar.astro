@@ -35,12 +35,17 @@ const navItems = [
     href: '/client/hirings',
     icon: 'mdi:clipboard-text'
   },
+  {
+    name: 'Chats',
+    href: '/client/conversations',
+    icon: 'mdi:comment-multiple-outline'
+  },
 ]
 
 const currentPath = Astro.url.pathname
 ---
 
-<nav class="bg-teal-600 text-white shadow-lg">
+<nav class="bg-slate-100 text-slate-800 shadow-lg">
   <div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <div class="flex items-center">
@@ -51,7 +56,6 @@ const currentPath = Astro.url.pathname
               alt="logo"
               class="h-16"
             />
-            Jobs Now 🚀
           </span>
         </a>
         <div class="hidden lg:block">
@@ -59,7 +63,7 @@ const currentPath = Astro.url.pathname
             { navItems.map( ( item ) => (
             <a
               href={ item.href }
-              class={`px-3 py-2 rounded-md font-medium flex items-center gap-2 ${ ( currentPath === item.href ) ? 'bg-teal-700 text-white' : 'text-teal-100 hover:bg-teal-500 hover:text-white' }` }
+              class={`px-3 py-2 rounded-md font-medium flex items-center gap-2 ${ ( currentPath === item.href ) ? 'bg-teal-500 text-white' : 'text-teal-700' } hover:bg-teal-500 hover:text-white` }
             >
               <Icon name={ `${ item.icon }` } size={ 24 } />
               { item.name }
@@ -70,16 +74,16 @@ const currentPath = Astro.url.pathname
       </div>
       <div class="hidden lg:block">
         <div class="ml-4 flex items-center lg:ml-6 gap-2">
-          <span class="text-teal-100 font-bold"> Saldo: </span>
-          <span>
+          <span class="text-teal-700 font-bold"> Saldo: </span>
+          <span class="text-teal-700 font-bold">
             { wallet.stars } ⭐
           </span>
           <button
-            class="bg-teal-600 p-1 rounded-full text-teal-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
+            class="bg-teal-600 p-1 rounded-full text-teal-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
             id="toggle-button-open-menu"
           >
             <span class="sr-only">Ver notificaciones</span>
-            <Icon name="mdi:bell" size={ 24 } />
+            <Icon name="mdi:bell" size={ 24 } class="text-white" />
           </button>
           <div class="ml-3 relative">
             <div>
@@ -130,7 +134,7 @@ const currentPath = Astro.url.pathname
       <div class="-mr-2 flex lg:hidden">
         <button
           type="button"
-          class="bg-teal-600 inline-flex items-center justify-center p-2 rounded-md text-teal-100 hover:text-white hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
+          class="bg-teal-600 inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
           aria-controls="mobile-menu"
           aria-expanded="false"
           id="open-mobile-menu"
@@ -149,7 +153,7 @@ const currentPath = Astro.url.pathname
       <a
         href={ item.href }
         class={ `px-3 py-2 rounded-md text-base font-medium flex items-center gap-2 ${
-          ( currentPath  === item.href ) ? 'bg-teal-700 text-white' : 'text-teal-100 hover:bg-teal-500 hover:text-white'
+          ( currentPath  === item.href ) ? 'bg-teal-500 text-white' : 'text-teal-700'
         }` }
       >
         <Icon name={ `${ item.icon }` } size={ 24 } class="mr-2" />
@@ -175,25 +179,25 @@ const currentPath = Astro.url.pathname
           }
         </div>
         <div class="ml-3 flex flex-col gap-2">
-          <div class="text-base font-medium leading-none text-white">{user.name}</div>
-          <div class="font-medium leading-none text-teal-100">{user.email}</div>
+          <div class="text-base font-medium leading-none text-slate-800">{user.name}</div>
+          <div class="font-medium leading-none text-teal-700">{user.email}</div>
         </div>
       </div>
       <div class="mt-3 px-2 space-y-1">
         <a
           href="/client/profile"
-          class="px-3 py-2 rounded-md text-base font-medium text-teal-100 hover:text-white hover:bg-teal-500 flex items-center gap-2"
+          class="px-3 py-2 rounded-md text-base font-medium text-teal-700 hover:text-white hover:bg-teal-500 flex items-center gap-2"
         >
           <Icon name="mdi:account" size={ 24 } class="mr-2" />Perfil
         </a>
         <a
           href="/settings"
-          class="px-3 py-2 rounded-md text-base font-medium text-teal-100 hover:text-white hover:bg-teal-500 flex items-center gap-2"
+          class="px-3 py-2 rounded-md text-base font-medium text-teal-700 hover:text-white hover:bg-teal-500 flex items-center gap-2"
         >
           <Icon name="mdi:cog" size={ 24 } class="mr-2" />Configuración
         </a>
         <button
-          class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-teal-100 hover:text-white hover:bg-teal-500 flex items-center gap-2"
+          class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-teal-700 hover:text-white hover:bg-teal-500 flex items-center gap-2"
           id="signout-button-mobile"
         >
           <Icon name="mdi:logout" size={ 24 } class="mr-2" />Cerrar sesión
