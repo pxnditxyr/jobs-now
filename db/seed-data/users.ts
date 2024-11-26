@@ -28,8 +28,6 @@ export const seedUsers = [
   },
 ]
 
-console.log({ seedUsers })
-
 export const seedWorkerProfiles = [
   {
     id: UUID(),

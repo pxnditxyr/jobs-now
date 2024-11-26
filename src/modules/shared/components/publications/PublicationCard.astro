@@ -68,9 +68,7 @@ dotsVerticalButtons.forEach( button => {
   button.addEventListener( 'click', () => {
     const id = button.id.replace( 'dots-vertical-', '' )
     const serviceIdentifier = `service-menu-${id}`
-    console.log({ serviceIdentifier })
     const serviceMenu = document.getElementById( `service-menu-${id}` ) as HTMLDivElement
-    console.log({ serviceMenu })
     serviceMenu.classList.toggle( 'hidden' )
   } )
 } )
@@ -108,9 +106,7 @@ editServiceButtons.forEach( button => {
   button.addEventListener( 'click', () => {
     const id = button.dataset.id
     const serviceIdentifier = `edit-publication-modal-${id}`
-    console.log({ serviceIdentifier })
     const serviceModal = document.getElementById( serviceIdentifier ) as HTMLDivElement
-    console.log({ serviceModal })
     serviceModal.classList.remove( 'hidden' )
     serviceModal.classList.add( 'flex' )
   } )
@@ -122,9 +118,7 @@ closeEditServiceModals.forEach( button => {
   button.addEventListener( 'click', () => {
     const id = button.id.replace( 'close-edit-publication-modal-', '' )
     const serviceIdentifier = `edit-publication-modal-${id}`
-    console.log({ serviceIdentifier })
     const serviceModal = document.getElementById( serviceIdentifier ) as HTMLDivElement
-    console.log({ serviceModal })
     serviceModal.classList.add( 'hidden' )
     serviceModal.classList.remove( 'flex' )
   } )

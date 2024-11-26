@@ -95,7 +95,6 @@ form.addEventListener( 'submit', async ( event ) => {
   const { error } = await actions.createServiceCategory( formData )
 
   if ( error ) {
-    console.log({ error, errorType: typeof error })
     const errorMessages = getErrorList( error )
     for ( const errorMessage of errorMessages ) {
       const { field, message } = errorMessage

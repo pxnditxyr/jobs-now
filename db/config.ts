@@ -126,7 +126,7 @@ const Transaction = defineTable({
   }
 })
 
-const Hiring = defineTable({
+const HiringService = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
     userId: column.text({ references: () => User.columns.id }),
@@ -146,6 +146,7 @@ const HiringWorker = defineTable({
     userId: column.text({ references: () => User.columns.id }),
     workerProfileId: column.text({ references: () => WorkerProfile.columns.id }),
     contractDate: column.date(),
+    description: column.text(),
     state: column.text({ default: 'pending' }),
 
     createdAt: column.date({ default: new Date() }),
@@ -154,12 +155,11 @@ const HiringWorker = defineTable({
   }
 })
 
-const Review = defineTable({
+const ReviewCompletedWork = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
-    hiringId: column.text({ references: () => Hiring.columns.id }),
+    hiringWorkerId: column.text({ references: () => HiringWorker.columns.id }),
     rating: column.number(),
-    comment: column.text(),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
@@ -201,7 +201,66 @@ const Follower = defineTable({
   },
 })
 
-// https://astro.build/db/config
+
+const Conversation = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true, unique: true }),
+
+    isGroup: column.boolean({ default: false }),
+    name: column.text({ optional: true }),
+
+    createdAt: column.date({ default: new Date() }),
+    updatedAt: column.date({ default: new Date() }),
+    status: column.boolean({ default: true }),
+  },
+})
+
+
+const ConversationParticipant = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true, unique: true }),
+
+    conversationId: column.text({ references: () => Conversation.columns.id }),
+    userId: column.text({ references: () => User.columns.id }),
+    joinedAt: column.date({ default: new Date() }),
+
+    role: column.text({ optional: true }),
+    status: column.boolean({ default: true }),
+  },
+})
+
+const Message = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true, unique: true }),
+
+    conversationId: column.text({ references: () => Conversation.columns.id }),
+    senderId: column.text({ references: () => User.columns.id }),
+    content: column.text(),
+    messageType: column.text({ default: 'text' }),
+    attachmentUrl: column.text({ optional: true }),
+
+    createdAt: column.date({ default: new Date() }),
+    updatedAt: column.date({ default: new Date() }),
+    status: column.boolean({ default: true }),
+  },
+})
+
+
+const MessageStatus = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true, unique: true }),
+
+    messageId: column.text({ references: () => Message.columns.id }),
+    userId: column.text({ references: () => User.columns.id }),
+    isRead: column.boolean({ default: false }),
+    readAt: column.date({ optional: true }),
+
+    createdAt: column.date({ default: new Date() }),
+    updatedAt: column.date({ default: new Date() }),
+  },
+});
+
+
 export default defineDb({
   tables: {
     User,
@@ -211,12 +270,16 @@ export default defineDb({
     Service,
     Wallet,
     Transaction,
-    Hiring,
-    Review,
+    HiringService,
+    ReviewCompletedWork,
     ReviewWorker,
     Analytic,
     CommentService,
     Follower,
     HiringWorker,
+    Conversation,
+    ConversationParticipant,
+    Message,
+    MessageStatus,
   }
-});
+})

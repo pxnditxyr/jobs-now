@@ -103,17 +103,13 @@ import Swal from 'sweetalert2'
 
 const { signIn } = await import( 'auth-astro/client' )
 
-console.log( 'hola' )
 
 const handlerPageLoadSignin = () => {
-  console.log( 'Page loaded' )
   const form = document.querySelector( '#form-signin' ) as HTMLFormElement
   const submitButton = document.querySelector( 'button' ) as HTMLButtonElement
 
   const captchaAudio = document.querySelector( '#captcha-audio' ) as HTMLAudioElement
   const captchaInput = document.querySelector( '#captcha' ) as HTMLInputElement
-
-  console.log({ captchaAudio, captchaInput, form, submitButton })
 
   if ( !form || !submitButton || !captchaAudio || !captchaInput ) {
     return
@@ -121,7 +117,6 @@ const handlerPageLoadSignin = () => {
 
   const encodedCode = captchaAudio.getAttribute( 'data-ref' ) as string
   const decodedCode = atob( encodedCode.trim() )
-  console.log( decodedCode )
 
   form.addEventListener( 'submit', async ( event ) => {
 
@@ -132,10 +127,8 @@ const handlerPageLoadSignin = () => {
     const formData = new FormData( form )
 
     const userCaptcha = captchaInput.value.trim()
-    console.log({ userCaptcha })
 
     if ( userCaptcha !== decodedCode ) {
-      console.log({ userCaptcha, decodedCode })
       Swal.fire({
         icon: 'error',
         title: 'Error de CAPTCHA',
@@ -152,12 +145,7 @@ const handlerPageLoadSignin = () => {
     } )
 
     if ( response ) {
-      console.log({ response })
       const data = await response.json()
-      console.log({ data })
-      const urlParams = new URLSearchParams(response.url.split('?')[1]);
-      const errorCode = urlParams.get('error');
-      console.log({ errorCode, data })
       const errorMessages : Record<string, string> = {
         AccountDisabled: 'Tu cuenta ha sido deshabilitada, por favor contacta a soporte',
         InvalidCredentials: 'Parece que el correo electrónico o la contraseña son incorrectos',

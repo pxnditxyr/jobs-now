@@ -1,7 +1,6 @@
 import { defineAction } from 'astro:actions'
 import { db, eq, Service } from 'astro:db'
 import { z } from 'astro:schema'
-import { v4 as UUID } from 'uuid'
 
 
 export const updateService = defineAction({
@@ -20,9 +19,6 @@ export const updateService = defineAction({
     imageUrl,
     categoryId,
   } ) => {
-
-    console.log( 'entra' )
-    console.log( { id, title, description, imageUrl, categoryId } )
 
     try {
       await db.update( Service ).set({

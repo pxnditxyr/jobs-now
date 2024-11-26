@@ -81,9 +81,9 @@ const { serviceCategories } = serviceCategoriesData
           >
             {
             [ 5, 4, 3, 2, 1 ].map( ( subStar ) => (
-              <span>
-              { ( subStar < star + 1 ) && ( <span> ⭐ </span> ) }
-              </span>
+              <>
+              { ( subStar < star + 1 ) && ( <> ⭐ </> ) }
+              </>
             ) )
             }
           </option>
@@ -106,12 +106,10 @@ const { serviceCategories } = serviceCategoriesData
 
 <script>
 const starButtons = document.querySelectorAll( '.star-buttons' ) as NodeListOf<HTMLButtonElement>
-console.log( starButtons )
 
 starButtons.forEach( ( star ) => {
   star.addEventListener( 'click', async () => {
     const id = star.id.replace( 'button-star-', '' )
-    console.log({ id })
 
     for ( const star of starButtons ) {
       const beforeStar = star.id.replace( 'button-star-', '' )
@@ -140,7 +138,6 @@ searchForm.addEventListener( 'submit', async ( event ) => {
   const formData = new FormData( searchForm )
   const data = Object.fromEntries( formData.entries() )
   const { rating, serviceCategoryId, search } = data
-  console.log({ rating, serviceCategoryId, search })
   window.location.href = `/?rating=${ rating }&serviceCategoryId=${ serviceCategoryId }&search=${ search }`
 } )
 </script>

@@ -298,16 +298,13 @@ closeButtons.forEach( button => {
 
 
     const originalValue = button.dataset.original
-    console.log({ data: button.dataset, originalValue })
 
     const input = fieldElement.querySelector( 'input' ) as HTMLInputElement
     const select = fieldElement.querySelector( 'select' ) as HTMLSelectElement
     if ( input ) {
-      console.log({ originalValue, type: 'input', value: input.value })
       input.value = originalValue ?? ''
     }
     if ( select ) {
-      console.log({ originalValue, type: 'select', value: select.value })
       select.value = originalValue ?? ''
     }
   } )
@@ -321,7 +318,6 @@ profileEditForm.addEventListener( 'submit', async event => {
   const { error } = await actions.updateProfile( formData )
 
   if ( error ) {
-    console.log({ error })
     Swal.fire( {
       title: '¡Error al Actualizar!',
       text: 'Ocurrió un error al intentar actualizar tu información de perfil. Por favor, intenta de nuevo.',

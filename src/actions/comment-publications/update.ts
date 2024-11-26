@@ -21,9 +21,6 @@ export const updateService = defineAction({
     categoryId,
   } ) => {
 
-    console.log( 'entra' )
-    console.log( { id, title, description, imageUrl, categoryId } )
-
     try {
       await db.update( Service ).set({
         id: UUID(),

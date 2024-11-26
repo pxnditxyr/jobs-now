@@ -37,8 +37,6 @@ export const getListErrorMessage = ( error : any ) : string[] => {
 }
 
 export const getErrorList = ( error : any ) : IErrorDetail[] => {
-  console.log( 'error:', error )
-  console.log( 'error.message:', error.message )
   if ( error.message.startsWith( 'Failed to validate: ' ) ) {
     const prefix = 'Failed to validate: '
     const textErrors = error.message
