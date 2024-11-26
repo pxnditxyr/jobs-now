@@ -159,7 +159,9 @@ const ReviewCompletedWork = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
     hiringWorkerId: column.text({ references: () => HiringWorker.columns.id }),
+    userId: column.text({ references: () => User.columns.id }),
     rating: column.number(),
+    state: column.text({ default: 'pending' }),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
@@ -183,8 +185,9 @@ const ReviewWorker = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
     userId: column.text({ references: () => User.columns.id }),
+    workerProfileId: column.text({ references: () => WorkerProfile.columns.id }),
     rating: column.number(),
-    comment: column.text(),
+    state: column.text({ default: 'pending' }),
 
     createdAt: column.date({ default: new Date() }),
     updatedAt: column.date({ default: new Date() }),
