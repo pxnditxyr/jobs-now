@@ -28,7 +28,7 @@ interface Conversation {
 
 interface IProps {
   userId: string
-  workerId: string
+  workerId?: string
   currentUser: User
   disabled: boolean
 }

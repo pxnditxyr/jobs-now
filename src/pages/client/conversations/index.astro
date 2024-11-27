@@ -17,14 +17,19 @@ const { user } = userData
 
 //const userId = Astro.url.searchParams.get( 'userId' ) ?? ''
 const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
-const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
-if ( workerProfileError ) return Astro.redirect( '/' )
-const { workerProfile } = workerProfileData
+let currentHiring = { state: 'approved' }
+if ( workerId !== '' ) {
+  const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
+  if ( workerProfileError ) return Astro.redirect( '/client/wallet' )
+  const { workerProfile } = workerProfileData
 
 
-const { data: currentHiringData, error: currentHiringError } = await Astro.callAction( actions.getHiringByUserId, { userId: user.id, wokerProfileId: workerProfile.id } )
-if ( currentHiringError ) return Astro.redirect( '/' )
-const { hiring: currentHiring } = currentHiringData
+  const { data: currentHiringData, error: currentHiringError } = await Astro.callAction( actions.getHiringByUserId, { userId: user.id, wokerProfileId: workerProfile.id } )
+  if ( currentHiringError ) return Astro.redirect( '/' )
+  const { hiring: currentHiringxd } = currentHiringData
+  currentHiring = currentHiringxd
+}
+
 ---
 
 
