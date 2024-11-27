@@ -10,11 +10,13 @@ export const createHiringWorker = defineAction({
     userId: z.string({ message: 'El id del usuario es obligatorio.' }),
     workerProfileId: z.string({ message: 'El id del trabajador es obligatorio.' }),
     contractDate: z.string({ message: 'La fecha de contrato es obligatoria.' }),
+    description: z.string({ message: 'La descripción es obligatoria.' }).min( 2, { message: 'La descripción debe tener al menos 2 caracteres.' } ),
   }),
   handler: async ( {
     userId,
     workerProfileId,
     contractDate,
+    description,
   } ) => {
     try {
       await db.insert( HiringWorker ).values({
@@ -22,6 +24,7 @@ export const createHiringWorker = defineAction({
         userId,
         workerProfileId,
         contractDate: new Date( contractDate ),
+        description,
         createdAt: new Date(),
       })
 

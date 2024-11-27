@@ -1,6 +1,5 @@
 ---
 import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
-import { Icon } from 'astro-icon/components'
 import { actions } from 'astro:actions'
 import { getSession } from 'auth-astro/server'
 import { ChatInterface } from '@/modules/shared/components/chats/ChatInterface.tsx'
@@ -16,6 +15,8 @@ if ( userError ) return Astro.redirect( '/auth/signin' )
 const { user } = userData
 
 
+//const userId = Astro.url.searchParams.get( 'userId' ) ?? ''
+const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
 
 ---
 
@@ -24,6 +25,8 @@ const { user } = userData
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
     <ChatInterface
       client:only="react"
+      userId={ user.id }
+      workerId={ workerId }
     />
 </ClientLayout>
 

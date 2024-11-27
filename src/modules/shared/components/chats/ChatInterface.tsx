@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { actions } from 'astro:actions'
+import { useState, useEffect, useRef } from 'react'
 
 interface User {
   id: string
@@ -28,26 +29,6 @@ const currentUser: User = {
   avatar: '/placeholder.svg?height=40&width=40'
 }
 
-const mockConversations: Conversation[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    isGroup: false,
-    participants: [{ id: '2', name: 'John Doe', avatar: '/placeholder.svg?height=40&width=40' }],
-    lastMessage: { id: 'msg1', senderId: '2', content: 'Hey, how are you?', createdAt: new Date(), status: 'read' }
-  },
-  {
-    id: '2',
-    name: 'Project Team',
-    isGroup: true,
-    participants: [
-      { id: '3', name: 'Alice', avatar: '/placeholder.svg?height=40&width=40' },
-      { id: '4', name: 'Bob', avatar: '/placeholder.svg?height=40&width=40' },
-      { id: '5', name: 'Charlie', avatar: '/placeholder.svg?height=40&width=40' }
-    ],
-    lastMessage: { id: 'msg2', senderId: '3', content: 'Meeting at 3 PM', createdAt: new Date(), status: 'delivered' }
-  }
-]
 
 const mockMessages: { [key: string]: Message[] } = {
   '1': [
@@ -62,8 +43,13 @@ const mockMessages: { [key: string]: Message[] } = {
   ]
 }
 
-export const ChatInterface = () => {
-  const [conversations, setConversations] = useState<Conversation[]>(mockConversations)
+interface IProps {
+  userId: string
+  workerId: string
+}
+
+export const ChatInterface = ( { userId, workerId }: IProps ) => {
+  const [conversations, setConversations] = useState<Conversation[]>([])
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
@@ -74,43 +60,60 @@ export const ChatInterface = () => {
     if (selectedConversation) {
       setMessages(mockMessages[selectedConversation.id] || [])
     }
-  }, [selectedConversation])
+  }, [ selectedConversation ])
+
+
+  useEffect( () => {
+
+    const getConversations = async () => {
+      const { data: conversationsData, error: conversationsError } = await actions.getUserConversations({ userId })
+      if ( conversationsError ) {
+        console.log( conversationsError )
+        return
+      }
+      const { conversations } = conversationsData
+      console.log({ conversations })
+      //setConversations( conversations )
+    }
+    getConversations()
+
+  }, [] )
 
   //useLayoutEffect(() => {
   //  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   //}, [messages])
 
   const handleSendMessage = () => {
-    if (newMessage.trim() && selectedConversation) {
+    if ( newMessage.trim() && selectedConversation ) {
       const newMsg: Message = {
-        id: `msg${Date.now()}`,
+        id: `msg${ Date.now() }`,
         senderId: currentUser.id,
         content: newMessage.trim(),
         createdAt: new Date(),
         status: 'sent'
       }
-      setMessages([...messages, newMsg])
-      setNewMessage('')
+      setMessages([ ...messages, newMsg ])
+      setNewMessage( '' )
 
       // Update last message in conversation list
-      setConversations(conversations.map(conv =>
+      setConversations( conversations.map(conv =>
         conv.id === selectedConversation.id
           ? { ...conv, lastMessage: newMsg }
           : conv
-      ))
+      ) )
     }
   }
 
-  const handleCreateConversation = () => {
-    const newConv: Conversation = {
-      id: `conv${Date.now()}`,
-      name: 'New Conversation',
-      isGroup: false,
-      participants: [{ id: `user${Date.now()}`, name: 'New User', avatar: '/placeholder.svg?height=40&width=40' }]
-    }
-    setConversations([newConv, ...conversations])
-    setSelectedConversation(newConv)
-  }
+  //const handleCreateConversation = () => {
+  //  const newConv: Conversation = {
+  //    id: `conv${Date.now()}`,
+  //    name: 'New Conversation',
+  //    isGroup: false,
+  //    participants: [{ id: `user${Date.now()}`, name: 'New User', avatar: '/placeholder.svg?height=40&width=40' }]
+  //  }
+  //  setConversations([newConv, ...conversations])
+  //  setSelectedConversation(newConv)
+  //}
 
   const handleDeleteConversation = (convId: string) => {
     setConversations(conversations.filter(conv => conv.id !== convId))
@@ -136,16 +139,15 @@ export const ChatInterface = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Conversation List */}
       <div className="w-1/3 bg-white border-r border-gray-200">
         <div className="p-4 border-b border-gray-200">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search conversations..."
+              placeholder="Buscar..."
               className="w-full pl-10 pr-4 py-2 border rounded-lg"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={ searchTerm }
+              onChange={ ( e ) => setSearchTerm( e.target.value ) }
             />
             <svg className="absolute left-3 top-3 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -153,13 +155,13 @@ export const ChatInterface = () => {
           </div>
         </div>
         <div className="overflow-y-auto h-[calc(100vh-80px)]">
-          {filteredConversations.map(conv => (
+          { filteredConversations.map( conv => (
             <div
-              key={conv.id}
-              className={`flex items-center p-4 border-b border-gray-200 cursor-pointer ${selectedConversation?.id === conv.id ? 'bg-blue-50' : ''}`}
-              onClick={() => setSelectedConversation(conv)}
+              key={ conv.id }
+              className={ `flex items-center p-4 border-b border-gray-200 cursor-pointer ${selectedConversation?.id === conv.id ? 'bg-blue-50' : ''}` }
+              onClick={ () => setSelectedConversation( conv ) }
             >
-              <img src={conv.isGroup ? '/placeholder.svg?height=40&width=40' : conv.participants[0].avatar} alt={conv.name} className="w-10 h-10 rounded-full mr-3" />
+              <img src={ conv.isGroup ? '/placeholder.svg?height=40&width=40' : conv.participants[0].avatar } alt={conv.name} className="w-10 h-10 rounded-full mr-3" />
               <div className="flex-1">
                 <h3 className="font-semibold">{conv.name}</h3>
                 <p className="text-sm text-gray-500 truncate">{conv.lastMessage?.content}</p>
@@ -170,16 +172,16 @@ export const ChatInterface = () => {
                 </svg>
               </button>
             </div>
-          ))}
+          ) )
+          }
+          {
+            ( filteredConversations.length === 0 ) && (
+            <div className="flex-1 flex items-center justify-center bg-gray-100">
+              <p className="text-xl text-gray-500"> No se encontraron conversaciones recientes 😢 </p>
+            </div>
+            )
+          }
         </div>
-        <button
-          className="absolute bottom-4 right-4 bg-blue-500 text-white rounded-full p-3 shadow-lg hover:bg-blue-600"
-          onClick={handleCreateConversation}
-        >
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-        </button>
       </div>
 
       {/* Chat Area */}

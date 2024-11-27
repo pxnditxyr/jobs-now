@@ -56,6 +56,7 @@ hiring.state === 'cancelled' ? 'bg-red-100 text-red-800' :
                   {stateEmojis[hiring.state]}
                 </span>
               </td>
+
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(hiring.updatedAt)}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 {hiring.state === 'pending' && (
@@ -63,6 +64,8 @@ hiring.state === 'cancelled' ? 'bg-red-100 text-red-800' :
                 <button
                   class="text-green-600 hover:text-green-900 mr-2 flex items-center gap-2 approve-button"
                   data-id={ hiring.id }
+                  data-user-id={ hiring.user.id }
+                  data-worker-id={ hiring.workerProfile.userId }
                 >
                   <Icon name="mdi:check" size={ 24 } />Aceptar
                 </button>
@@ -122,6 +125,25 @@ approveButtons.forEach( button => {
         } )
         return
       }
+
+      // create conversation between user and worker
+      const userId = String( button.dataset.userId )
+      const workerId = String( button.dataset.workerId )
+
+      const { error: conversationError } = await actions.createConversation({
+        name: 'Contratto de Servicio',
+        participantIds: [ userId, workerId ],
+      })
+
+      if ( conversationError ) {
+        Swal.fire( {
+          title: '¡Ups! Algo salió mal 😢',
+          text: 'No se pudo crear la conversación. Por favor, inténtelo de nuevo.',
+          icon: 'error',
+        } )
+        return
+      }
+
       Swal.fire( {
         title: 'Felicitaciones! 🎉',
         text: 'La acción ha sido realizada con éxito.',

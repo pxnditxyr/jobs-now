@@ -4,7 +4,7 @@ import { z } from 'astro:schema'
 import { v4 as UUID } from 'uuid'
 
 export const createConversation = defineAction({
-  accept: 'form',
+  accept: 'json',
   input: z.object({
     isGroup: z.boolean().optional().default(false),
     name: z.string().optional(),
