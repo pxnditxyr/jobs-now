@@ -1,5 +1,5 @@
 import { defineAction } from 'astro:actions'
-import { db, Conversation, ConversationParticipant } from 'astro:db'
+import { db, Conversation, ConversationParticipant, eq, and } from 'astro:db'
 import { z } from 'astro:schema'
 import { v4 as UUID } from 'uuid'
 
@@ -20,6 +20,46 @@ export const createConversation = defineAction({
   } ),
   handler: async ({ isGroup, name, participantIds }) => {
     try {
+      const participantsUser1 = await db
+        .select()
+        .from( ConversationParticipant )
+        .where(
+          and(
+            eq( ConversationParticipant.userId, participantIds[ 0 ] ),
+            eq( ConversationParticipant.status, true ),
+          )
+        )
+
+      const participantsUser2 = await db
+        .select()
+        .from( ConversationParticipant )
+        .where(
+          and(
+            eq( ConversationParticipant.userId, participantIds[ 1 ] ),
+            eq( ConversationParticipant.status, true ),
+          )
+        )
+
+      const participantsUser1Id = participantsUser1.map( p => p.conversationId )
+      const participantsUser2Id = participantsUser2.map( p => p.conversationId )
+      const setParticipantsUser1Id = new Set( participantsUser1Id )
+
+      if ( participantsUser1Id.length !== 0 && participantsUser2Id.length !== 0 ) {
+        const existingConversation = participantsUser1Id.some( id => setParticipantsUser1Id.has( id ) )
+        if ( existingConversation ) {
+          const [ conversation ] = await db
+            .select()
+            .from( Conversation )
+            .where(
+              eq( Conversation.id, participantsUser2Id[ 0 ] )
+            )
+          return {
+            success: true,
+            conversationId: conversation.id,
+          }
+        }
+      }
+
       const conversationId = UUID()
 
       await db.insert( Conversation ).values({

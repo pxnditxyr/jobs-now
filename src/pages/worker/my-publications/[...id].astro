@@ -9,8 +9,12 @@ import Comments from '@/modules/workers/components/publications/Comments.astro'
 
 const session = await getSession( Astro.request )
 
-const { user } = session ?? {}
-if ( !user ) return Astro.redirect( '/auth/signin' )
+const { user: userSession } = session ?? {}
+if ( !userSession ) return Astro.redirect( '/auth/signin' )
+
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: userSession.id } )
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
 
 const { id } = Astro.params
 

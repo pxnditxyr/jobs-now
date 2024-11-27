@@ -30,12 +30,13 @@ const stateEmojis: { [key: string]: string } = {
   <div class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-3xl font-bold text-gray-900 mb-6">📋 Historial de Contrataciones</h1>
-      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="bg-white shadow overflow-x-auto sm:rounded-lg">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Contrato</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Actualización</th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
@@ -46,6 +47,7 @@ const stateEmojis: { [key: string]: string } = {
             <tr>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize">{hiring.user.name} {hiring.user.lastName}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(hiring.contractDate)}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{hiring.description}</td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
 hiring.state === 'active' ? 'bg-green-100 text-green-800' :

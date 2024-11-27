@@ -1,5 +1,5 @@
 ---
-import ClientLayout from '@/modules/clients/layouts/ClientLayout.astro'
+import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
 import { actions } from 'astro:actions'
 import { getSession } from 'auth-astro/server'
 import { ChatInterface } from '@/modules/shared/components/chats/ChatInterface.tsx'
@@ -17,24 +17,16 @@ const { user } = userData
 
 //const userId = Astro.url.searchParams.get( 'userId' ) ?? ''
 const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
-const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
-if ( workerProfileError ) return Astro.redirect( '/' )
-const { workerProfile } = workerProfileData
 
-
-const { data: currentHiringData, error: currentHiringError } = await Astro.callAction( actions.getHiringByUserId, { userId: user.id, wokerProfileId: workerProfile.id } )
-if ( currentHiringError ) return Astro.redirect( '/' )
-const { hiring: currentHiring } = currentHiringData
 ---
 
 
-<ClientLayout>
+<WorkersLayout>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
     <ChatInterface
       client:only="react"
       userId={ user.id }
       workerId={ workerId }
       currentUser={ user }
-      disabled={ ( currentHiring.state !== 'approved' ) }
     />
-</ClientLayout>
+</WorkersLayout>

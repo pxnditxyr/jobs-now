@@ -1,10 +1,12 @@
 import { actions } from 'astro:actions'
 import { useState, useEffect, useRef } from 'react'
+import Swal from 'sweetalert2'
 
 interface User {
   id: string
   name: string
-  avatar: string
+  lastName: string
+  avatar: string | null
 }
 
 interface Message {
@@ -12,43 +14,26 @@ interface Message {
   senderId: string
   content: string
   createdAt: Date
-  status: 'sent' | 'delivered' | 'read'
+  //status: 'delivered' | 'read'
+  state: string
 }
 
 interface Conversation {
   id: string
-  name: string
+  name: string | null
   isGroup: boolean
   participants: User[]
   lastMessage?: Message
 }
 
-const currentUser: User = {
-  id: 'current-user-id',
-  name: 'Current User',
-  avatar: '/placeholder.svg?height=40&width=40'
-}
-
-
-const mockMessages: { [key: string]: Message[] } = {
-  '1': [
-    { id: 'msg1', senderId: '2', content: 'Hey, how are you?', createdAt: new Date(Date.now() - 3600000), status: 'read' },
-    { id: 'msg2', senderId: 'current-user-id', content: 'I`m good, thanks! How about you?', createdAt: new Date(Date.now() - 3500000), status: 'read' },
-    { id: 'msg3', senderId: '2', content: 'Doing well, thanks for asking!', createdAt: new Date(Date.now() - 3400000), status: 'read' }
-  ],
-  '2': [
-    { id: 'msg4', senderId: '3', content: 'Hello everyone!', createdAt: new Date(Date.now() - 7200000), status: 'read' },
-    { id: 'msg5', senderId: '4', content: 'Hi Alice!', createdAt: new Date(Date.now() - 7100000), status: 'read' },
-    { id: 'msg6', senderId: '5', content: 'Meeting at 3 PM, don`t forget!', createdAt: new Date(Date.now() - 3600000), status: 'delivered' }
-  ]
-}
-
 interface IProps {
   userId: string
   workerId: string
+  currentUser: User
+  disabled: boolean
 }
 
-export const ChatInterface = ( { userId, workerId }: IProps ) => {
+export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IProps ) => {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
@@ -57,8 +42,19 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (selectedConversation) {
-      setMessages(mockMessages[selectedConversation.id] || [])
+    if ( selectedConversation ) {
+      //setMessages( mockMessages[ selectedConversation.id ] || [] )
+      //console.log({ selectedConversation })
+      const getMessages = async () => {
+        const { data: messagesData, error: messagesError } = await actions.getConversationMessages({ conversationId: selectedConversation.id })
+        if ( messagesError ) {
+          console.log( messagesError )
+          return
+        }
+        const { messages } = messagesData
+        setMessages( messages )
+      }
+      getMessages()
     }
   }, [ selectedConversation ])
 
@@ -72,9 +68,9 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
         return
       }
       const { conversations } = conversationsData
-      console.log({ conversations })
-      //setConversations( conversations )
+      setConversations( conversations )
     }
+
     getConversations()
 
   }, [] )
@@ -83,25 +79,47 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
   //  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   //}, [messages])
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
+
+
+
     if ( newMessage.trim() && selectedConversation ) {
-      const newMsg: Message = {
-        id: `msg${ Date.now() }`,
+      const newMsg = {
+        conversationId: selectedConversation.id,
         senderId: currentUser.id,
         content: newMessage.trim(),
-        createdAt: new Date(),
-        status: 'sent'
+        //messageType: 'text',
+        //attachmentUrl: undefined,
       }
-      setMessages([ ...messages, newMsg ])
+
+      const { data: messageData, error: messageError } = await actions.sendMessage( newMsg )
+      if ( messageError ) {
+        Swal.fire( {
+          title: '¡Ups! Algo salió mal 😢',
+          text: 'No se pudo enviar el mensaje. Por favor, inténtelo de nuevo.',
+          icon: 'error',
+        } )
+        return
+      }
+
+      const { message } = messageData
+
+      setMessages([
+        ...messages,
+        message
+      ])
       setNewMessage( '' )
 
-      // Update last message in conversation list
-      setConversations( conversations.map(conv =>
-        conv.id === selectedConversation.id
-          ? { ...conv, lastMessage: newMsg }
-          : conv
-      ) )
+    //  // Update last message in conversation list
+    //  setConversations( conversations.map(conv =>
+    //    conv.id === selectedConversation.id
+    //      ? { ...conv, lastMessage: newMsg }
+    //      : conv
+    //  ) )
     }
+
+
+
   }
 
   //const handleCreateConversation = () => {
@@ -133,12 +151,22 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
     ))
   }
 
-  const filteredConversations = conversations.filter(conv =>
-    conv.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredConversations = conversations.filter( conv =>
+    conv.participants.some( user => user.name.toLowerCase().includes( searchTerm.toLowerCase() ) || user.lastName.toLowerCase().includes( searchTerm.toLowerCase() ) )
+   )
+
+  const getAnotherUserName = ( participants : User[] ) : string => {
+    const otherUser = participants.filter( user => user.id !== userId )[ 0 ]
+    return `${ otherUser.name } ${ otherUser.lastName }`
+  }
+
+  const getAvatar = ( participants : User[] ) : string => {
+    const otherUser = participants.filter( user => user.id !== userId )[ 0 ]
+    return otherUser.avatar ?? '/avatar.svg'
+  }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex bg-gray-100">
       <div className="w-1/3 bg-white border-r border-gray-200">
         <div className="p-4 border-b border-gray-200">
           <div className="relative">
@@ -154,16 +182,24 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
             </svg>
           </div>
         </div>
-        <div className="overflow-y-auto h-[calc(100vh-80px)]">
+        <div className="overflow-y-auto h-[calc(100vh-200px)]">
           { filteredConversations.map( conv => (
             <div
               key={ conv.id }
               className={ `flex items-center p-4 border-b border-gray-200 cursor-pointer ${selectedConversation?.id === conv.id ? 'bg-blue-50' : ''}` }
               onClick={ () => setSelectedConversation( conv ) }
             >
-              <img src={ conv.isGroup ? '/placeholder.svg?height=40&width=40' : conv.participants[0].avatar } alt={conv.name} className="w-10 h-10 rounded-full mr-3" />
+              <img
+                src={ getAvatar( conv.participants ) }
+                alt={ conv.name ?? 'avatar' }
+                className="w-10 h-10 rounded-full mr-3"
+              />
               <div className="flex-1">
-                <h3 className="font-semibold">{conv.name}</h3>
+                <h3 className="font-semibold text-slate-800">
+                {
+                  getAnotherUserName( conv.participants )
+                }
+                </h3>
                 <p className="text-sm text-gray-500 truncate">{conv.lastMessage?.content}</p>
               </div>
               <button onClick={() => handleDeleteConversation(conv.id)} className="text-red-500 hover:text-red-700">
@@ -192,7 +228,7 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
               <h2 className="text-xl font-semibold">{selectedConversation.name}</h2>
             </div>
             <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
-              {messages.map(msg => (
+              { messages.map( msg => (
                 <div key={msg.id} className={`flex mb-4 ${msg.senderId === currentUser.id ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.senderId === currentUser.id ? 'bg-blue-500 text-white' : 'bg-white'}`}>
                     <p>{msg.content}</p>
@@ -200,9 +236,16 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
                       {msg.createdAt.toLocaleTimeString()}
                       {msg.senderId === currentUser.id && (
                         <span className="ml-2">
-                          {msg.status === 'sent' && '✓'}
-                          {msg.status === 'delivered' && '✓✓'}
-                          {msg.status === 'read' && '✓✓'}
+                          {
+                            ( msg.state === 'delivered' ) && (
+                              <span className="text-yellow-500 font-bold text-lg">✓</span>
+                            )
+                          }
+                          {
+                            ( msg.state === 'read' ) && (
+                              <span className="text-green-500 font-bold text-lg">✓✓</span>
+                            )
+                          }
                         </span>
                       )}
                     </div>
@@ -222,22 +265,32 @@ export const ChatInterface = ( { userId, workerId }: IProps ) => {
                     )}
                   </div>
                 </div>
-              ))}
-              <div ref={messagesEndRef} />
+              ) ) }
+              <div ref={ messagesEndRef } />
             </div>
+            {
+              ( disabled ) && (
+                <div>
+                  <p className="text-xl text-red-600"> Parece que por el momento no puedes conversar con el trabajador 😢 </p>
+                  <span className="text-xs text-red-500"> El motivo puede ser que el trabajador no está aprobado, se haya completado o se haya cancelado la contratación </span>
+                </div>
+              )
+            }
             <div className="p-4 bg-white border-t border-gray-200">
               <div className="flex items-center">
                 <input
                   type="text"
                   placeholder="Type a message..."
                   className="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  value={ newMessage }
+                  onChange={ (e) => setNewMessage(e.target.value) }
+                  onKeyDown={ (e) => e.key === 'Enter' && handleSendMessage() }
+                  disabled={ disabled }
                 />
                 <button
                   className="bg-blue-500 text-white rounded-r-lg px-4 py-2 hover:bg-blue-600"
-                  onClick={handleSendMessage}
+                  onClick={ handleSendMessage }
+                  disabled={ disabled }
                 >
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

@@ -2,11 +2,16 @@
 import { Icon } from 'astro-icon/components'
 import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
 import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
 
 const session = await getSession( Astro.request )
 
-const { user } = session ?? {}
-if ( !user ) return Astro.redirect( '/auth/signin' )
+const { user: userSession } = session ?? {}
+if ( !userSession ) return Astro.redirect( '/auth/signin' )
+
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: userSession.id } )
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
 
 const initialServices = [
   { id: 1, name: 'Reparación de Plomería', status: 'Completado', income: 150 },

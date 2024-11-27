@@ -1,10 +1,11 @@
 import { defineAction } from 'astro:actions'
+import { MessageStatus } from 'astro:db'
 import { db, Message, Conversation, eq, ConversationParticipant, and } from 'astro:db'
 import { z } from 'astro:schema'
 import { v4 as UUID } from 'uuid'
 
 export const sendMessage = defineAction({
-  accept: 'form',
+  accept: 'json',
   input: z.object({
     conversationId: z.string({ required_error: 'El ID de la conversación es requerido.' }),
     senderId: z.string({ required_error: 'El ID del remitente es requerido.' }),
@@ -52,10 +53,35 @@ export const sendMessage = defineAction({
         attachmentUrl: attachmentUrl || null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        status: true,
       })
 
-      return { success: true, messageId }
+      await db.insert( MessageStatus ).values({
+        id: UUID(),
+        messageId,
+        userId: senderId,
+        isRead: false,
+        readAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+
+      const [ currentMessage ] = await db
+        .select()
+        .from( Message )
+        .innerJoin( MessageStatus, eq( MessageStatus.messageId, Message.id ) )
+        .where(
+          eq( Message.id, messageId )
+        )
+      if ( !currentMessage ) {
+        throw new Error( 'El mensaje no se encontro 💁‍♂️' )
+      }
+
+      return {
+        message: {
+          ...currentMessage.Message,
+          state: currentMessage.MessageStatus.isRead ? 'delivered' : 'read'
+        }
+      }
     } catch ( error: any ) {
       throw new Error( error )
     }

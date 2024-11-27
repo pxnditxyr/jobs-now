@@ -1,5 +1,5 @@
 import { defineAction } from 'astro:actions'
-import { and, asc, db, eq, Message } from 'astro:db'
+import { and, asc, db, eq, Message, MessageStatus } from 'astro:db'
 import { z } from 'astro:schema'
 
 export const getConversationMessages = defineAction({
@@ -13,6 +13,7 @@ export const getConversationMessages = defineAction({
     try {
       const messages = await db.select()
         .from( Message )
+        .innerJoin( MessageStatus, eq( Message.id, MessageStatus.messageId ) )
         .where(
           and(
             eq( Message.conversationId, conversationId ),
@@ -27,14 +28,9 @@ export const getConversationMessages = defineAction({
         .limit( limit )
         .offset( offset )
 
-      const formattedMessages = messages.map( message => ({
-        id: message.id,
-        senderId: message.senderId,
-        content: message.content,
-        messageType: message.messageType,
-        attachmentUrl: message.attachmentUrl,
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
+      const formattedMessages = messages.map( ({ Message, MessageStatus }) => ({
+        ...Message,
+        state: MessageStatus.isRead ? 'read' : 'delivered',
       }) )
 
       return { messages: formattedMessages }
