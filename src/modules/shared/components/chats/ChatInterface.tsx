@@ -1,6 +1,8 @@
 import { actions } from 'astro:actions'
 import { useState, useEffect, useRef } from 'react'
 import Swal from 'sweetalert2'
+import { v4 as UUID } from 'uuid'
+import { useSocket } from './SocketContext'
 
 interface User {
   id: string
@@ -12,6 +14,7 @@ interface User {
 interface Message {
   id: string
   senderId: string
+  conversationId: string
   content: string
   createdAt: Date
   //status: 'delivered' | 'read'
@@ -34,12 +37,60 @@ interface IProps {
 }
 
 export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IProps ) => {
+  const { socket } = useSocket()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit('getUserConversations')
+
+      socket.on('userConversations', ( data: { conversations: Conversation[] } ) => {
+        setConversations(data.conversations)
+      })
+
+      socket.on( 'errorMessage', ( error : any ) => {
+        console.error(error.error)
+      } )
+
+      return () => {
+        socket.off('userConversations')
+        socket.off('errorMessage')
+      }
+    }
+  }, [socket])
+
+  useEffect(() => {
+    if (selectedConversation && socket) {
+      socket.emit( 'joinConversation', selectedConversation.id )
+      socket.emit('getConversationMessages', { conversationId: selectedConversation.id })
+
+      socket.on('conversationMessages', ( data : any ) => {
+        setMessages(data.messages)
+      })
+
+      socket.on( 'receiveMessage', ( message: Message ) => {
+        if ( message.conversationId === selectedConversation.id ) {
+          setMessages((prevMessages) => [...prevMessages, message])
+        }
+      } )
+
+      socket.on('errorMessage', ( error : any ) => {
+        console.error(error.error)
+      })
+
+      return () => {
+        socket.off('conversationMessages')
+        socket.off('receiveMessage')
+        socket.off('errorMessage')
+      }
+
+    }
+  }, [selectedConversation, socket])
 
   useEffect(() => {
     if ( selectedConversation ) {
@@ -78,49 +129,36 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
   //useLayoutEffect(() => {
   //  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   //}, [messages])
+  //
 
-  const handleSendMessage = async () => {
-
-
-
-    if ( newMessage.trim() && selectedConversation ) {
-      const newMsg = {
+  const handleSendMessage = () => {
+    if (newMessage.trim() && selectedConversation && socket) {
+      const messageId = UUID()
+      const message = {
+        id: messageId,
         conversationId: selectedConversation.id,
-        senderId: currentUser.id,
         content: newMessage.trim(),
-        //messageType: 'text',
-        //attachmentUrl: undefined,
+        messageType: 'text',
+        attachmentUrl: null,
       }
 
-      const { data: messageData, error: messageError } = await actions.sendMessage( newMsg )
-      if ( messageError ) {
-        Swal.fire( {
-          title: '¡Ups! Algo salió mal 😢',
-          text: 'No se pudo enviar el mensaje. Por favor, inténtelo de nuevo.',
-          icon: 'error',
-        } )
-        return
-      }
+      socket.emit('sendMessage', message)
 
-      const { message } = messageData
-
-      setMessages([
-        ...messages,
-        message
-      ])
-      setNewMessage( '' )
-
-    //  // Update last message in conversation list
-    //  setConversations( conversations.map(conv =>
-    //    conv.id === selectedConversation.id
-    //      ? { ...conv, lastMessage: newMsg }
-    //      : conv
-    //  ) )
+      setMessages( ( prevMessages ) => [
+        ...prevMessages,
+        {
+          ...message,
+          senderId: currentUser.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          status: true,
+          state: 'sent',
+        },
+      ] )
+      setNewMessage('')
     }
-
-
-
   }
+
 
   //const handleCreateConversation = () => {
   //  const newConv: Conversation = {
@@ -196,9 +234,9 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
               />
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-800">
-                {
-                  getAnotherUserName( conv.participants )
-                }
+                  {
+                    getAnotherUserName( conv.participants )
+                  }
                 </h3>
                 <p className="text-sm text-gray-500 truncate">{conv.lastMessage?.content}</p>
               </div>
@@ -212,9 +250,9 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
           }
           {
             ( filteredConversations.length === 0 ) && (
-            <div className="flex-1 flex items-center justify-center bg-gray-100">
-              <p className="text-xl text-gray-500"> No se encontraron conversaciones recientes 😢 </p>
-            </div>
+              <div className="flex-1 flex items-center justify-center bg-gray-100">
+                <p className="text-xl text-gray-500"> No se encontraron conversaciones recientes 😢 </p>
+              </div>
             )
           }
         </div>
@@ -233,7 +271,7 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
                   <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.senderId === currentUser.id ? 'bg-blue-500 text-white' : 'bg-white'}`}>
                     <p>{msg.content}</p>
                     <div className="text-xs mt-1 text-gray-400">
-                      {msg.createdAt.toLocaleTimeString()}
+                      { new Date( msg.createdAt ).toLocaleTimeString() }
                       {msg.senderId === currentUser.id && (
                         <span className="ml-2">
                           {
@@ -300,10 +338,10 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-100">
-            <p className="text-xl text-gray-500">Selecciona una conversación para comenzar a chatear</p>
-          </div>
-        )}
+            <div className="flex-1 flex items-center justify-center bg-gray-100">
+              <p className="text-xl text-gray-500">Selecciona una conversación para comenzar a chatear</p>
+            </div>
+          )}
       </div>
     </div>
   )
