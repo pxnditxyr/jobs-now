@@ -18,6 +18,7 @@ const { user } = userData
 //const userId = Astro.url.searchParams.get( 'userId' ) ?? ''
 const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
 let currentHiring = { state: 'approved' }
+
 if ( workerId !== '' ) {
   const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
   if ( workerProfileError ) return Astro.redirect( '/client/wallet' )

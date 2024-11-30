@@ -19,3 +19,11 @@ declare namespace App {
     user: User | null
   }
 }
+
+interface ImportMetaEnv {
+  readonly PUBLIC_SOCKET_SERVER: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

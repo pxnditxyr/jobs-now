@@ -22,11 +22,13 @@ interface IProps {
   children: React.ReactNode
 }
 
+const PUBLIC_SOCKET_SERVER = import.meta.env.PUBLIC_SOCKET_SERVER
+
 export const SocketProvider = ( { currentUser, children } : IProps ) => {
   const [ socket, setSocket ] = useState<Socket | null>(null)
 
   useEffect(() => {
-    const newSocket = io( 'http://localhost:4000', {
+    const newSocket = io( PUBLIC_SOCKET_SERVER, {
       auth: {
         token: currentUser.id,
       },

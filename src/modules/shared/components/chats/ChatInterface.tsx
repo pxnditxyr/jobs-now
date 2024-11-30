@@ -1,6 +1,5 @@
 import { actions } from 'astro:actions'
 import { useState, useEffect, useRef } from 'react'
-import Swal from 'sweetalert2'
 import { v4 as UUID } from 'uuid'
 import { useSocket } from './SocketContext'
 
@@ -37,13 +36,27 @@ interface IProps {
 }
 
 export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IProps ) => {
+  const current = localStorage.getItem( 'currentConversation' )
+  const currentConversation = current ? JSON.parse( current ) : null
+  const currentInputValue = localStorage.getItem( 'currentInputValue' ) ?? ''
+  console.log({ currentConversation, currentInputValue })
+
   const { socket } = useSocket()
   const [conversations, setConversations] = useState<Conversation[]>([])
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>( currentConversation )
   const [messages, setMessages] = useState<Message[]>([])
-  const [newMessage, setNewMessage] = useState('')
+  const [newMessage, setNewMessage] = useState( currentInputValue )
   const [searchTerm, setSearchTerm] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const setCurrentStatus = () => {
+    localStorage.setItem( 'currentConversation', JSON.stringify( selectedConversation ) )
+    localStorage.setItem( 'currentInputValue', newMessage )
+  }
+
+  useEffect( () => {
+    setCurrentStatus()
+  }, [ selectedConversation, newMessage ] )
 
   useEffect(() => {
     if (socket) {
@@ -126,10 +139,15 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
 
   }, [] )
 
+  const messagesContainerRef = useRef<HTMLDivElement>( null )
+  useEffect( () => {
+    if ( messagesContainerRef.current ) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+  }, [ messages ] )
   //useLayoutEffect(() => {
   //  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   //}, [messages])
-  //
 
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedConversation && socket) {
@@ -144,17 +162,17 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
 
       socket.emit('sendMessage', message)
 
-      setMessages( ( prevMessages ) => [
-        ...prevMessages,
-        {
-          ...message,
-          senderId: currentUser.id,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          status: true,
-          state: 'sent',
-        },
-      ] )
+      //setMessages( ( prevMessages ) => [
+      //  ...prevMessages,
+      //  {
+      //    ...message,
+      //    senderId: currentUser.id,
+      //    createdAt: new Date(),
+      //    updatedAt: new Date(),
+      //    status: true,
+      //    state: 'sent',
+      //  },
+      //] )
       setNewMessage('')
     }
   }
@@ -265,14 +283,16 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
             <div className="p-4 border-b border-gray-200 bg-white">
               <h2 className="text-xl font-semibold">{selectedConversation.name}</h2>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
+            <div
+              ref={ messagesContainerRef }
+              className="flex-1 overflow-y-auto p-4 bg-gray-100 max-h-[calc(100vh-200px)]">
               { messages.map( msg => (
-                <div key={msg.id} className={`flex mb-4 ${msg.senderId === currentUser.id ? 'justify-end' : 'justify-start'}`}>
+                <div key={ msg.id } className={ `flex mb-4 ${ msg.senderId === currentUser.id ? 'justify-end' : 'justify-start' }` }>
                   <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${msg.senderId === currentUser.id ? 'bg-blue-500 text-white' : 'bg-white'}`}>
-                    <p>{msg.content}</p>
+                    <p>{ msg.content }</p>
                     <div className="text-xs mt-1 text-gray-400">
                       { new Date( msg.createdAt ).toLocaleTimeString() }
-                      {msg.senderId === currentUser.id && (
+                      { msg.senderId === currentUser.id && (
                         <span className="ml-2">
                           {
                             ( msg.state === 'delivered' ) && (
@@ -285,9 +305,9 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
                             )
                           }
                         </span>
-                      )}
+                      ) }
                     </div>
-                    {msg.senderId === currentUser.id && (
+                    { msg.senderId === currentUser.id && (
                       <div className="flex mt-1">
                         <button onClick={() => handleEditMessage(msg.id, prompt('Edit message:', msg.content) || msg.content)} className="text-xs text-gray-300 hover:text-gray-100 mr-2">
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -300,7 +320,7 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
                           </svg>
                         </button>
                       </div>
-                    )}
+                    ) }
                   </div>
                 </div>
               ) ) }
@@ -321,7 +341,7 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
                   placeholder="Type a message..."
                   className="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={ newMessage }
-                  onChange={ (e) => setNewMessage(e.target.value) }
+                  onChange={ (e) => setNewMessage( e.target.value ) }
                   onKeyDown={ (e) => e.key === 'Enter' && handleSendMessage() }
                   disabled={ disabled }
                 />

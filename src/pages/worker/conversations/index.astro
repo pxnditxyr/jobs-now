@@ -2,7 +2,7 @@
 import WorkersLayout from '@/modules/workers/layouts/WorkersLayout.astro'
 import { actions } from 'astro:actions'
 import { getSession } from 'auth-astro/server'
-import { ChatInterface } from '@/modules/shared/components/chats/ChatInterface.tsx'
+import { ChatInterfaceProvider } from '@/modules/shared/components/chats/ChatInterfaceProvider'
 
 const session = await getSession( Astro.request )
 
@@ -23,10 +23,11 @@ const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
 
 <WorkersLayout>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
-    <ChatInterface
+    <ChatInterfaceProvider
       client:only="react"
       userId={ user.id }
       workerId={ workerId }
       currentUser={ user }
+      disabled={ false }
     />
 </WorkersLayout>
