@@ -158,8 +158,9 @@ const HiringWorker = defineTable({
 const ReviewCompletedWork = defineTable({
   columns: {
     id: column.text({ primaryKey: true, unique: true }),
-    hiringWorkerId: column.text({ references: () => HiringWorker.columns.id }),
+    workerProfileId: column.text({ references: () => WorkerProfile.columns.id }),
     userId: column.text({ references: () => User.columns.id }),
+
     rating: column.number(),
     state: column.text({ default: 'pending' }),
 
