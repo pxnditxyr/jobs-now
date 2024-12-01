@@ -29,10 +29,6 @@ const reviews = initialReviews
 
 const services = initialServices
 
-const calculateTotalIncome = () => {
-  return services.reduce((total, service) => total + service.income, 0)
-}
-
 const calculateAverageRating = () => {
   const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
   return reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : 'N/A'
@@ -47,21 +43,6 @@ const calculateAverageRating = () => {
         <h2 class="text-2xl font-semibold text-gray-900 mb-6">Bienvenido, { user.name } 👋</h2>
 
         <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 bg-primary-light rounded-md p-3 text-white">
-                  <Icon size={ 24 } name="mdi:account-group" />
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate"> Seguidores </dt>
-                    <dd class="text-lg font-semibold text-gray-900"> {calculateTotalIncome()} </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
               <div class="flex items-center">
@@ -114,7 +95,7 @@ const calculateAverageRating = () => {
                   <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.name}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.status}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${service.income}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.income} Bs. </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       { service.status === 'Pendiente' && (
                       <button

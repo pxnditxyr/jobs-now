@@ -38,6 +38,50 @@ const {
   author = SITE_INFO.author,
 } = Astro.props as Props
 
+
+const links = [
+  {
+    title: 'Panel de Control',
+    icon: 'mdi:home-outline',
+    url: '/worker',
+  },
+  {
+    title: 'Mis Publicaciones',
+    icon: 'mdi:briefcase-outline',
+    url: '/worker/my-publications',
+  },
+  {
+    title: 'Contrataciones',
+    icon: 'mdi:star-outline',
+    url: '/worker/hirings',
+  },
+  {
+    title: 'Mi Perfil',
+    icon: 'mdi:account-outline',
+    url: '/worker/profile',
+  },
+  {
+    title: 'Perfil Laboral',
+    icon: 'mdi:certificate',
+    url: '/worker/job-profile',
+  },
+  {
+    title: 'Chats',
+    icon: 'mdi:comment-multiple-outline',
+    url: '/worker/conversations',
+  },
+]
+
+const getCurrentPathTitle = () => {
+  const defaultValues = {
+    title: 'Panel de Control',
+    icon: 'mdi:home-outline',
+    url: '/worker',
+  }
+  const currentPath = Astro.url.pathname
+  const currentPathTitle = links.find( link => link.url === currentPath )
+  return [ currentPathTitle ] ?? [ defaultValues ]
+}
 ---
 
 <html lang="es">
@@ -66,14 +110,14 @@ const {
         class={ `-translate-x-full fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0` }
         id="sidebar"
       >
-        <div class="flex items-center justify-between p-4 border-b bg-primary">
-          <span class="text-2xl font-bold text-white">
+        <div class="flex flex-row items-center justify-between border-b bg-primary border-r-2 border-slate-200 lg:flex-col px-4">
+          <div class="py-2">
             <img
-              src="/logo.jpg"
+              src="/logo.webp"
               alt="logo"
-              class="h-16"
+              class="h-12"
             />
-          </span>
+          </div>
           <button
             class="lg:hidden"
             id="closeSidebar"
@@ -112,16 +156,30 @@ const {
               <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                   <div class="flex items-center">
-                    <span class="font-bold text-xl">🛠️ Dashboard del Trabajador</span>
+                    <span class="font-bold text-xl">
+                      {
+                      getCurrentPathTitle().map( ( item ) => (
+                        <div class="flex items-center gap-2">
+                          <Icon name={ item?.icon } size={ 24 } />
+                          { item?.title }
+                        </div>
+                      ) )
+                      }
+                    </span>
                   </div>
-                  <a class="flex items-center" href="/worker/profile">
-                    <span class="text-sm mr-4"> { user?.name } </span>
-                    <img
-                      class="h-8 w-8 rounded-full bg-white"
-                      src={ ( user?.avatar ) ? user.avatar : '/avatar.svg' }
-                      alt="Perfil"
-                    />
-                  </a>
+                  <div class="flex items-center gap-6">
+                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-900 font-semibold">
+                      Trabajador
+                    </span>
+                    <a class="flex items-center text-lg" href="/worker/profile">
+                      <span class="font-semibold mr-4"> { user?.name } </span>
+                      <img
+                        class="h-8 w-8 rounded-full bg-white"
+                        src={ ( user?.avatar ) ? user.avatar : '/avatar.svg' }
+                        alt="Perfil"
+                      />
+                    </a>
+                  </div>
                 </div>
               </div>
             </nav>
