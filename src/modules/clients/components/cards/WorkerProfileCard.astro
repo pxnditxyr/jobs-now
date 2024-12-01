@@ -21,12 +21,12 @@ if ( ratingError ) return Astro.redirect( '/' )
 const { rating } = ratingData
 ---
 
-<div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center gap-4">
-  <div class="relative w-full h-40 overflow-hidden rounded-lg">
+<div class="bg-white rounded-lg hover:shadow-lg transition-shadow duration-300 flex flex-col items-center gap-4 border shadow-[0_0_12px_6px_rgba(0,0,0,0.6)] p-4">
+  <div class="relative w-full h-40 overflow-hidden rounded-lg flex items-center justify-center bg-gray-300">
     <img
       src={ worker.avatar ?? '/avatar.svg' }
       alt={ `${ worker.name } ${ worker.lastName }` }
-      class="absolute h-40 w-full object-cover"
+      class="absolute h-32 w-32 rounded-full object-cover bg-blue-300"
     />
 
   </div>

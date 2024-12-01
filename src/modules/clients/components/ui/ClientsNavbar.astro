@@ -51,7 +51,7 @@ const currentPath = Astro.url.pathname
   <ReviewWorkerScreen />
   <div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
-      <div class="flex items-center">
+      <div class="flex items-center w-full">
         <a href="/" class="flex-shrink-0">
           <span class="font-bold text-xl flex items-center gap-2">
             <img
@@ -61,8 +61,8 @@ const currentPath = Astro.url.pathname
             />
           </span>
         </a>
-        <div class="hidden lg:block">
-          <div class="ml-10 flex items-baseline space-x-4">
+        <div class="hidden lg:w-full lg:flex lg:items-center lg:justify-center">
+          <div class="ml-10 flex space-x-8 w-full items-center justify-center">
             { navItems.map( ( item ) => (
             <a
               href={ item.href }
@@ -76,7 +76,7 @@ const currentPath = Astro.url.pathname
         </div>
       </div>
       <div class="hidden lg:block">
-        <div class="ml-4 flex items-center lg:ml-6 gap-2">
+        <div class="ml-4 flex items-center lg:ml-6 gap-2 w-full">
           <span class="text-teal-700 font-bold"> Saldo: </span>
           <span class="text-teal-700 font-bold">
             { wallet.stars } ⭐
@@ -122,9 +122,6 @@ const currentPath = Astro.url.pathname
             >
               <a href="/client/profile" class="px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2">
                 <Icon name="mdi:account" size={ 24 } class="mr-2" /> Perfil
-              </a>
-              <a href="/settings" class="px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2">
-                <Icon name="mdi:cog" size={ 24 } class="mr-2" /> Configuración
               </a>
               <button
                 class="w-full text-left px-4 py-2 text-teal-800 hover:bg-gray-100 flex items-center gap-2"
@@ -194,12 +191,6 @@ const currentPath = Astro.url.pathname
           class="px-3 py-2 rounded-md text-base font-medium text-teal-700 hover:text-white hover:bg-teal-500 flex items-center gap-2"
         >
           <Icon name="mdi:account" size={ 24 } class="mr-2" />Perfil
-        </a>
-        <a
-          href="/settings"
-          class="px-3 py-2 rounded-md text-base font-medium text-teal-700 hover:text-white hover:bg-teal-500 flex items-center gap-2"
-        >
-          <Icon name="mdi:cog" size={ 24 } class="mr-2" />Configuración
         </a>
         <button
           class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-teal-700 hover:text-white hover:bg-teal-500 flex items-center gap-2"

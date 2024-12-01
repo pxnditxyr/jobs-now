@@ -6,14 +6,116 @@ import PublicNavbar from '@/modules/public/components/ui/PublicNavbar.astro'
 const session = await getSession( Astro.request )
 
 const { user } = session ?? {}
+
+
+//¡Bienvenido a Jobs-now! La plataforma ideal para conectar a clientes con trabajadores independientes calificados en La Paz, Bolivia. En Jobs-now, hacemos que la contratación de servicios frecuentes y de mantenimiento sea rápida, segura y eficiente.
+//
+//Nuestra plataforma te permite comunicarte directamente con profesionales mediante un sistema de chat integrado, asegurando que cada detalle del servicio sea claro antes de comenzar. Descubre una manera sencilla de resolver tus necesidades con trabajadores confiables y calificados.
+//
+//Regístrate hoy mismo y empieza a disfrutar de un servicio que transforma tus tareas en soluciones.
+
+
+//Beneficios para los Clientes
+//Ahorro de tiempo: Encuentra profesionales adecuados de manera rápida.
+//Comunicación directa: Habla directamente con los trabajadores a través del chat para acordar todos los detalles.
+//Perfiles confiables: Consulta información detallada y reseñas de otros clientes para elegir con confianza.
+//Flexibilidad: Contrata servicios a tu medida, negociando directamente con los trabajadores.
+//Plataforma segura: Disfruta de un entorno protegido para gestionar tus servicios.
+//
+
+//Beneficios para los Trabajadores 
+//Conexión directa con clientes: Habla con los clientes a través del chat para entender sus necesidades y llegar a acuerdos.
+//Mejora tu reputación: Gana reseñas positivas y destaca entre otros trabajadores.
+//Más oportunidades: Amplía tu cartera de clientes y aumenta tus ingresos.
+//Gestión simplificada: Recibe solicitudes de trabajo y responde en tiempo real desde cualquier dispositivo.
+//Control total: Tú decides tus precios, horarios y condiciones de trabajo.
 ---
 
 <Layout>
   {
-    ( !user ) && (
-      <>
-        <PublicNavbar />
-      </>
+    ( !user ) ? (
+      <PublicNavbar />
+    ) : (
+      <ClientNavbar user={ user } />
     )
   }
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
+    <div class="bg-slate-800 shadow rounded-lg p-6 md:p-8 flex flex-col items-center gap-12 items-center">
+      <div class="w-full flex items-center justify-center gap-12">
+        <div class="w-full flex items-center justify-center gap-4">
+          <img
+            src="/logo.webp"
+            alt="logo"
+            class="h-80 rounded-lg bg-white shadow-[0_0_25px_12px_rgba(0,0,0,0.6)]"
+          />
+        </div>
+        <div class="w-full flex flex-col items-center justify-center gap-4 md:p-8 md:max-w-[500px] bg-pink-600 rounded-lg shadow-md">
+          <h1 class="text-3xl font-bold text-white mb-6">¡Bienvenido a Jobs-now!</h1>
+          <p class="text-white text-center font-semibold text-xl">
+            La plataforma ideal para conectar a clientes con trabajadores independientes calificados en La Paz, Bolivia. En Jobs-now, hacemos que la contratación de servicios frecuentes y de mantenimiento sea rápida, segura y eficiente.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Nuestra plataforma te permite comunicarte directamente con profesionales mediante un sistema de chat integrado, asegurando que cada detalle del servicio sea claro antes de comenzar. Descubre una manera sencilla de resolver tus necesidades con trabajadores confiables y calificados.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Regístrate hoy mismo y empieza a disfrutar de un servicio que transforma tus tareas en soluciones.
+          </p>
+        </div>
+      </div>
+      <div class="w-full flex items-center justify-center gap-12">
+        <div class="w-full flex flex-col items-center justify-center gap-4 md:p-8 md:max-w-[500px] bg-pink-600 rounded-lg shadow-md">
+          <h1 class="text-3xl font-bold text-white mb-6 text-center">Beneficios para los Trabajadores</h1>
+          <p class="text-white text-center font-semibold text-xl">
+            Conexión directa con clientes: Habla con los clientes a través del chat para entender sus necesidades y llegar a acuerdos.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Mejora tu reputación: Gana reseñas positivas y destaca entre otros trabajadores.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Más oportunidades: Amplía tu cartera de clientes y aumenta tus ingresos.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Gestión simplificada: Recibe solicitudes de trabajo y responde en tiempo real desde cualquier dispositivo.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Control total: Tú decides tus precios, horarios y condiciones de trabajo.
+          </p>
+        </div>
+        <div class="w-full flex items-center justify-center gap-4">
+          <img
+            src="/trabajador.webp"
+            alt="logo"
+            class="h-80 rounded-lg bg-white shadow-[0_0_25px_12px_rgba(0,0,0,0.6)]"
+          />
+        </div>
+      </div>
+      <div class="w-full flex items-center justify-center gap-12">
+        <div class="w-full flex items-center justify-center gap-4">
+          <img
+            src="/cliente.webp"
+            alt="logo"
+            class="h-80 rounded-lg bg-white shadow-[0_0_25px_12px_rgba(0,0,0,0.6)]"
+          />
+        </div>
+        <div class="w-full flex flex-col items-center justify-center gap-4 md:p-8 md:max-w-[500px] bg-pink-600 rounded-lg shadow-md">
+          <h1 class="text-3xl font-bold text-white mb-6">Beneficios para los Clientes</h1>
+          <p class="text-white text-center font-semibold text-xl">
+            Mejora tu calidad de vida: Gana más tiempo trabajando y menos tiempo en la escuela.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Comunicación directa: Habla directamente con los trabajadores a través del chat para acordar todos los detalles.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Perfiles confiables: Consulta información detallada y reseñas de otros clientes para elegir con confianza.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Flexibilidad: Contrata servicios a tu medida, negociando directamente con los trabajadores.
+          </p>
+          <p class="text-white text-center font-semibold text-xl">
+            Plataforma segura: Disfruta de un entorno protegido para gestionar tus servicios.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>

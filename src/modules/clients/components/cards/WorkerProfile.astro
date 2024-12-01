@@ -32,11 +32,11 @@ const { rating } = ratingData
     <div class="bg-white rounded-lg shadow-md mb-6">
       <div class="p-6 sm:p-8 flex flex-col sm:flex-row sm:justify-between items-center gap-4">
         <div class="flex flex-col sm:flex-row items-center gap-4">
-          <div class="relative w-24 h-24 rounded-full">
+          <div class="relative w-32 h-32 rounded-full">
             <img
               src={ worker.avatar || '/avatar.svg' }
               alt={ `${ worker.name } ${ worker.lastName }` }
-              class="w-full h-full rounded-full object-cover"
+              class="w-full h-full rounded-full object-cover bg-blue-300"
             />
           </div>
           <div class="text-center sm:text-left">
@@ -185,7 +185,7 @@ const { rating } = ratingData
     </div>
   </div>
 
-  <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+  <div class="grid grid-cols-1 gap-12 md:grid-cols-2 py-8 max-w-6xl">
     { services.filter( s => s.status ).map( service => (
       <PublicationCard service={ service } />
     ) ) }

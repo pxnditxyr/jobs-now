@@ -32,10 +32,9 @@ interface IProps {
   userId: string
   workerId?: string
   currentUser: User
-  disabled: boolean
 }
 
-export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IProps ) => {
+export const ChatInterface = ( { userId, workerId, currentUser }: IProps ) => {
   const current = localStorage.getItem( 'currentConversation' )
   const currentConversation = current ? JSON.parse( current ) : null
   const currentInputValue = localStorage.getItem( 'currentInputValue' ) ?? ''
@@ -220,6 +219,8 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
     return otherUser.avatar ?? '/avatar.svg'
   }
 
+  const disabled = false
+
   return (
     <div className="flex bg-gray-100">
       <div className="w-1/3 bg-white border-r border-gray-200">
@@ -247,7 +248,7 @@ export const ChatInterface = ( { userId, workerId, currentUser, disabled }: IPro
               <img
                 src={ getAvatar( conv.participants ) }
                 alt={ conv.name ?? 'avatar' }
-                className="w-10 h-10 rounded-full mr-3"
+                className="w-10 h-10 rounded-full mr-3 bg-blue-300"
               />
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-800">

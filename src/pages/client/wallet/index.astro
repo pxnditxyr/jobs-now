@@ -34,6 +34,66 @@ const { wallet } = walletData
           </span>
         </div>
 
+
+<!--¿Qué son las estrellas y cómo funcionan?-->
+<!---->
+<!--En Jobs-now, usamos un sistema de estrellas como método de pago para solicitar servicios de manera sencilla y práctica. Cada vez que solicites un servicio a un trabajador, se descontará automáticamente 1 estrella de tu cuenta.-->
+<!---->
+<!--¿Cuánto vale una estrella?-->
+<!--Cada estrella tiene un valor de 2 Bs. Este sistema te permite gestionar tus servicios de forma más controlada y sin necesidad de pagos directos en cada solicitud.-->
+<!---->
+<!--¿Qué son las estrellas y cómo funcionan?-->
+<!---->
+<!--En Jobs-now, usamos un sistema de estrellas como método de pago para solicitar servicios de manera sencilla y práctica. Cada vez que solicites un servicio a un trabajador, se descontará automáticamente 1 estrella de tu cuenta.-->
+<!---->
+<!--¿Cuánto vale una estrella?-->
+<!--Cada estrella tiene un valor de 2 Bs. Este sistema te permite gestionar tus servicios de forma más controlada y sin necesidad de pagos directos en cada solicitud.-->
+<!---->
+<!--Paquetes disponibles:-->
+<!--Puedes recargar estrellas eligiendo entre los siguientes paquetes:-->
+<!---->
+<!--1 estrella: 2 Bs-->
+<!---->
+<!--3 estrellas: 6 Bs-->
+<!---->
+<!--5 estrellas: 10 Bs-->
+<!---->
+<!---->
+<!---->
+<!---->
+<!------->
+<!---->
+<!--¿Cómo recargar tus estrellas?-->
+<!---->
+<!--Recargar estrellas es fácil y rápido. Solo sigue estos pasos:-->
+<!---->
+<!--Accede a tu billetera virtual en tu cuenta de Jobs-now.-->
+<!---->
+<!---->
+<!--Selecciona el paquete de estrellas que deseas comprar.-->
+<!---->
+<!---->
+<!--Realiza el pago a través de PayPal, nuestro método de recarga seguro y confiable.-->
+<!---->
+<!---->
+<!--Una vez confirmado el pago, las estrellas se acreditarán automáticamente en tu cuenta.-->
+<!---->
+<!------->
+<!---->
+<!--Preguntas frecuentes sobre las estrellas-->
+<!---->
+<!--¿Qué pasa si me quedo sin estrellas?-->
+<!--Puedes recargar estrellas en cualquier momento para seguir solicitando servicios.-->
+<!---->
+<!--¿Caducan las estrellas?-->
+<!--No, tus estrellas permanecen en tu cuenta hasta que las uses.-->
+<!---->
+<!--¿Puedo solicitar un servicio si no tengo estrellas?-->
+<!--No, es necesario tener al menos 1 estrella disponible para hacer una solicitud.-->
+<!------->
+<!---->
+<!--Este sistema de estrellas está diseñado para que tu experiencia en Jobs-now sea más cómoda, segura y sin complicaciones. ¡Empieza a recargar y solicita los servicios que necesitas con confianza!-->
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div class="bg-teal-50 p-6 rounded-lg">
             <p class="text-teal-600 mb-2 flex items-center gap-2">
@@ -47,6 +107,23 @@ const { wallet } = walletData
               <Icon name="mdi:calendar" size={ 24 } class="mr-2" />Fecha de Creación
             </p>
             <p class="text-xl font-semibold">{ wallet.updatedAt.toLocaleDateString() }</p>
+          </div>
+        </div>
+
+        <div class="bg-white text-gray-800 px-8 rounded-xl mb-8 flex flex-col items-center gap-4 md:flex-row">
+          <div class="bg-teal-100 text-slate-800 p-4 rounded-xl mb-8 flex flex-col items-center w-full">
+            <p class="text-xl mb-2 font-bold"> ⭐ ¿Qué son las estrellas? ⭐️</p>
+            <p class="mb-2 text-center">
+              Las estrellas son un sistema de pago en Jobs-now que te permite solicitar servicios de manera sencilla y práctica. Cada vez que solicites un servicio a un trabajador, se descontará automáticamente 1 estrella de tu cuenta.
+            </p>
+
+          </div>
+
+          <div class="bg-teal-100 text-slate-800 p-4 rounded-xl mb-8 flex flex-col items-center w-full">
+            <p class="text-xl mb-2 font-bold"> 💸 ¿Cuánto vale una estrella? 💸 </p>
+            <p class="mb-2 text-center">
+              Cada estrella tiene un valor de 2 Bs. Este sistema te permite gestionar tus servicios de forma más controlada y sin necesidad de pagos directos en cada solicitud.
+            </p>
           </div>
         </div>
 
@@ -74,15 +151,20 @@ const { wallet } = walletData
           <div class="flex items-center space-x-4">
             <div class="bg-teal-50 p-6 rounded-lg shadow-md">
               <h2 class="text-2xl font-bold text-teal-600 mb-4 flex items-center">
-                💳 Recarga tu Billetera con Dinero Real 💰✨
+                💳 ¿Cómo recargar tus estrellas? 💰✨
               </h2>
               <div class="mb-4">
                 <h3 class="text-xl font-semibold text-teal-700 mb-2 flex items-center">
-                  🔹 Facilita tus Pagos y Contrataciones 🔹
+                  Recargar estrellas es fácil y rápido. Solo sigue estos pasos: 🔹
                 </h3>
-                <p class="text-gray-700">
-                  Recarga tu billetera de manera rápida y segura con dinero real para realizar pagos y contrataciones sin complicaciones. 🛒💼
-                </p>
+                <div class="text-gray-700 px-5">
+                  <ul class="list-disc list-inside text-gray-600 space-y-2">
+                    <li>Accede a tu billetera virtual en tu cuenta de Jobs-now.</li>
+                    <li>Selecciona el paquete de estrellas que deseas comprar.</li>
+                    <li>Realiza el pago a través de PayPal, nuestro método de recarga seguro y confiable.</li>
+                    <li>Una vez confirmado el pago, las estrellas se acreditarán automáticamente en tu cuenta.</li>
+                  </ul>
+                </div>
               </div>
               <div class="mb-4">
                 <h3 class="text-xl font-semibold text-teal-700 mb-2 flex items-center">
@@ -107,12 +189,16 @@ const { wallet } = walletData
       </div>
     </div>
 
-    <div class="mt-12 text-center text-teal-800 w-full flex flex-col gap-6 justify-center items-center">
+    <div class="mt-12 text-center text-teal-800 w-full flex flex-col gap-6 justify-center items-center py-8">
       <p class="text-xl mb-4">¿Necesitas ayuda con tu billetera? 🤔</p>
-      <button class="flex items-center gap-2 bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-colors">
+      <a
+        class="flex items-center gap-2 bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-colors"
+        href="https://quality-soft.netlify.app/#contact"
+        target="_blank"
+      >
         <Icon name="mdi:help-circle" size={ 24 } class="mr-2" />
         Contactar Soporte
-      </button>
+      </a>
     </div>
   </div>
 </ClientLayout>

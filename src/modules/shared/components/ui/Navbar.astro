@@ -1,42 +1,96 @@
 ---
-import { type ILink } from '@/interfaces'
+import { Icon } from 'astro-icon/components'
+import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
 
-interface Props {
-  links: ILink[]
-}
+const navItems = [
+  {
+    name: 'Inicio',
+    href: '/',
+    icon: 'mdi:home'
+  },
+  {
+    name: 'Acerca de Nosotros',
+    href: '/about',
+    icon: 'mdi:information-outline'
+  },
+  {
+    name: 'Iniciar Sesión',
+    href: '/auth/signin',
+    icon: 'mdi:login'
+  },
+]
 
-const { links = [] } = Astro.props
 const currentPath = Astro.url.pathname
 ---
 
-<nav class="flex justify-between px-6 py-2 items-center bg-white w-full">
-  <div class="flex items-center gap-2">
-    <img
-      src="/logo.webp"
-      alt="logo"
-      class="w-32"
-    />
-  </div>
-  <div class="flex items-center">
-    <ul class="flex items-center gap-5">
-      {
-        links.map( ({ name, url }) => (
-        <li
-          class:list={[
-            'font-semibold hover:text-blue-600 capitalize',
-            {
-              'text-blue-600': currentPath === url,
-              'text-gray-700': currentPath !== url
-            }
-          ]}
+<nav class="bg-slate-100 text-slate-800 shadow-lg">
+  <div class="mx-auto px-4 sm:px-6 md:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center w-full">
+        <a href="/" class="flex-shrink-0">
+          <span class="font-bold text-xl flex items-center gap-2">
+            <img
+              src="/logo.webp"
+              alt="logo"
+              class="h-16"
+            />
+          </span>
+        </a>
+        <div class="hidden md:w-full md:flex md:items-center md:justify-center">
+          <div class="ml-10 flex space-x-8 w-full items-center justify-center">
+            { navItems.map( ( item ) => (
+            <a
+              href={ item.href }
+              class={`px-3 py-2 rounded-md font-medium flex items-center gap-2 ${ ( currentPath === item.href ) ? 'bg-teal-500 text-white' : 'text-teal-700' } hover:bg-teal-500 hover:text-white` }
+            >
+              <Icon name={ `${ item.icon }` } size={ 24 } />
+              { item.name }
+            </a>
+            ) ) }
+          </div>
+        </div>
+      </div>
+      <div class="-mr-2 flex md:hidden">
+        <button
+          type="button"
+          class="bg-teal-600 inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          id="open-mobile-menu"
         >
-        <a
-          href={ url }
-        > { name } </a>
-        </li>
-        ) )
-      }
-      <slot />
-    </ul>
+          <span class="sr-only">Abrir menú principal</span>
+          <Icon name="mdi:menu" size={ 24 } class="" />
+          <Icon name="mdi:close" size={ 24 } class="hidden" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hidden md:hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      { navItems.map( (item) => (
+      <a
+        href={ item.href }
+        class={ `px-3 py-2 rounded-md text-base font-medium flex items-center gap-2 ${
+          ( currentPath  === item.href ) ? 'bg-teal-500 text-white' : 'text-teal-700'
+        }` }
+      >
+        <Icon name={ `${ item.icon }` } size={ 24 } class="mr-2" />
+        { item.name }
+      </a>
+      ) ) }
+    </div>
   </div>
 </nav>
+<script>
+const openMobileMenu = document.getElementById( 'open-mobile-menu' ) as HTMLButtonElement
+const mobileMenu = document.getElementById( 'mobile-menu' ) as HTMLDivElement
+
+openMobileMenu.addEventListener( 'click', () => {
+  console.log( 'click' )
+  const isExpanded = openMobileMenu.getAttribute( 'aria-expanded' ) === 'true'
+  openMobileMenu.setAttribute( 'aria-expanded', String( !isExpanded ) )
+  mobileMenu.classList.toggle( 'hidden' )
+} )
+</script>

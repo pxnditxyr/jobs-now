@@ -80,7 +80,7 @@ const getCurrentPathTitle = () => {
   }
   const currentPath = Astro.url.pathname
   const currentPathTitle = links.find( link => link.url === currentPath )
-  return [ currentPathTitle ] ?? [ defaultValues ]
+  return currentPathTitle ? [ currentPathTitle ] : [ defaultValues ]
 }
 ---
 
@@ -161,6 +161,7 @@ const getCurrentPathTitle = () => {
                       getCurrentPathTitle().map( ( item ) => (
                         <div class="flex items-center gap-2">
                           <Icon name={ item?.icon } size={ 24 } />
+
                           { item?.title }
                         </div>
                       ) )

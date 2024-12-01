@@ -41,11 +41,15 @@ const { wallet } = walletData
       </div>
     </div>
 
-    <div class="mt-8 text-center text-teal-800">
+    <div class="mt-8 text-center text-teal-800 py-8 w-full flex flex-col items-center justify-center">
       <p class="text-xl mb-4">¿Necesitas ayuda con tu recarga? 🤔</p>
-      <button class="bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-colors flex items-center gap-2">
+      <a
+        class="bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-colors flex items-center gap-2"
+        href="https://quality-soft.netlify.app/#contact"
+        target="_blank"
+      >
         <Icon name="mdi:help-circle" size={ 24 } />Contactar Soporte
-      </button>
+      </a>
     </div>
   </div>
 </ClientLayout>

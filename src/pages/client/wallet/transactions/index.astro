@@ -25,8 +25,8 @@ if ( transactionsError ) return Astro.redirect( '/' )
 
 const { transactions } = transactionsData
 
-const getAmountColor = ( amount: number ) => {
-  return amount >= 10 ? 'text-green-600' : 'text-yellow-600'
+const getAmountColor = ( description: string ) => {
+  return description.includes( 'Cobro' ) ? 'text-yellow-600' : 'text-green-600'
 }
 
 ---
@@ -80,15 +80,15 @@ const getAmountColor = ( amount: number ) => {
                   { transaction.description }
                 </div>
               </td>
-              <td class={`py-3 px-4 text-right font-semibold ${ getAmountColor( transaction.amount ) }`}>
+              <td class={`py-3 px-4 text-right font-semibold ${ getAmountColor( transaction.description ) }`}>
                 <div class="flex items-center justify-end">
-                  <Icon name={ transaction.amount >= 0 ? 'mdi:arrow-up-bold' : 'mdi:arrow-down-bold' } size={ 24 } class="mr-2" />
-                  ${ Math.abs( transaction.amount ).toFixed(2) }
+                  <Icon name={ transaction.description.includes( 'Cobro' ) ? 'mdi:arrow-down-bold' : 'mdi:arrow-up-bold' } size={ 24 } class="mr-2" />
+                  { Math.abs( transaction.amount ).toFixed(2) } Bs.
                 </div>
               </td>
-              <td class={`py-3 px-4 text-right font-semibold ${ getAmountColor( transaction.amount ) }`}>
+              <td class={`py-3 px-4 text-right font-semibold ${ getAmountColor( transaction.description ) }`}>
                 <div class="flex items-center justify-end">
-                  <Icon name={ transaction.amount >= 0 ? 'mdi:arrow-up-bold' : 'mdi:arrow-down-bold' } size={ 24 } class="mr-2" />
+                  <Icon name={ transaction.description.includes( 'Cobro' ) ? 'mdi:arrow-down-bold' : 'mdi:arrow-up-bold' } size={ 24 } class="mr-2" />
                   { transaction.stars } ⭐️
                 </div>
               </td>
@@ -118,11 +118,12 @@ const getAmountColor = ( amount: number ) => {
     </div>
   </div>
 
-  <div class="mt-8 text-center text-teal-800 w-full flex flex-col items-center justify-center">
+  <div class="mt-8 text-center text-teal-800 w-full flex flex-col items-center justify-center py-8">
     <p class="text-xl mb-4">¿Necesitas ayuda con tus transacciones? 🤔</p>
     <a
       class="bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-colors shadow-lg hover:shadow-xl flex justify-center"
-      href="/support"
+      href="https://quality-soft.netlify.app/#contact"
+      target="_blank"
     >
       <Icon name="mdi:help-circle" size={ 24 } class="mr-2" />Contactar Soporte
     </a>

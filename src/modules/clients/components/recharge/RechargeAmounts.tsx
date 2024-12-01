@@ -30,6 +30,21 @@ const rechargeOptions = [
   },
 ]
 
+const moneyDescriptions = [
+  {
+    emoji: '🪙',
+    description: '(moneda pequeña, básica)',
+  },
+  {
+    emoji: '💰',
+    description: '(bolsa de dinero, más atractivo)',
+  },
+  {
+    emoji: '👑',
+    description:  '(corona, simbolizando el plan premium o más completo)',
+  },
+]
+
 interface IProps {
   clientId: string
   walletId: string
@@ -92,6 +107,14 @@ export const RechargeAmounts = ( { clientId, walletId }: IProps ) => {
 
   return (
     <div className="p-6 sm:p-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+       {moneyDescriptions.map((money) => (
+          <div className="flex flex-col items-center gap-2 bg-pink-600 p-4 rounded-lg">
+            <span className="text-xl sm:text-2xl font-bold text-white">{money.emoji}</span>
+            <span className="text-sm text-white text-center">{money.description}</span>
+          </div>
+        ))}
+      </div>
 
       { !isSuccess ? (
         <>
@@ -109,13 +132,16 @@ export const RechargeAmounts = ( { clientId, walletId }: IProps ) => {
                   setSelectedStars( option.stars )
                 }}
               >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-2xl sm:text-3xl">{ option.emoji } </span>
+                </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl sm:text-3xl">{ option.emoji }</span>
-                  <span className="text-xl sm:text-2xl font-bold text-teal-700">{ option.stars }⭐</span>
+                  <p className="mt-2 text text-gray-600 font-semibold">Recargas</p>
+                  <span className="text-xl sm:text-2xl font-bold text-teal-700">{ option.bolivianos } Bs.</span>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
-                  <p className="mt-2 text-sm text-gray-600 font-semibold">Recargar</p>
-                  <span className="text-xl sm:text-2xl font-bold text-teal-700">{ option.bolivianos } Bs.</span>
+                  <span className="">Equivale a</span>
+                  <span className="text-xl sm:text-2xl font-bold text-teal-700">{ option.stars }⭐</span>
                 </div>
               </div>
             ))}
