@@ -139,7 +139,7 @@ const currentPath = Astro.url.pathname
           class="bg-teal-600 inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
           aria-controls="mobile-menu"
           aria-expanded="false"
-          id="open-mobile-menu"
+          id="open-mobile-menu-client"
         >
           <span class="sr-only">Abrir menú principal</span>
           <Icon name="mdi:menu" size={ 24 } class="" />
@@ -207,7 +207,7 @@ const currentPath = Astro.url.pathname
 import { navigate } from 'astro:transitions/client'
 const { signOut } = await import( 'auth-astro/client' )
 
-const openMobileMenu = document.getElementById( 'open-mobile-menu' ) as HTMLButtonElement
+const openMobileMenu = document.getElementById( 'open-mobile-menu-client' ) as HTMLButtonElement
 const mobileMenu = document.getElementById( 'mobile-menu' ) as HTMLDivElement
 const signoutButton = document.getElementById( 'signout-button' ) as HTMLButtonElement
 const signoutButtonMobile = document.getElementById( 'signout-button-mobile' ) as HTMLButtonElement
