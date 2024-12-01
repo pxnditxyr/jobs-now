@@ -17,7 +17,6 @@ const {
   description = SITE_INFO.description,
   author = SITE_INFO.author,
 } = Astro.props as Props
-
 ---
 
 <html lang="es">
@@ -37,7 +36,7 @@ const {
     <title>{ title }</title>
   </head>
   <body>
-    <main class:list={[
+    <div class:list={[
       'w-full min-h-screen flex flex-col',
       Astro.props.class
     ]}

@@ -69,8 +69,8 @@ const { serviceCategories } = serviceCategoriesData
           Calificación mínima
         </label>
         <select
-          id="rating"
-          name="rating"
+          id="ratingSearch"
+          name="ratingSearch"
           class="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value=""> Todos los niveles </option>
@@ -133,7 +133,7 @@ starButtons.forEach( ( star ) => {
       }
     }
 
-    const ratingInput = document.getElementById( 'rating' ) as HTMLInputElement
+    const ratingInput = document.getElementById( 'ratingSearch' ) as HTMLInputElement
     ratingInput.value = String( id )
   } )
 } )
@@ -144,7 +144,13 @@ searchForm.addEventListener( 'submit', async ( event ) => {
   event.preventDefault()
   const formData = new FormData( searchForm )
   const data = Object.fromEntries( formData.entries() )
-  const { rating, serviceCategoryId, search } = data
-  window.location.href = `/?rating=${ rating }&serviceCategoryId=${ serviceCategoryId }&search=${ search }`
+  const { ratingSearch, serviceCategoryId, search } = data
+  //window.location.href = `/?rating=${ ratingSearch }&serviceCategoryId=${ serviceCategoryId }&search=${ search }`
+  const ratingSearchValue = ratingSearch ?? ''
+  const serviceCategoryIdValue = serviceCategoryId ?? ''
+  const searchValue = search ?? ''
+
+  window.location.href = `/?rating=${ ratingSearchValue }&serviceCategoryId=${ serviceCategoryIdValue }&search=${ searchValue }`
+
 } )
 </script>

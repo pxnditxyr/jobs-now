@@ -15,6 +15,10 @@ const { user: worker } = workerData
 const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
 if ( workerProfileError ) return Astro.redirect( '/client' )
 const { workerProfile } = workerProfileData
+
+const { data: ratingData, error: ratingError } = await Astro.callAction( actions.getRatingByWorkerProfileId, { workerProfileId: workerProfile.id } )
+if ( ratingError ) return Astro.redirect( '/' )
+const { rating } = ratingData
 ---
 
 <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center gap-4">
@@ -24,9 +28,13 @@ const { workerProfile } = workerProfileData
       alt={ `${ worker.name } ${ worker.lastName }` }
       class="absolute h-40 w-full object-cover"
     />
+
   </div>
   <div class="p-4 w-full">
-    <h2 class="text-xl font-semibold text-gray-800 mb-2">{worker.name} {worker.lastName}</h2>
+    <div class="flex items-center flex-col gap-2 md:flex-row justify-between">
+      <h2 class="text-xl font-semibold text-gray-800 mb-2">{worker.name} {worker.lastName}</h2>
+      <span class="font-bold"> { rating.toFixed( 2 ) } ⭐ </span>
+    </div>
     <p class="text-gray-600 mb-2 line-clamp-2">{workerProfile.description}</p>
     <div class="flex items-center mb-2 gap-2">
       <Icon name="mdi:map-marker" size={ 24 } class="text-red-500" />

@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components'
 import { getSession } from 'auth-astro/server'
 import { actions } from 'astro:actions'
+import ReviewWorkerScreen from '@/modules/clients/components/reviews/ReviewWorkerScreen.astro'
 
 const session = await getSession( Astro.request )
 
@@ -46,6 +47,8 @@ const currentPath = Astro.url.pathname
 ---
 
 <nav class="bg-slate-100 text-slate-800 shadow-lg">
+
+  <ReviewWorkerScreen />
   <div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <div class="flex items-center">
@@ -78,13 +81,12 @@ const currentPath = Astro.url.pathname
           <span class="text-teal-700 font-bold">
             { wallet.stars } ⭐
           </span>
-          <button
-            class="bg-teal-600 p-1 rounded-full text-teal-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
-            id="toggle-button-open-menu"
-          >
-            <span class="sr-only">Ver notificaciones</span>
-            <Icon name="mdi:bell" size={ 24 } class="text-white" />
-          </button>
+          <!--<button-->
+          <!--  class="bg-teal-600 p-1 rounded-full text-teal-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"-->
+          <!--  id="toggle-button-open-menu" >-->
+          <!--  <span class="sr-only">Ver notificaciones</span>-->
+          <!--  <Icon name="mdi:bell" size={ 24 } class="text-white" />-->
+          <!--</button>-->
           <div class="ml-3 relative">
             <div>
               <button

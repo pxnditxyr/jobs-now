@@ -11,19 +11,22 @@ const initialOptions = {
 
 const rechargeOptions = [
   {
-    amount: 2,
+    amount: 0.28,
+    bolivianos: 2,
     stars: 1,
-    emoji: '☕'
+    emoji: '🪙'
   },
   {
-    amount: 6,
+    amount: 0.84,
+    bolivianos: 6,
     stars: 3,
-    emoji: '🍔'
+    emoji: '💰'
   },
   {
-    amount: 10,
+    amount: 1.40,
+    bolivianos: 10,
     stars: 5,
-    emoji: '🍕'
+    emoji: '👑'
   },
 ]
 
@@ -79,7 +82,10 @@ export const RechargeAmounts = ( { clientId, walletId }: IProps ) => {
       setIsProcessing( false )
       console.log( 'Transaction completed by ' + details.payer.name.given_name )
       if ( !selectedAmount ) return
-      await setRechargeAmount( selectedAmount, selectedStars )
+      await setRechargeAmount(
+        rechargeOptions.find( option => option.amount === selectedAmount )?.bolivianos ?? 0,
+        selectedStars
+      )
       setIsSuccess( true )
     } )
   }
@@ -109,7 +115,7 @@ export const RechargeAmounts = ( { clientId, walletId }: IProps ) => {
                 </div>
                 <div className="mt-4 flex items-center justify-between">
                   <p className="mt-2 text-sm text-gray-600 font-semibold">Recargar</p>
-                  <span className="text-xl sm:text-2xl font-bold text-teal-700">${ option.amount }</span>
+                  <span className="text-xl sm:text-2xl font-bold text-teal-700">{ option.bolivianos } Bs.</span>
                 </div>
               </div>
             ))}
@@ -118,7 +124,7 @@ export const RechargeAmounts = ( { clientId, walletId }: IProps ) => {
           { selectedAmount && (
             <div className="mb-8">
               <h2 className="text-2xl font-semibold mb-4 text-teal-700">
-                <i className="mdi mdi-cash-check mr-2"></i>Monto seleccionado: ${ selectedAmount }
+                <i className="mdi mdi-cash-check mr-2"></i>Monto seleccionado: { rechargeOptions.find( option => option.amount === selectedAmount )?.bolivianos } Bs.
               </h2>
               <PayPalScriptProvider
                 options={{
@@ -127,9 +133,16 @@ export const RechargeAmounts = ( { clientId, walletId }: IProps ) => {
                 }}
               >
                 <PayPalButtons
+                  style={{
+                    color: "blue",
+                    layout: "horizontal",
+                    label: "paypal",
+                    borderRadius: 10,
+                    tagline: false,
+                  }}
                   createOrder={ handleCreateOrder }
                   onApprove={ handleApprove }
-                  style={{ layout: "horizontal" }}
+                  forceReRender={[ selectedAmount ]}
                 />
               </PayPalScriptProvider>
             </div>

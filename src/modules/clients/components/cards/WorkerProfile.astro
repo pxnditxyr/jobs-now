@@ -19,7 +19,7 @@ if ( workerProfileError ) return Astro.redirect( '/' )
 const { workerProfile } = workerProfileData
 
 const { data: servicesData, error: servicesError } = await Astro.callAction( actions.findAllServicesByWorkerId, { workerId: workerProfile.id } )
-if ( servicesError ) return Astro.redirect( '/worker' )
+if ( servicesError ) return Astro.redirect( '/' )
 const { services } = servicesData
 
 const { data: ratingData, error: ratingError } = await Astro.callAction( actions.getRatingByWorkerProfileId, { workerProfileId: workerProfile.id } )

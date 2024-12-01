@@ -83,6 +83,8 @@ hiring.state === 'cancelled' ? 'bg-red-100 text-red-800' :
                 <button
                   class="text-blue-600 hover:text-blue-900 flex items-center gap-2 complete-button"
                   data-id={ hiring.id }
+                  data-user-id={ hiring.user.id }
+                  data-worker-id={ hiring.workerProfile.id }
                 >
                   <Icon name="mdi:check-all" size={ 24 } />Completar
                 </button>
@@ -210,6 +212,22 @@ completeButtons.forEach( button => {
         } )
         return
       }
+
+      const { error: reviewError } = await actions.createReviewWorker({
+        userId: String( button.dataset.userId ),
+        workerProfileId: String( button.dataset.workerId ),
+      })
+
+      if ( reviewError ) {
+        Swal.fire( {
+          title: '¡Ups! Algo salió mal 😢',
+          text: 'No se pudo crear la reseña. Por favor, inténtelo de nuevo.',
+          icon: 'error',
+        } )
+        return
+      }
+
+
       Swal.fire( {
         title: '¡Felicitaciones! 🎉',
         text: 'La acción ha sido realizada con éxito.',

@@ -1,4 +1,5 @@
 import { defineAction } from 'astro:actions'
+import { ReviewCompletedWork } from 'astro:db'
 import { and, CommentService, db, desc, eq, like, or, Service, ServiceCategory, User, WorkerProfile } from 'astro:db'
 import { z } from 'astro:schema'
 
@@ -64,17 +65,28 @@ export const findAllWorkerProfiles = defineAction({
             Service.createdAt
           )
         )
-
+      const completedWorkRatings = await db
+        .select()
+        .from( ReviewCompletedWork )
+        .where(
+          and(
+            eq( ReviewCompletedWork.workerProfileId, WorkerProfile.id ),
+            eq( ReviewCompletedWork.state, 'completed' ),
+          )
+        )
 
       let ratingAverage = 0
       let noRepeatedServiceCategoryIds : any = []
 
-      if ( dataForRating.length > 0 ) {
-        const ratingSum = dataForRating.reduce((total, publication) => {
+      if ( dataForRating.length > 0 || completedWorkRatings.length > 0 ) {
+        const ratingSum = dataForRating.reduce( ( total, publication ) => {
           return total + publication.CommentService.rating
-        }, 0)
+        }, 0 )
+        const ratingSumCompletedWork = completedWorkRatings.reduce( ( total, completedWork ) => {
+          return total + completedWork.rating
+        }, 0 )
 
-        ratingAverage = ratingSum / dataForRating.length
+        ratingAverage = ( ratingSum + ratingSumCompletedWork ) / ( dataForRating.length + completedWorkRatings.length )
 
       }
       const serviceCategoryIds = dataForServices.map(ps => ps.ServiceCategory.id)
@@ -89,7 +101,9 @@ export const findAllWorkerProfiles = defineAction({
     }))
 
     if ( rating !== undefined && rating !== 0 ) {
-      workerProfilesFiltered = workerProfilesFiltered.filter(wp => wp.rating >= rating)
+      workerProfilesFiltered = workerProfilesFiltered.filter(
+        wp => Math.floor( wp.rating ) === rating
+      )
     }
 
     if ( serviceCategoryId !== undefined && serviceCategoryId !== '' ) {

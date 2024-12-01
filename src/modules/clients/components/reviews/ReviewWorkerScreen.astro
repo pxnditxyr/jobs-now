@@ -1,0 +1,189 @@
+---
+import { getSession } from 'auth-astro/server'
+import { actions } from 'astro:actions'
+import { Icon } from 'astro-icon/components'
+import WorkerNameCard from '@/modules/clients/components/cards/WorkerNameCard.astro'
+
+const session = await getSession( Astro.request )
+const { user: userSession } = session ?? {}
+if ( !userSession ) return Astro.redirect( '/auth/signin' )
+
+const { data: userData, error: userError } = await Astro.callAction( actions.findOneUser, { id: userSession.id } )
+if ( userError ) return Astro.redirect( '/auth/signin' )
+const { user } = userData
+
+const { data: pendingRatingsData, error: pendingRatingsError } = await Astro.callAction( actions.findAllPendingRatingByUserId, { userId: user.id } )
+if ( pendingRatingsError ) return Astro.redirect( '/' )
+const { pendingRatings } = pendingRatingsData
+console.log({ pendingRatings })
+console.log({ pendingRating: pendingRatings.length })
+let pendingRating : typeof pendingRatings = []
+if ( pendingRatings.length > 0 ) {
+  console.log({ pendingRatings })
+  pendingRating.push( pendingRatings[ 0 ] )
+  console.log({ pendingRating })
+} else {
+  console.log( 'no hay mas trabajos pendientes' )
+}
+---
+
+<>
+{
+  pendingRating.map( ( rating ) => (
+<div class="fixed inset-0 bg-black bg-opacity-50 min-h-screen flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg p-8 shadow-xl flex flex-col gap-4">
+    <h2 class="text-2xl font-bold text-center mb-4">
+      🌟 ¡Felicidades! 🎉
+    </h2>
+    <p class="text-center text-gray-600 text-xl">
+      ¡Han completado tu contrato y ahora puedes compartir tu experiencia con nosotros! 📝
+    </p>
+    <div class="flex justify-center items-center gap-4">
+      <button class="bg-blue-500 text-white px-6 py-4 rounded-lg hover:bg-blue-600 flex flex-col items-center gap-4 justify-center">
+        <span class="text-xl">
+          👉 Compartir mi experiencia acerca del Trabajador
+        </span>
+        <WorkerNameCard workerId={ rating.workerProfileId } />
+      </button>
+    </div>
+    <form
+      class="flex flex-col gap-4 w-full"
+      id="create-review-form"
+    >
+      <input type="hidden" name="id" value={ rating.id } />
+      <input type="hidden" name="rating" id="rating" value={ rating.rating } />
+      <div class="mb-6">
+        <p class="text-lg font-semibold mb-2 text-center">¿Qué te pareció el servicio?</p>
+        <div class="flex justify-center items-center space-x-2">
+          { [ 1, 2, 3, 4, 5 ].map( ( star ) => (
+          <button
+            type="button"
+            class="text-3xl focus:outline-none transition-colors duration-200 star-buttons"
+            id={`button-star-${ star }`}
+          >
+            <Icon
+              name="mdi:star-outline"
+              size={ 24 }
+              class="text-gray-400"
+              id={`icon-star-outline-${ star }`}
+            />
+            <Icon
+              name="mdi:star"
+              size={ 24 }
+              class="text-yellow-400 hidden"
+              id={`icon-star-${ star }`}
+            />
+          </button>
+          ) ) }
+        </div>
+        <p class="text-center mt-2">
+          {
+          [ '😞', '😕', '😐', '🙂', '😄' ].map( ( emoji, index ) => (
+          <span
+            class="text-7xl focus:outline-none transition-colors duration-200 hidden button-emoji"
+            id={`button-emoji-${ index + 1 }`}
+          >
+            { emoji }
+          </span>
+          ) )
+          }
+        </p>
+      </div>
+      <button
+        type="submit"
+        class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300"
+      >
+        Enviar Reseña 📤
+      </button>
+    </form>
+  </div>
+</div>
+  ) )
+}
+</>
+
+<script>
+import { actions } from 'astro:actions'
+import Swal from 'sweetalert2'
+import { getErrorList } from '@/utils'
+
+const starButtons = document.querySelectorAll( '.star-buttons' ) as NodeListOf<HTMLButtonElement>
+
+starButtons.forEach( ( star ) => {
+  star.addEventListener( 'click', async () => {
+    const id = star.id.replace( 'button-star-', '' )
+
+    for ( const star of starButtons ) {
+      const beforeStar = star.id.replace( 'button-star-', '' )
+      if ( Number( beforeStar ) <= Number( id ) ) {
+        const iconStarOutline = document.getElementById( `icon-star-outline-${ beforeStar }` ) as HTMLElement
+        const iconStar = document.getElementById( `icon-star-${ beforeStar }` ) as HTMLElement
+        iconStarOutline.classList.add( 'hidden' )
+        iconStar.classList.remove( 'hidden' )
+      } else {
+        const iconStarOutline = document.getElementById( `icon-star-outline-${ beforeStar }` ) as HTMLElement
+        const iconStar = document.getElementById( `icon-star-${ beforeStar }` ) as HTMLElement
+        iconStarOutline.classList.remove( 'hidden' )
+        iconStar.classList.add( 'hidden' )
+      }
+    }
+
+    const buttonEmojis = document.querySelectorAll( '.button-emoji' ) as NodeListOf<HTMLButtonElement>
+    buttonEmojis.forEach( ( emoji ) => {
+      emoji.classList.add( 'hidden' )
+    } )
+
+    const buttonEmoji = document.getElementById( `button-emoji-${ id }` ) as HTMLButtonElement
+    buttonEmoji.classList.remove( 'hidden' )
+
+    const ratingInput = document.getElementById( 'rating' ) as HTMLInputElement
+    ratingInput.value = String( id )
+
+  } )
+} )
+
+
+const form = document.getElementById( 'create-review-form' ) as HTMLFormElement
+
+form?.addEventListener( 'submit', async ( event ) => {
+  event.preventDefault()
+
+  const formData = new FormData( form )
+  const data = Object.fromEntries( formData.entries() )
+  console.log({ data })
+  const rating = Number( data.rating )
+  if ( rating < 1 || rating > 5 ) {
+    Swal.fire( {
+      title: 'Error al enviar la reseña',
+      text: 'La calificación debe ser un número entre 1 y 5',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    } )
+    return
+  }
+
+  const { error } = await actions.updateReviewCompletedWork( formData )
+
+  if ( error ) {
+    const errorMessages = getErrorList( error )
+    const errorMessage = errorMessages.map( error => error.message ).join( '\n' )
+    Swal.fire( {
+      title: 'Error al enviar la reseña',
+      text: errorMessage,
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    } )
+    return
+  }
+
+  await Swal.fire( {
+    title: 'Reseña enviada',
+    text: 'La reseña ha sido enviada exitosamente',
+    icon: 'success',
+    confirmButtonText: 'Aceptar',
+  } )
+
+  window.location.reload()
+} )
+
+</script>

@@ -1,5 +1,5 @@
 import { defineAction } from 'astro:actions'
-import { and, CommentService, db, eq, Service, WorkerProfile, } from 'astro:db'
+import { and, CommentService, db, eq, ReviewCompletedWork, Service, WorkerProfile, } from 'astro:db'
 
 export const getRatingByWorkerProfileId = defineAction({
   accept: 'json',
@@ -24,7 +24,17 @@ export const getRatingByWorkerProfileId = defineAction({
         )
       )
 
-    if ( publications.length === 0 ) {
+    const completedWorkRatings = await db
+      .select()
+      .from( ReviewCompletedWork )
+      .where(
+        and(
+          eq( ReviewCompletedWork.workerProfileId, workerProfileId ),
+          eq( ReviewCompletedWork.state, 'completed' ),
+        )
+      )
+
+    if ( ( publications.length === 0 ) && ( completedWorkRatings.length === 0 ) ) {
       return {
         rating: 0
       }
@@ -34,7 +44,11 @@ export const getRatingByWorkerProfileId = defineAction({
       return total + publication.CommentService.rating
     }, 0 )
 
-    const ratingAverage = ratingSum / publications.length
+    const ratingSumCompletedWork = completedWorkRatings.reduce( ( total, completedWork ) => {
+      return total + completedWork.rating
+    }, 0 )
+
+    const ratingAverage = ( ratingSum + ratingSumCompletedWork ) / ( publications.length + completedWorkRatings.length )
 
     return {
       rating: ratingAverage,

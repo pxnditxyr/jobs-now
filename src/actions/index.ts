@@ -6,6 +6,8 @@ import { approveHiring } from './hirings/approve-hiring.action'
 import { completeHiring } from './hirings/complete-hiring.action'
 import { rejectHiring } from './hirings/reject-hiring.action'
 import { updateProfile } from './profile'
+import { createReviewWorker, updateReviewCompletedWork } from './review-completed'
+import { findAllPendingRatingByUserId } from './review-completed/findAllByUserId'
 import { createServiceCategory, findAllServiceCategories, findOneServiceCategory, toggleStatusServiceCategory, updateServiceCategory } from './service-categories'
 import { createService, deleteService, findAllServices, findAllServicesByWorkerId, findOneService, updateService } from './services'
 import { findAllTransactionsByWalletId } from './transactions'
@@ -71,4 +73,8 @@ export const server = {
   updateMessageStatus,
   deleteMessage,
   getConversationMessages,
+
+  createReviewWorker,
+  findAllPendingRatingByUserId,
+  updateReviewCompletedWork,
 }
