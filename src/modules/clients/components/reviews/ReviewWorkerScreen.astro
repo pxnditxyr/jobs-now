@@ -15,13 +15,9 @@ const { user } = userData
 const { data: pendingRatingsData, error: pendingRatingsError } = await Astro.callAction( actions.findAllPendingRatingByUserId, { userId: user.id } )
 if ( pendingRatingsError ) return Astro.redirect( '/' )
 const { pendingRatings } = pendingRatingsData
-console.log({ pendingRatings })
-console.log({ pendingRating: pendingRatings.length })
 let pendingRating : typeof pendingRatings = []
 if ( pendingRatings.length > 0 ) {
-  console.log({ pendingRatings })
   pendingRating.push( pendingRatings[ 0 ] )
-  console.log({ pendingRating })
 } else {
   console.log( 'no hay mas trabajos pendientes' )
 }
