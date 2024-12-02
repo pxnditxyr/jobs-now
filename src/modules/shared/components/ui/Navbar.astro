@@ -57,7 +57,7 @@ const currentPath = Astro.url.pathname
           class="bg-teal-600 inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-600 focus:ring-white"
           aria-controls="mobile-menu"
           aria-expanded="false"
-          id="open-mobile-menu"
+          id="open-mobile-menu-shared"
         >
           <span class="sr-only">Abrir menú principal</span>
           <Icon name="mdi:menu" size={ 24 } class="" />
@@ -84,11 +84,9 @@ const currentPath = Astro.url.pathname
   </div>
 </nav>
 <script>
-const openMobileMenu = document.getElementById( 'open-mobile-menu' ) as HTMLButtonElement
-const mobileMenu = document.getElementById( 'mobile-menu' ) as HTMLDivElement
+const openMobileMenu = document.getElementById( 'open-mobile-menu-shared' ) as HTMLButtonElement
 
-openMobileMenu.addEventListener( 'click', () => {
-  console.log( 'click' )
+openMobileMenu?.addEventListener( 'click', () => {
   const isExpanded = openMobileMenu.getAttribute( 'aria-expanded' ) === 'true'
   openMobileMenu.setAttribute( 'aria-expanded', String( !isExpanded ) )
   mobileMenu.classList.toggle( 'hidden' )
