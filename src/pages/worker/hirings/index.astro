@@ -134,6 +134,7 @@ approveButtons.forEach( button => {
       const userId = String( button.dataset.userId )
       const workerId = String( button.dataset.workerId )
 
+      console.log({ userId, workerId })
       const { error: conversationError } = await actions.createConversation({
         name: 'Contratto de Servicio',
         participantIds: [ userId, workerId ],
