@@ -19,15 +19,15 @@ const { wallet } = walletData
 
 //const { data: workerData, error: workerError } = await actions.findOneUser({ id: workerId })
 const { data: workerData, error: workerError } = await Astro.callAction( actions.findOneUser, { id: workerId } )
-if ( workerError ) return Astro.redirect( '/client' )
+if ( workerError ) return Astro.redirect( '/' )
 const { user: worker } = workerData
 
 const { data: workerProfileData, error: workerProfileError } = await Astro.callAction( actions.findOneWorkerProfileByUserId, { userId: workerId } )
-if ( workerProfileError ) return Astro.redirect( '/client' )
+if ( workerProfileError ) return Astro.redirect( '/' )
 const { workerProfile } = workerProfileData
 
 const { data: currentHiringData, error: currentHiringError } = await Astro.callAction( actions.getHiringByUserId, { userId: user.id, wokerProfileId: workerProfile.id } )
-if ( currentHiringError ) return Astro.redirect( '/client' )
+if ( currentHiringError ) return Astro.redirect( '/' )
 const { hiring: currentHiring } = currentHiringData
 
 

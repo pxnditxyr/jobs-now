@@ -8,7 +8,7 @@ const serviceCategoryId = Astro.url.searchParams.get( 'serviceCategoryId' )
 const search = Astro.url.searchParams.get( 'search' )
 
 const { data: workerProfilesData, error: workerProfilesError } = await Astro.callAction( actions.findAllWorkerProfiles, { search: search ?? undefined, rating: rating ?? undefined, serviceCategoryId: serviceCategoryId ?? undefined } )
-if ( workerProfilesError ) return Astro.redirect( '/client' )
+if ( workerProfilesError ) return Astro.redirect( '/' )
 const { workerProfiles } = workerProfilesData
 
 const { data: serviceCategoriesData, error: serviceCategoriesError } = await Astro.callAction( actions.findAllServiceCategories, {} )

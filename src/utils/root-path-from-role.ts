@@ -7,7 +7,7 @@ interface IRolePath {
 export const rootPathFromRole : IRolePath = {
   'admin': '/admin',
   'worker': '/worker',
-  'client': '/client',
+  'client': '/',
   'notAuthenticated': '/auth/signin'
 }
 
