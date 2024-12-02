@@ -1,5 +1,6 @@
 import { signupUser } from './auth'
 import { addParticipants, createConversation, deleteConversation, deleteMessage, getConversationMessages, getUserConversations, sendMessage, updateMessageStatus } from './chats'
+import { getEnabledConversationsByUserId } from './chats/get-enabled-conversations.action'
 import { createCommentPublication, findAllCommentsByPublicationId } from './comment-publications'
 import { createHiringWorker, getAllHiringsByUserId, getAllHiringsByWorkerId, getAllPendingHiringsByWorkerId, getHiringByUserId } from './hirings'
 import { approveHiring } from './hirings/approve-hiring.action'
@@ -77,4 +78,5 @@ export const server = {
   createReviewWorker,
   findAllPendingRatingByUserId,
   updateReviewCompletedWork,
+  getEnabledConversationsByUserId,
 }

@@ -34,7 +34,7 @@ interface IProps {
   currentUser: User
 }
 
-export const ChatInterface = ( { userId, workerId, currentUser }: IProps ) => {
+export const ChatInterface = ( { userId, currentUser }: IProps ) => {
   const current = localStorage.getItem( 'currentConversation' )
   const currentConversation = current ? JSON.parse( current ) : null
   const currentInputValue = localStorage.getItem( 'currentInputValue' ) ?? ''
@@ -42,6 +42,7 @@ export const ChatInterface = ( { userId, workerId, currentUser }: IProps ) => {
   const { socket } = useSocket()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>( currentConversation )
+  const [ enabledConversations, setEnabledConversations ] = useState<any[]>([])
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState( currentInputValue )
   const [searchTerm, setSearchTerm] = useState('')
@@ -51,6 +52,19 @@ export const ChatInterface = ( { userId, workerId, currentUser }: IProps ) => {
     localStorage.setItem( 'currentConversation', JSON.stringify( selectedConversation ) )
     localStorage.setItem( 'currentInputValue', newMessage )
   }
+
+  useEffect( () => {
+    const getEnabledConversations = async () => {
+      const { data: enabledConversationsData, error: enabledConversationsError } = await actions.getEnabledConversationsByUserId({ userId: userId })
+      if ( enabledConversationsError ) {
+        return
+      }
+      const { enabledConversations } = enabledConversationsData
+      console.log({ enabledConversations })
+      setEnabledConversations( enabledConversations )
+    }
+    getEnabledConversations()
+  }, [] )
 
   useEffect( () => {
     setCurrentStatus()
@@ -221,6 +235,17 @@ export const ChatInterface = ( { userId, workerId, currentUser }: IProps ) => {
 
   const disabled = false
 
+  const isEnabledConversation = (): boolean => {
+    if (!enabledConversations.length) return false;
+
+    const workerIds = enabledConversations.map(convo => convo.workerId);
+
+    const participantIds = selectedConversation?.participants.map(participant => participant.id);
+
+    return workerIds.some( workerId => participantIds?.includes(workerId) );
+  }
+
+
   return (
     <div className="flex bg-gray-100">
       <div className="w-1/3 bg-white border-r border-gray-200">
@@ -278,6 +303,28 @@ export const ChatInterface = ( { userId, workerId, currentUser }: IProps ) => {
       <div className="flex-1 flex flex-col">
         {selectedConversation ? (
           <>
+            <div className="p-4 border-b border-gray-200 bg-slate-800 w-full flex items-center">
+              <img
+                src={ getAvatar( selectedConversation.participants ) }
+                alt={ selectedConversation.name ?? 'avatar' }
+                className="w-14 h-14 rounded-full mr-3 bg-blue-300"
+              />
+              <p className="text-xl text-white font-semibold">
+                { getAnotherUserName( selectedConversation.participants ) }
+              </p>
+            </div>
+            {
+              ( !isEnabledConversation() ) && (
+                <div className="flex-1 flex items-center justify-center bg-gray-100 w-full p-8 rounded-lg text-center">
+                  <p className="text-xl text-gray-500">
+                  No tienes permiso para enviar mensajes con este trabajador 😢
+                  para poder hacerlo debes esperar a que el trabajador acepte tu solicitud 📝
+                  o volver a contratarlo 📝
+                  </p>
+
+                </div>
+              )
+            }
             <div className="p-4 border-b border-gray-200 bg-white">
               <h2 className="text-xl font-semibold">{selectedConversation.name}</h2>
             </div>
@@ -327,17 +374,17 @@ export const ChatInterface = ( { userId, workerId, currentUser }: IProps ) => {
               <div className="flex items-center">
                 <input
                   type="text"
-                  placeholder="Type a message..."
+                  placeholder={ "Escribe tu mensaje..." }
                   className="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={ newMessage }
                   onChange={ (e) => setNewMessage( e.target.value ) }
                   onKeyDown={ (e) => e.key === 'Enter' && handleSendMessage() }
-                  disabled={ disabled }
+                  disabled={ !isEnabledConversation() }
                 />
                 <button
-                  className="bg-blue-500 text-white rounded-r-lg px-4 py-2 hover:bg-blue-600"
+                  className="bg-blue-500 text-white rounded-r-lg px-4 py-2 hover:bg-blue-600 disabled:bg-gray-300"
                   onClick={ handleSendMessage }
-                  disabled={ disabled }
+                  disabled={ !isEnabledConversation() }
                 >
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
