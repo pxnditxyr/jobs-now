@@ -12,10 +12,10 @@ interface IProps {
   userId: string
   workerId?: string
   currentUser: User
-  disabled: boolean
+  isWorker: boolean
 }
 
-export const ChatInterfaceProvider = ( { currentUser, userId, workerId, disabled } : IProps ) => {
+export const ChatInterfaceProvider = ( { currentUser, userId, workerId, isWorker = false } : IProps ) => {
 
   return (
     <SocketProvider currentUser={ currentUser }>
@@ -23,7 +23,7 @@ export const ChatInterfaceProvider = ( { currentUser, userId, workerId, disabled
         userId={ userId }
         workerId={ workerId }
         currentUser={ currentUser }
-        disabled={ disabled }
+        isWorker={ isWorker }
       />
     </SocketProvider>
   )

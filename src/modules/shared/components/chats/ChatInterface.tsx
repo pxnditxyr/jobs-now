@@ -32,9 +32,10 @@ interface IProps {
   userId: string
   workerId?: string
   currentUser: User
+  isWorker: boolean
 }
 
-export const ChatInterface = ( { userId, currentUser }: IProps ) => {
+export const ChatInterface = ( { userId, currentUser, isWorker = false }: IProps ) => {
   const current = localStorage.getItem( 'currentConversation' )
   const currentConversation = current ? JSON.parse( current ) : null
   const currentInputValue = localStorage.getItem( 'currentInputValue' ) ?? ''
@@ -209,15 +210,15 @@ export const ChatInterface = ( { userId, currentUser }: IProps ) => {
     }
   }
 
-  const handleDeleteMessage = (msgId: string) => {
-    setMessages(messages.filter(msg => msg.id !== msgId))
-  }
-
-  const handleEditMessage = (msgId: string, newContent: string) => {
-    setMessages(messages.map(msg =>
-      msg.id === msgId ? { ...msg, content: newContent, updatedAt: new Date() } : msg
-    ))
-  }
+  //const handleDeleteMessage = (msgId: string) => {
+  //  setMessages(messages.filter(msg => msg.id !== msgId))
+  //}
+  //
+  //const handleEditMessage = (msgId: string, newContent: string) => {
+  //  setMessages(messages.map(msg =>
+  //    msg.id === msgId ? { ...msg, content: newContent, updatedAt: new Date() } : msg
+  //  ))
+  //}
 
   const filteredConversations = conversations.filter( conv =>
     conv.participants.some( user => user.name.toLowerCase().includes( searchTerm.toLowerCase() ) || user.lastName.toLowerCase().includes( searchTerm.toLowerCase() ) )
@@ -236,6 +237,7 @@ export const ChatInterface = ( { userId, currentUser }: IProps ) => {
   const disabled = false
 
   const isEnabledConversation = (): boolean => {
+    if ( isWorker ) return true
     if (!enabledConversations.length) return false;
 
     const workerIds = enabledConversations.map(convo => convo.workerId);

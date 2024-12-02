@@ -28,5 +28,6 @@ const workerId = Astro.url.searchParams.get( 'workerId' ) ?? ''
       userId={ user.id }
       workerId={ workerId }
       currentUser={ user }
+      isWorker={ true }
     />
 </WorkersLayout>
