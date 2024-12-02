@@ -6,29 +6,6 @@ import PublicNavbar from '@/modules/public/components/ui/PublicNavbar.astro'
 const session = await getSession( Astro.request )
 
 const { user } = session ?? {}
-
-
-//¡Bienvenido a Jobs-now! La plataforma ideal para conectar a clientes con trabajadores independientes calificados en La Paz, Bolivia. En Jobs-now, hacemos que la contratación de servicios frecuentes y de mantenimiento sea rápida, segura y eficiente.
-//
-//Nuestra plataforma te permite comunicarte directamente con profesionales mediante un sistema de chat integrado, asegurando que cada detalle del servicio sea claro antes de comenzar. Descubre una manera sencilla de resolver tus necesidades con trabajadores confiables y calificados.
-//
-//Regístrate hoy mismo y empieza a disfrutar de un servicio que transforma tus tareas en soluciones.
-
-
-//Beneficios para los Clientes
-//Ahorro de tiempo: Encuentra profesionales adecuados de manera rápida.
-//Comunicación directa: Habla directamente con los trabajadores a través del chat para acordar todos los detalles.
-//Perfiles confiables: Consulta información detallada y reseñas de otros clientes para elegir con confianza.
-//Flexibilidad: Contrata servicios a tu medida, negociando directamente con los trabajadores.
-//Plataforma segura: Disfruta de un entorno protegido para gestionar tus servicios.
-//
-
-//Beneficios para los Trabajadores 
-//Conexión directa con clientes: Habla con los clientes a través del chat para entender sus necesidades y llegar a acuerdos.
-//Mejora tu reputación: Gana reseñas positivas y destaca entre otros trabajadores.
-//Más oportunidades: Amplía tu cartera de clientes y aumenta tus ingresos.
-//Gestión simplificada: Recibe solicitudes de trabajo y responde en tiempo real desde cualquier dispositivo.
-//Control total: Tú decides tus precios, horarios y condiciones de trabajo.
 ---
 
 <Layout>
@@ -40,7 +17,7 @@ const { user } = session ?? {}
     )
   }
   <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
-    <div class="bg-slate-800 shadow rounded-lg p-6 md:p-8 flex flex-col items-center gap-12 items-center">
+    <div class="bg-slate-800 shadow rounded-lg p-6 md:p-8 flex flex-col items-center gap-12">
       <div class="w-full flex items-center justify-center gap-12">
         <div class="w-full flex items-center justify-center gap-4">
           <img
